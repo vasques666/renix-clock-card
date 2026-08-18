@@ -20,13 +20,28 @@ A custom Home Assistant Lovelace card with a layered reNix tube-style clock, wea
 - Frosted Glass blur support.
 - Theme-controlled card background, border, shadow and radius when set to `null`.
 
-## HACS installation
+## Installation
 
-1. Open HACS in Home Assistant.
-2. Add this repository as a **Custom repository** with category **Dashboard**.
-3. Install `reNix Clock Card`.
-4. Add the resource if HACS does not do so automatically.
-5. Add `type: custom:renix-clock-card` to a Lovelace dashboard.
+### HACS
+
+The easiest way to install Renix Clock Card is through HACS.
+
+1. Open **HACS** in Home Assistant.
+2. Go to **Frontend**.
+3. Click the three-dot menu in the top-right corner.
+4. Select **Custom repositories**.
+5. Add:
+
+   `https://github.com/vasques666/renix-clock-card`
+
+6. Select **Dashboard** as the repository type.
+7. Click **Add**.
+8. Find **Renix Clock Card** and install it.
+9. Restart Home Assistant or reload the Lovelace resources.
+
+### Manual installation
+
+Download `renix-clock-card.js` from the repository and add it as a Lovelace resource.
 
 ## Example
 
