@@ -17,7 +17,7 @@ const RENIX_CSS = `
 .renix-grid span{background:repeating-linear-gradient(0deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.48) 5px,rgba(255,190,90,.48) 6px),repeating-linear-gradient(90deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.42) 5px,rgba(255,190,90,.42) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .renix-colon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:150px;z-index:10;pointer-events:none}.renix-colon span{position:absolute;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--renix-clock-color,#ff7700);box-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700)}.renix-colon span:first-child{top:25px}.renix-colon span:last-child{bottom:25px}
 .renix-seconds-layer{position:absolute;left:calc(50% + 4.5em);bottom:4px;width:max-content;height:auto;display:block;font-family:renix1,monospace;font-size:6rem;font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none}.renix-seconds-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 1px rgba(255,80,0,.07),0 0 3px rgba(255,80,0,.035);opacity:.72;z-index:17}.renix-seconds-base{font-feature-settings:normal;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 calc(3px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff3300),0 0 calc(7px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff5500),0 0 calc(14px * var(--renix-clock-glow,1)) var(--renix-clock-color,#ff7700),0 0 calc(22px * var(--renix-clock-glow,1)) rgba(255,85,0,.4);opacity:1;z-index:18}.renix-seconds-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:19}
-.renix-date{position:absolute;left:50%;bottom:calc(110%);transform:translateX(-50%);width:max-content;display:flex;align-items:center;gap:14px;font-family:Roboto,Arial,sans-serif;font-size:2.3rem;font-weight:300;line-height:1.2;letter-spacing:1px;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);white-space:nowrap;z-index:30;pointer-events:none}.renix-weather-icon{display:flex;align-items:center;justify-content:center;width:42px;height:42px;flex-shrink:0}.renix-weather-icon ha-icon{--mdc-icon-size:42px;color:var(--renix-clock-color,#ff7700);filter:drop-shadow(0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300)) drop-shadow(0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500))}
+.renix-date{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:max-content;display:flex;align-items:center;gap:14px;font-family:Roboto,Arial,sans-serif;font-size:2.3rem;font-weight:300;line-height:1.2;letter-spacing:1px;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);white-space:nowrap;z-index:30;pointer-events:none}.renix-weather-icon{display:flex;align-items:center;justify-content:center;width:42px;height:42px;flex-shrink:0}.renix-weather-icon ha-icon{--mdc-icon-size:42px;color:var(--renix-clock-color,#ff7700);filter:drop-shadow(0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300)) drop-shadow(0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500))}
 .renix-card.night .renix-top-item{filter:brightness(var(--renix-top-brightness,.5))}.renix-card.night .renix-colon,.renix-card.night .renix-date,.renix-card.night .renix-weather-icon{filter:brightness(var(--renix-top-brightness,.5))}
  .bottom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:0}
 .info-card{min-width:0;overflow:hidden;background:transparent;border:none;box-shadow:none;font-family:'Nixie One',monospace}
@@ -27,8 +27,6 @@ const RENIX_CSS = `
 .info-secondary{width:100%;text-align:center;font-family:'Nixie One',monospace;font-size:5rem;font-weight:900;line-height:1.05;white-space:nowrap;color:var(--secondary-color);-webkit-text-stroke:1.5px var(--secondary-stroke);text-shadow:0 0 10px var(--secondary-stroke),0 0 20px var(--secondary-glow)}
 .night .info-title,.night .info-value,.night .info-secondary{filter:brightness(var(--renix-bottom-brightness,.5));transition:filter .8s ease-in-out}
 .empty{visibility:hidden}
-
-@supports (-webkit-hyphens:none) { .info-value{text-shadow:0 0 5px var(--stroke-color),0 0 10px var(--glow-color)} .info-secondary{text-shadow:0 0 5px var(--secondary-stroke),0 0 10px var(--secondary-glow)} }
 @media(max-width:700px){.renix-digit-layer,.renix-grid{font-size:13rem}.renix-seconds-layer{font-size:4.5rem}.renix-date{font-size:1.45rem}.renix-weather-icon,.renix-weather-icon ha-icon{width:30px;height:30px;--mdc-icon-size:30px}.bottom-grid{gap:6px}.info-title{font-size:1.1rem;letter-spacing:1px}.info-value{font-size:3rem}.info-content{padding-left:6px;padding-right:6px}.info-secondary{font-size:1rem}}
 `;
 
@@ -59,8 +57,17 @@ class RenixClockCard extends HTMLElement {
   }
   set hass(hass){this._hass=hass;this._render();}
   connectedCallback(){this._start()}
-  disconnectedCallback(){clearInterval(this._timer);this._timer=null}
-  _start(){if(this._timer)return;this._timer=setInterval(()=>this._render(),1000)}
+  disconnectedCallback(){clearTimeout(this._timer);this._timer=null}
+  _start(){if(this._timer)return;this._scheduleNextSecond()}
+  _scheduleNextSecond(){
+    clearTimeout(this._timer);
+    const delay = 1000 - (Date.now() % 1000);
+    this._timer = setTimeout(()=>{
+      this._timer=null;
+      this._render();
+      this._scheduleNextSecond();
+    }, delay);
+  }
   _state(id){return id&&this._hass?.states?.[id]||null}
   _val(id){return this._state(id)?.state??'—'}
   _unit(id){return this._state(id)?.attributes?.unit_of_measurement||''}
