@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an improvement or new feature for Renix Clock Card
+title: "[Feature]: "
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement for Renix Clock Card!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: Describe the feature you would like to see.
+      placeholder: What would you like to add or change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: Explain why this feature would be useful.
+      placeholder: How would you use this feature?
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+      description: If you have an idea about how it should work, describe it here.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Describe any alternative solutions or workarounds you have tried.
