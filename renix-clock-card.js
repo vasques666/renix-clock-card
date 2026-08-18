@@ -27,6 +27,8 @@ const RENIX_CSS = `
 .info-secondary{width:100%;text-align:center;font-family:'Nixie One',monospace;font-size:5rem;font-weight:900;line-height:1.05;white-space:nowrap;color:var(--secondary-color);-webkit-text-stroke:1.5px var(--secondary-stroke);text-shadow:0 0 10px var(--secondary-stroke),0 0 20px var(--secondary-glow)}
 .night .info-title,.night .info-value,.night .info-secondary{filter:brightness(var(--renix-bottom-brightness,.5));transition:filter .8s ease-in-out}
 .empty{visibility:hidden}
+
+@supports (-webkit-hyphens:none) { .info-value{text-shadow:0 0 5px var(--stroke-color),0 0 10px var(--glow-color)} .info-secondary{text-shadow:0 0 5px var(--secondary-stroke),0 0 10px var(--secondary-glow)} }
 @media(max-width:700px){.renix-digit-layer,.renix-grid{font-size:13rem}.renix-seconds-layer{font-size:4.5rem}.renix-date{font-size:1.45rem}.renix-weather-icon,.renix-weather-icon ha-icon{width:30px;height:30px;--mdc-icon-size:30px}.bottom-grid{gap:6px}.info-title{font-size:1.1rem;letter-spacing:1px}.info-value{font-size:3rem}.info-content{padding-left:6px;padding-right:6px}.info-secondary{font-size:1rem}}
 `;
 
