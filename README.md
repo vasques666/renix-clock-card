@@ -53,18 +53,6 @@ See [`example.yaml`](example.yaml).
 
 Самый простой способ установить **Renix Clock Card** — через HACS.
 
-[![Открыть Renix Clock Card в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=vasques666&repository=renix-clock-card&category=dashboard)
-
-#### Установка через кнопку HACS
-
-1. Нажмите кнопку **Open in HACS** выше.
-2. Home Assistant откроет страницу **Renix Clock Card** в HACS.
-3. Нажмите **Download** / **Скачать**.
-4. После установки перезагрузите Home Assistant или обновите ресурсы Lovelace.
-
-#### Установка как Custom Repository
-
-Если кнопка выше не работает:
 
 1. Откройте **HACS**.
 2. Перейдите в раздел **Frontend**.
