@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 — Language support
+
+- Added `language` setting with `auto`, `ru`, and `en` options.
+- Added automatic language detection from the Home Assistant locale.
+- Localized date, weekday, month and lower sensor panel titles.
+- Preserved all 1.0.0 functionality and visual settings.
+
 ## 1.0.0 — Release
 
 - First stable release of `renix-clock-card`.

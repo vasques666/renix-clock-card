@@ -1,4 +1,5 @@
 type: custom:renix-clock-card
+language: auto
 weather_entity: weather.yandex_pogoda
 night_entity: input_boolean.night_mode
 outside_temperature: sensor.spalnia_ulitsa_temperature

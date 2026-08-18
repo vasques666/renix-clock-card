@@ -36,7 +36,7 @@ class RenixClockCard extends HTMLElement {
     if(!config) throw new Error('renix-clock-card: configuration is required');
     const legacyNight = config.night_brightness != null ? Number(config.night_brightness) : 0.5;
     this._config={
-      weather_entity:config.weather_entity||'', night_entity:config.night_entity||'',
+      language:config.language||'auto', weather_entity:config.weather_entity||'', night_entity:config.night_entity||'',
       outside_temperature:config.outside_temperature||'', outside_humidity:config.outside_humidity||'',
       pressure_entity:config.pressure_entity||'', room_temperature:config.room_temperature||'', room_humidity:config.room_humidity||'',
       show_bottom_cards:config.show_bottom_cards!==false, height:Number(config.height)||330,
@@ -69,16 +69,16 @@ class RenixClockCard extends HTMLElement {
   _render(){
     if(!this.shadowRoot||!this._config)return;
     const now=new Date(), h=String(now.getHours()).padStart(2,'0'), m=String(now.getMinutes()).padStart(2,'0'), s=String(now.getSeconds()).padStart(2,'0');
-    const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-    const days=['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
-    const date=`${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} года, ${days[(now.getDay()+6)%7]}`;
+    const language=this._config.language==='auto' ? String(this._hass?.locale?.language || this._hass?.language || navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en' : this._config.language;
+    const L=language==='ru' ? {months:['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],days:['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'],year:'года',outside:'Улица',pressure:'Давление',room:'Спальня'} : {months:['January','February','March','April','May','June','July','August','September','October','November','December'],days:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],year:'',outside:'Outside',pressure:'Pressure',room:'Bedroom'};
+    const date=language==='ru' ? `${now.getDate()} ${L.months[now.getMonth()]} ${now.getFullYear()} ${L.year}, ${L.days[(now.getDay()+6)%7]}` : `${L.months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}, ${L.days[(now.getDay()+6)%7]}`;
     const night=this._state(this._config.night_entity)?.state==='on';
     const weather=this._state(this._config.weather_entity), wi=this._weatherIcon(weather?.state||'');
     const C=this._config;
     const temp=this._escape(this._val(C.outside_temperature)), hum=this._escape(this._val(C.outside_humidity)), pressRaw=this._val(C.pressure_entity), press=this._escape((Number.isFinite(Number(pressRaw)) ? Number(pressRaw).toFixed(1) : pressRaw)), rt=this._escape(this._val(C.room_temperature)), rh=this._escape(this._val(C.room_humidity));
     const tu=this._escape(this._unit(C.outside_temperature)), hu=this._escape(this._unit(C.outside_humidity)), pu=this._escape(this._unit(C.pressure_entity)), ru=this._escape(this._unit(C.room_temperature)), rhu=this._escape(this._unit(C.room_humidity));
     const info=(title,value,unit,secondary,secondaryUnit,color,stroke,glow)=>`<div class="info-card"><div class="info-title">${title}</div><div class="info-content"><div class="info-value" style="--value-color:${color};--stroke-color:${stroke};--glow-color:${glow}">${value}${unit?`<span style="font-size:.55em;margin-left:.08em">${unit}</span>`:''}</div>${secondary!==''?`<div class="info-secondary" style="--secondary-color:${color};--secondary-stroke:${stroke};--secondary-glow:${glow}">${secondary}${secondaryUnit?`<span style="font-size:.55em;margin-left:.08em">${secondaryUnit}</span>`:''}</div>`:''}</div></div>`;
-    const bottom=C.show_bottom_cards?`<div class="bottom-grid ${night?'night':''}" style="--renix-title-color:${C.title_color};--renix-bottom-brightness:${C.bottom_night_brightness}">${info('Улица',temp,tu,hum,hu,C.outside_color,C.outside_stroke,C.outside_glow)}${info('Давление',press,pu,'','',C.pressure_color,C.pressure_stroke,C.pressure_glow)}${info('Спальня',rt,ru,rh,rhu,C.room_color,C.room_stroke,C.room_glow)}</div>`:'';
+    const bottom=C.show_bottom_cards?`<div class="bottom-grid ${night?'night':''}" style="--renix-title-color:${C.title_color};--renix-bottom-brightness:${C.bottom_night_brightness}">${info(L.outside,temp,tu,hum,hu,C.outside_color,C.outside_stroke,C.outside_glow)}${info(L.pressure,press,pu,'','',C.pressure_color,C.pressure_stroke,C.pressure_glow)}${info(L.room,rt,ru,rh,rhu,C.room_color,C.room_stroke,C.room_glow)}</div>`:'';
     this.style.setProperty('--card-height',`${C.height}px`);
     this.shadowRoot.innerHTML=`<style>${RENIX_CSS}</style><div class="renix-shell" style="--renix-card-background:${C.card_background_color?this._rgba(C.card_background_color,C.card_background_opacity):this._css(C.card_background)};--renix-card-border:${C.card_border_color?`1px solid ${this._rgba(C.card_border_color,C.card_border_opacity)}`:this._css(C.card_border)};--renix-card-shadow:${C.card_shadow_color?`0 8px 32px ${this._rgba(C.card_shadow_color,C.card_shadow_opacity)}`:this._css(C.card_shadow)};--renix-card-radius:${this._css(C.card_radius)};--renix-card-backdrop-filter:blur(${Math.max(0,C.card_backdrop_blur)}px);--renix-clock-color:${C.clock_color};--renix-clock-glow-color:${C.clock_glow_color};--renix-glow-4:${4*C.clock_glow}px;--renix-glow-10:${10*C.clock_glow}px;--renix-glow-20:${20*C.clock_glow}px;--renix-glow-30:${30*C.clock_glow}px;--renix-clock-glow:${C.clock_glow};--renix-title-color:${C.title_color};--renix-top-brightness:${C.top_night_brightness}"><div class="renix-shared-backdrop"></div><div class="renix-card ${night?'night':''}"><div class="renix-clock"><div class="renix-top">
       <div class="renix-digit-layer renix-top-item renix-hours-layer renix-ss03"><span>${h}</span></div><div class="renix-digit-layer renix-top-item renix-hours-layer renix-base"><span>${h}</span></div><div class="renix-grid renix-top-item renix-hours-layer"><span>${h}</span></div><div class="renix-digit-layer renix-top-item renix-hours-layer renix-ss02"><span>${h}</span></div>
@@ -100,6 +100,7 @@ class RenixClockCardEditor extends HTMLElement {
     this._config={};
     this._form=null;
     this._schema=[
+      {name:'language',selector:{select:{options:[{value:'auto',label:'Автоматически'},{value:'ru',label:'Русский'},{value:'en',label:'English'}],mode:'dropdown'}},label:'Язык'},
       {name:'weather_entity',selector:{entity:{domain:'weather'}},label:'Погода'},
       {name:'night_entity',selector:{entity:{domain:'input_boolean'}},label:'Ночной режим'},
       {name:'outside_temperature',selector:{entity:{domain:'sensor'}},label:'Температура улицы'},
