@@ -7,7 +7,7 @@ const RENIX_CSS = `
 *{box-sizing:border-box}
 .renix-shell{position:relative;width:100%;min-height:var(--card-height,330px);overflow:visible}.renix-card{position:relative;width:100%;height:var(--card-height,330px);overflow:visible;background:transparent;border:none;box-shadow:none;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none}.renix-shared-backdrop{position:absolute;left:0;right:0;top:0;bottom:0;z-index:0;pointer-events:none;background:var(--renix-card-background,transparent);border:var(--renix-card-border,none);box-shadow:var(--renix-card-shadow,none);border-radius:var(--renix-card-radius,0);backdrop-filter:var(--renix-card-backdrop-filter,none);-webkit-backdrop-filter:var(--renix-card-backdrop-filter,none)}.renix-card,.bottom-grid{position:relative;z-index:1}
 .renix-clock{position:absolute;left:50%;top:50%;transform:translate(-50%,-43%);width:100%;height:230px;overflow:visible}
-.renix-digit-layer{position:absolute;top:0;height:100%;display:flex;align-items:flex-end;font-family:renix1,monospace;font-size:17rem;font-weight:200;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none}
+.renix-digit-layer{position:absolute;top:0;height:100%;display:flex;align-items:flex-end;font-family:renix1,monospace;font-size:17rem;font-weight:100;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none}
 .renix-digit-layer span,.renix-grid span,.renix-seconds-layer span{display:block;white-space:nowrap}
 .renix-hours-layer{right:calc(50% + .2em)}.renix-minutes-layer{left:calc(50% + .07em)}
 .renix-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 2px rgba(255,80,0,.07),0 0 4px rgba(255,80,0,.035);opacity:.72;z-index:1}
