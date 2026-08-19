@@ -11,11 +11,54 @@ const RENIX_CSS = `
 .renix-digit-layer span,.renix-grid span,.renix-seconds-layer span{display:block;white-space:nowrap}
 .renix-hours-layer{right:calc(50% + .2em)}.renix-minutes-layer{left:calc(50% + .07em)}
 .renix-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 2px rgba(255,80,0,.07),0 0 4px rgba(255,80,0,.035);opacity:.72;z-index:1}
-.renix-base{font-feature-settings:normal;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700),0 0 var(--renix-glow-30,30px) rgba(255,85,0,.4);opacity:1;z-index:2}
-.renix-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:3}
-.renix-grid{position:absolute;top:0;height:100%;display:flex;align-items:flex-end;font-family:renix1,monospace;font-size:17rem;font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none;z-index:4;color:transparent;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px),repeating-linear-gradient(90deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 2px rgba(255,110,0,.25)}
-.renix-grid span{background:repeating-linear-gradient(0deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.48) 5px,rgba(255,190,90,.48) 6px),repeating-linear-gradient(90deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.42) 5px,rgba(255,190,90,.42) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.renix-colon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:150px;z-index:10;pointer-events:none}.renix-colon span{position:absolute;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--renix-clock-color,#ff7700);box-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700)}.renix-colon span:first-child{top:25px}.renix-colon span:last-child{bottom:25px}
+/* Базовый слой активной цифры: уменьшаем радиус агрессивных теней, 
+   чтобы они не "пробивали" верхние слои */
+.renix-base {
+  font-feature-settings: normal;
+  color: var(--renix-clock-color, #ff7700);
+  /* Оставляем плотное внутреннее свечение */
+  text-shadow: 
+    0 0 var(--renix-glow-4, 4px) var(--renix-clock-glow-color, #ff3300), 
+    0 0 var(--renix-glow-10, 10px) var(--renix-clock-glow-color, #ff5500);
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Создаем подложку для дальнего объемного свечения под цифрой, 
+   чтобы оно не лезло наверх */
+.renix-base::before {
+  content: attr(data-text); /* Если в JS вы передаете значение в data-text */
+  position: absolute;
+  left: 0; top: 0;
+  color: transparent;
+  text-shadow: 
+    0 0 var(--renix-glow-20, 20px) var(--renix-clock-color, #ff7700), 
+    0 0 var(--renix-glow-30, 30px) rgba(255,85,0,.4);
+  z-index: -1; /* Уходит под саму цифру */
+}.renix-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:3}
+/* Сетка анода: делаем её гарантированным физическим оверлеем */
+.renix-grid {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 5; /* Поднимаем выше всех теней */
+  
+  /* Используем маску или multiply, чтобы отсечь нижний свет */
+  mix-blend-mode: source-over; 
+}
+
+/* Отрезанный текст сетки */
+.renix-grid span {
+  background: 
+    repeating-linear-gradient(0deg, rgba(20,20,20,0.9) 0px, rgba(20,20,20,0.9) 2px, transparent 2px, transparent 6px),
+    repeating-linear-gradient(90deg, rgba(20,20,20,0.9) 0px, rgba(20,20,20,0.9) 2px, transparent 2px, transparent 6px);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Добавляем легкий собственный блик сетки, чтобы она казалась металлической поверх неонового облака */
+  filter: drop-shadow(0 0 1px rgba(255, 190, 90, 0.3));
+}.renix-colon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:150px;z-index:10;pointer-events:none}.renix-colon span{position:absolute;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--renix-clock-color,#ff7700);box-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700)}.renix-colon span:first-child{top:25px}.renix-colon span:last-child{bottom:25px}
 .renix-seconds-layer{position:absolute;left:calc(50% + 4.5em);bottom:4px;width:max-content;height:auto;display:block;font-family:renix1,monospace;font-size:6rem;font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none}.renix-seconds-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 1px rgba(255,80,0,.07),0 0 3px rgba(255,80,0,.035);opacity:.72;z-index:17}.renix-seconds-base{font-feature-settings:normal;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 calc(3px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff3300),0 0 calc(7px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff5500),0 0 calc(14px * var(--renix-clock-glow,1)) var(--renix-clock-color,#ff7700),0 0 calc(22px * var(--renix-clock-glow,1)) rgba(255,85,0,.4);opacity:1;z-index:18}.renix-seconds-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:19}
 .renix-date{position:absolute;left:50%;bottom:calc(110%);transform:translateX(-50%);width:max-content;display:flex;align-items:center;gap:14px;font-family:Roboto,Arial,sans-serif;font-size:2.3rem;font-weight:300;line-height:1.2;letter-spacing:1px;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);white-space:nowrap;z-index:30;pointer-events:none}.renix-weather-icon{display:flex;align-items:center;justify-content:center;width:42px;height:42px;flex-shrink:0}.renix-weather-icon ha-icon{--mdc-icon-size:42px;color:var(--renix-clock-color,#ff7700);filter:drop-shadow(0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300)) drop-shadow(0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500))}
 .renix-card.night .renix-top-item{filter:brightness(var(--renix-top-brightness,.5))}.renix-card.night .renix-colon,.renix-card.night .renix-date,.renix-card.night .renix-weather-icon{filter:brightness(var(--renix-top-brightness,.5))}
