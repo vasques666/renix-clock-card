@@ -162,19 +162,30 @@ class RenixClockCard extends HTMLElement {
     this._applyAdaptiveSize();
   }
   _applyAdaptiveSize(){
-    if(!this.shadowRoot?.querySelector('.renix-card'))return;
-    const rect=this.getBoundingClientRect();
-    const w=rect.width||this._config.adaptive_base_width||800;
-    const h=rect.height||this._config.height||400;
-    const bw=this._config.adaptive_base_width||800;
-    const bh=this._config.adaptive_base_height||400;
-    const scale=Math.max(.55,Math.min(2.5,w/bw,h/bh));
-    this.style.setProperty('--renix-scale',String(scale));
-    this.style.setProperty('--renix-adaptive-header-top',`${32*scale}px`);
-    this.style.setProperty('--renix-adaptive-clock-top',`${96*scale}px`);
-    this.style.setProperty('--renix-adaptive-clock-height',`${230*scale}px`);
-    this.style.setProperty('--renix-adaptive-bottom-top',`${300*scale}px`);
-    this.style.setProperty('--renix-adaptive-bottom-height',`${Math.max(198*scale,h-300*scale-8)}px`);
+    if(!this.shadowRoot?.querySelector('.renix-card'))return;const clockTop = 96 * scale;
+const clockHeight = 230 * scale;
+const bottomGap = 10 * scale;
+const bottomTop = clockTop + clockHeight + bottomGap;
+
+this.style.setProperty(
+  '--renix-adaptive-clock-top',
+  `${clockTop}px`
+);
+
+this.style.setProperty(
+  '--renix-adaptive-clock-height',
+  `${clockHeight}px`
+);
+
+this.style.setProperty(
+  '--renix-adaptive-bottom-top',
+  `${bottomTop}px`
+);
+
+this.style.setProperty(
+  '--renix-adaptive-bottom-height',
+  `${Math.max(198 * scale, h - bottomTop - 8)}px`
+);
   }
   _state(id){return id&&this._hass?.states?.[id]||null}
   _val(id){return this._state(id)?.state??'—'}
