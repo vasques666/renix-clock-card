@@ -12,7 +12,7 @@ const RENIX_CSS = `
 .renix-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 2px rgba(255,80,0,.07),0 0 4px rgba(255,80,0,.035);opacity:.72;z-index:1}
 .renix-base{font-feature-settings:normal;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700),0 0 var(--renix-glow-30,30px) rgba(255,85,0,.4);opacity:1;z-index:2}
 .renix-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:4}
-.renix-grid{position:absolute;top:0;height:100%;display:flex;align-items:flex-end;font-family:renix1,monospace;font-size:17rem;font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none;z-index:3;color:transparent;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px),repeating-linear-gradient(90deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 2px rgba(255,110,0,.25)}
+.renix-grid{position:absolute;top:0;height:100%;display:flex;align-items:flex-end;font-family:renix1,monospace;font-size:calc(17rem * var(--renix-scale,1));font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none;z-index:3;color:transparent;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px),repeating-linear-gradient(90deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 5px,rgba(0,0,0,.9) 5px,rgba(0,0,0,.4) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 2px rgba(255,110,0,.25)}
 .renix-grid span{background:repeating-linear-gradient(0deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.48) 5px,rgba(255,190,90,.48) 6px),repeating-linear-gradient(90deg,rgba(255,190,90,0) 0,rgba(255,190,90,0) 5px,rgba(255,190,90,.42) 5px,rgba(255,190,90,.42) 6px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .renix-colon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(18px * var(--renix-scale,1));height:calc(150px * var(--renix-scale,1));z-index:10;pointer-events:none}.renix-colon span{position:absolute;left:50%;width:calc(13px * var(--renix-scale,1));height:calc(13px * var(--renix-scale,1));margin-left:calc(-6.5px * var(--renix-scale,1));border-radius:50%;background:var(--renix-clock-color,#ff7700);box-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700)}.renix-colon span:first-child{top:calc(25px * var(--renix-scale,1))}.renix-colon span:last-child{bottom:calc(25px * var(--renix-scale,1))}
 .renix-seconds-layer{position:absolute;left:calc(50% + 4.5em);bottom:calc(4px * var(--renix-scale,1));width:max-content;height:auto;display:block;font-family:renix1,monospace;font-size:calc(6rem * var(--renix-scale,1));font-weight:400;font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;pointer-events:none}.renix-seconds-ss03{font-feature-settings:"ss03" 1;color:rgba(255,119,0,.13);text-shadow:0 0 1px rgba(255,80,0,.07),0 0 3px rgba(255,80,0,.035);opacity:.72;z-index:17}.renix-seconds-base{font-feature-settings:normal;color:var(--renix-clock-color,#ff7700);text-shadow:0 0 calc(3px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff3300),0 0 calc(7px * var(--renix-clock-glow,1)) var(--renix-clock-glow-color,#ff5500),0 0 calc(14px * var(--renix-clock-glow,1)) var(--renix-clock-color,#ff7700),0 0 calc(22px * var(--renix-clock-glow,1)) rgba(255,85,0,.4);opacity:1;z-index:18}.renix-seconds-ss02{font-feature-settings:"ss02" 1;color:rgba(75,32,7,.62);text-shadow:0 0 1px rgba(80,30,5,.25),0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:19}
@@ -23,7 +23,7 @@ const RENIX_CSS = `
 .info-title{display:flex;justify-content:center;align-items:center;text-align:center;padding-bottom:0;font-family:Nixie One,monospace;font-size:calc(1.8rem * var(--renix-scale,1));font-weight:900;line-height:1.2;color:var(--renix-title-color,rgba(255,119,0,.8));text-transform:uppercase;letter-spacing:calc(2px * var(--renix-scale,1));text-shadow:0 0 4px rgba(255,51,0,.5)}
 .info-content{padding:0 calc(16px * var(--renix-scale,1)) calc(12px * var(--renix-scale,1));min-height:calc(164px * var(--renix-scale,1));height:calc(100% - 34px * var(--renix-scale,1));display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0}
 .info-value{width:100%;text-align:center;font-family:Nixie One,monospace;font-size:calc(5rem * var(--renix-scale,1));font-weight:900;line-height:1.05;white-space:nowrap;color:var(--value-color);-webkit-text-stroke:1.5px var(--stroke-color);text-shadow:0 0 10px var(--stroke-color),0 0 20px var(--glow-color)}
-.info-secondary{width:100%;text-align:center;font-family:Nixie One,monospace;font-size:5rem;font-weight:900;line-height:1.05;white-space:nowrap;color:var(--secondary-color);-webkit-text-stroke:1.5px var(--secondary-stroke);text-shadow:0 0 10px var(--secondary-stroke),0 0 20px var(--secondary-glow)}
+.info-secondary{width:100%;text-align:center;font-family:Nixie One,monospace;font-size:calc(5rem * var(--renix-scale,1));font-weight:900;line-height:1.05;white-space:nowrap;color:var(--secondary-color);-webkit-text-stroke:1.5px var(--secondary-stroke);text-shadow:0 0 10px var(--secondary-stroke),0 0 20px var(--secondary-glow)}
 .night .info-title,.night .info-value,.night .info-secondary{filter:brightness(var(--renix-bottom-brightness,.5));transition:filter .8s ease-in-out}
 .empty{visibility:hidden}
 
@@ -39,7 +39,7 @@ class RenixClockCard extends HTMLElement {
       language:config.language||'auto', weather_entity:config.weather_entity||'', night_entity:config.night_entity||'',
       outside_temperature:config.outside_temperature||'', outside_humidity:config.outside_humidity||'',
       pressure_entity:config.pressure_entity||'', room_temperature:config.room_temperature||'', room_humidity:config.room_humidity||'',
-      show_bottom_cards:config.show_bottom_cards!==false, height:Number(config.height)||330, adaptive:config.adaptive!==false, adaptive_base_width:Number(config.adaptive_base_width)||800, adaptive_base_height:Number(config.adaptive_base_height)||400,
+      show_bottom_cards:config.show_bottom_cards!==false, height:Number(config.height)||480, adaptive:config.adaptive!==false, adaptive_base_width:Number(config.adaptive_base_width)||800, adaptive_base_height:Number(config.adaptive_base_height)||480,
       card_background:config.card_background ?? null, card_border:config.card_border ?? null, card_shadow:config.card_shadow ?? null, card_radius:config.card_radius ?? null,
       card_backdrop_blur:config.card_backdrop_blur != null ? Number(config.card_backdrop_blur) : (config.card_backdrop_filter ? Number((String(config.card_backdrop_filter).match(/blur\(([-0-9.]+)px\)/)||[])[1] || 10) : 10),
       card_background_color:config.card_background_color ?? null, card_background_opacity:config.card_background_opacity != null ? Number(config.card_background_opacity) : 0.08,
@@ -83,21 +83,65 @@ class RenixClockCard extends HTMLElement {
     this._resizeObserver.observe(this);
     this._applyAdaptiveSize();
   }
-  _applyAdaptiveSize(){
-    if(!this.shadowRoot?.querySelector('.renix-card'))return;
-    const rect=this.getBoundingClientRect();
-    const w=rect.width||this._config.adaptive_base_width||800;
-    const h=rect.height||this._config.height||400;
-    const bw=this._config.adaptive_base_width||800;
-    const bh=this._config.adaptive_base_height||400;
-    const scale=Math.max(.55,Math.min(2.5,w/bw,h/bh));
-    this.style.setProperty('--renix-scale',String(scale));
-    this.style.setProperty('--renix-adaptive-header-top',`${32*scale}px`);
-    this.style.setProperty('--renix-adaptive-clock-top',`${96*scale}px`);
-    this.style.setProperty('--renix-adaptive-clock-height',`${230*scale}px`);
-    this.style.setProperty('--renix-adaptive-bottom-top',`${300*scale}px`);
-    this.style.setProperty('--renix-adaptive-bottom-height',`${Math.max(198*scale,h-300*scale-8)}px`);
-  }
+_applyAdaptiveSize(){
+  if(!this.shadowRoot?.querySelector('.renix-card')) return;
+
+  const rect=this.getBoundingClientRect();
+
+  const w=rect.width || 800;
+  const h=rect.height || 480;
+
+  const bw=this._config.adaptive_base_width || 800;
+  const bh=this._config.adaptive_base_height || 480;
+
+  const scale=Math.max(
+    0.55,
+    Math.min(2.5,w/bw,h/bh)
+  );
+
+  const DESIGN={
+    headerTop:32,
+    clockTop:96,
+    clockHeight:230,
+    bottomTop:300,
+    bottomBottom:472
+  };
+
+  this.style.setProperty(
+    '--renix-scale',
+    String(scale)
+  );
+
+  this.style.setProperty(
+    '--renix-adaptive-header-top',
+    `${DESIGN.headerTop*scale}px`
+  );
+
+  this.style.setProperty(
+    '--renix-adaptive-clock-top',
+    `${DESIGN.clockTop*scale}px`
+  );
+
+  this.style.setProperty(
+    '--renix-adaptive-clock-height',
+    `${DESIGN.clockHeight*scale}px`
+  );
+
+  this.style.setProperty(
+    '--renix-adaptive-bottom-top',
+    `${DESIGN.bottomTop*scale}px`
+  );
+
+  const bottomHeight=Math.max(
+    0,
+    h-DESIGN.bottomTop*scale-8*scale
+  );
+
+  this.style.setProperty(
+    '--renix-adaptive-bottom-height',
+    `${bottomHeight}px`
+  );
+}
   _state(id){return id&&this._hass?.states?.[id]||null}
   _val(id){return this._state(id)?.state??'—'}
   _unit(id){return this._state(id)?.attributes?.unit_of_measurement||''}
