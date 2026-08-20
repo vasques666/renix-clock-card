@@ -7,17 +7,20 @@ const RENIX_CSS = `
 :host{
   display:block;
   width:100%;
+
   --renix-orange:#ff7700;
   --renix-frame:rgba(255,119,0,.42);
   --renix-frame-glow:rgba(255,70,0,.22);
 
   --renix-scale:1;
 
-  /* 800 x 480 reference geometry */
   --renix-card-base-width:800;
   --renix-card-base-height:480;
 
-  /* clock reduced by 20% */
+  /*
+   * Clock is scaled as ONE complete group.
+   * This is NOT a font-size multiplier anymore.
+   */
   --renix-clock-factor:.8;
 }
 
@@ -31,32 +34,46 @@ const RENIX_CSS = `
 
 .renix-shell{
   position:relative;
+
   width:100%;
+
+  /*
+   * Adaptive height is derived from width.
+   */
   height:calc(480px * var(--renix-scale));
+
   min-height:0;
-  overflow:visible;
+
+  overflow:hidden;
 }
 
 .renix-card{
   position:relative;
+
   width:100%;
   height:100%;
-  overflow:visible;
+
+  overflow:hidden;
+
   background:transparent;
   border:none;
   box-shadow:none;
   border-radius:0;
+
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
+
   z-index:1;
 }
 
 .renix-shared-backdrop{
   position:absolute;
+
   left:0;
   right:0;
   top:0;
   bottom:0;
+
   z-index:0;
   pointer-events:none;
 
@@ -70,22 +87,34 @@ const RENIX_CSS = `
 }
 
 /* =========================================================
-   TOP: WEATHER / DATE / WEEKDAY
-   Reference position: Y = 30
+   TOP HEADER
    ========================================================= */
 
 .renix-header{
   position:absolute;
+
   left:0;
-  top:calc(var(--renix-top-offset,30px) * var(--renix-scale));
+
+  top:
+    calc(
+      var(--renix-top-offset,30px)
+      * var(--renix-scale)
+    );
+
   width:100%;
-  height:calc(48px * var(--renix-scale));
+
+  height:
+    calc(
+      48px * var(--renix-scale)
+    );
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
   z-index:40;
+
   pointer-events:none;
 }
 
@@ -93,102 +122,152 @@ const RENIX_CSS = `
   position:relative;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
   width:max-content;
+
   max-width:100%;
 
-  gap:calc(var(--renix-top-gap,14px) * var(--renix-scale));
+  gap:
+    calc(
+      var(--renix-top-gap,14px)
+      * var(--renix-scale)
+    );
 
   font-family:Roboto,Arial,sans-serif;
-  font-size:calc(var(--renix-top-font-size,2.3rem) * var(--renix-scale));
+
+  font-size:
+    calc(
+      var(--renix-top-font-size,2.3rem)
+      * var(--renix-scale)
+    );
+
   font-weight:300;
+
   line-height:1.2;
+
   letter-spacing:1px;
 
-  color:var(--renix-clock-color,#ff7700);
+  color:
+    var(
+      --renix-clock-color,
+      #ff7700
+    );
 
   text-shadow:
-    0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),
-    0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),
-    0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);
+    0 0 var(--renix-glow-4,4px)
+      var(
+        --renix-clock-glow-color,
+        #ff3300
+      ),
+    0 0 var(--renix-glow-10,10px)
+      var(
+        --renix-clock-glow-color,
+        #ff5500
+      ),
+    0 0 var(--renix-glow-20,20px)
+      var(
+        --renix-clock-color,
+        #ff7700
+      );
 
   white-space:nowrap;
+
   z-index:40;
 }
 
 .renix-weather-icon{
   display:flex;
+
   align-items:center;
   justify-content:center;
 
-  width:calc(var(--renix-top-icon-size,42px) * var(--renix-scale));
-  height:calc(var(--renix-top-icon-size,42px) * var(--renix-scale));
+  width:
+    calc(
+      var(--renix-top-icon-size,42px)
+      * var(--renix-scale)
+    );
+
+  height:
+    calc(
+      var(--renix-top-icon-size,42px)
+      * var(--renix-scale)
+    );
 
   flex-shrink:0;
 }
 
 .renix-weather-icon ha-icon{
-  --mdc-icon-size:calc(var(--renix-top-icon-size,42px) * var(--renix-scale));
+  --mdc-icon-size:
+    calc(
+      var(--renix-top-icon-size,42px)
+      * var(--renix-scale)
+    );
 
-  color:var(--renix-clock-color,#ff7700);
+  color:
+    var(
+      --renix-clock-color,
+      #ff7700
+    );
 
   filter:
     drop-shadow(
       0 0 var(--renix-glow-4,4px)
-      var(--renix-clock-glow-color,#ff3300)
+      var(
+        --renix-clock-glow-color,
+        #ff3300
+      )
     )
     drop-shadow(
       0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500)
+      var(
+        --renix-clock-glow-color,
+        #ff5500
+      )
     );
 }
 
 /* =========================================================
-   CLOCK AREA
+   CLOCK
+   Reference geometry = 800 x 184
    ========================================================= */
 
 .renix-clock{
   position:absolute;
 
   left:50%;
-  top:calc(96px * var(--renix-scale));
+
+  top:
+    calc(
+      96px * var(--renix-scale)
+    );
 
   /*
-   * ВАЖНО:
-   * часы теперь имеют собственную ширину,
-   * а не 100% ширины карточки.
+   * IMPORTANT:
+   *
+   * The clock itself has a fixed reference size.
+   * The complete group is then scaled.
    */
   width:800px;
   height:184px;
 
-  /*
-   * Целая группа часов масштабируется целиком.
-   * Это масштабирует:
-   * - часы
-   * - двоеточие
-   * - секунды
-   * - расстояния между ними
-   */
   transform:
     translateX(-50%)
     scale(
       calc(
-        var(--renix-scale) *
-        var(--renix-clock-factor)
+        var(--renix-scale)
+        * var(--renix-clock-factor)
       )
     );
 
   transform-origin:center top;
 
   overflow:visible;
+
   z-index:20;
 }
-
-/* =========================================================
-   CLOCK INTERNAL REFERENCE GEOMETRY
-   ========================================================= */
 
 .renix-top{
   position:relative;
@@ -209,15 +288,14 @@ const RENIX_CSS = `
   height:184px;
 
   display:flex;
+
   align-items:flex-end;
 
   font-family:renix1,monospace;
 
   /*
-   * Здесь БОЛЬШЕ НЕ нужно умножать размер
-   * на --renix-scale.
-   *
-   * Весь clock масштабируется целиком.
+   * Fixed reference font size.
+   * The complete clock is scaled by transform.
    */
   font-size:17rem;
 
@@ -225,10 +303,20 @@ const RENIX_CSS = `
   font-style:normal;
 
   line-height:.95;
+
   letter-spacing:-.12em;
 
   white-space:nowrap;
+
   pointer-events:none;
+}
+
+.renix-digit-layer span,
+.renix-grid span,
+.renix-seconds-layer span{
+  display:block;
+
+  white-space:nowrap;
 }
 
 .renix-hours-layer{
@@ -239,6 +327,70 @@ const RENIX_CSS = `
   left:calc(50% + .07em);
 }
 
+/* =========================================================
+   reNix LAYERS
+   ========================================================= */
+
+.renix-ss03{
+  font-feature-settings:"ss03" 1;
+
+  color:rgba(255,119,0,.13);
+
+  text-shadow:
+    0 0 2px rgba(255,80,0,.07),
+    0 0 4px rgba(255,80,0,.035);
+
+  opacity:.72;
+
+  z-index:1;
+}
+
+.renix-base{
+  font-feature-settings:normal;
+
+  color:
+    var(
+      --renix-clock-color,
+      #ff7700
+    );
+
+  text-shadow:
+    0 0 var(--renix-glow-4,4px)
+      var(
+        --renix-clock-glow-color,
+        #ff3300
+      ),
+    0 0 var(--renix-glow-10,10px)
+      var(
+        --renix-clock-glow-color,
+        #ff5500
+      ),
+    0 0 var(--renix-glow-20,20px)
+      var(
+        --renix-clock-color,
+        #ff7700
+      ),
+    0 0 var(--renix-glow-30,30px)
+      rgba(255,85,0,.4);
+
+  opacity:1;
+
+  z-index:2;
+}
+
+.renix-ss02{
+  font-feature-settings:"ss02" 1;
+
+  color:rgba(75,32,7,.62);
+
+  text-shadow:
+    0 0 1px rgba(80,30,5,.25),
+    0 0 2px rgba(70,25,4,.1);
+
+  opacity:.68;
+
+  z-index:4;
+}
 
 /* =========================================================
    GRID
@@ -252,6 +404,7 @@ const RENIX_CSS = `
   height:184px;
 
   display:flex;
+
   align-items:flex-end;
 
   font-family:renix1,monospace;
@@ -262,9 +415,11 @@ const RENIX_CSS = `
   font-style:normal;
 
   line-height:.95;
+
   letter-spacing:-.12em;
 
   white-space:nowrap;
+
   pointer-events:none;
 
   z-index:3;
@@ -289,6 +444,7 @@ const RENIX_CSS = `
 
   -webkit-background-clip:text;
   background-clip:text;
+
   -webkit-text-fill-color:transparent;
 
   text-shadow:
@@ -314,9 +470,9 @@ const RENIX_CSS = `
 
   -webkit-background-clip:text;
   background-clip:text;
+
   -webkit-text-fill-color:transparent;
 }
-
 
 /* =========================================================
    COLON
@@ -328,12 +484,14 @@ const RENIX_CSS = `
   left:50%;
   top:50%;
 
-  transform:translate(-50%,-50%);
+  transform:
+    translate(-50%,-50%);
 
   width:18px;
   height:150px;
 
   z-index:10;
+
   pointer-events:none;
 }
 
@@ -349,15 +507,28 @@ const RENIX_CSS = `
 
   border-radius:50%;
 
-  background:var(--renix-clock-color,#ff7700);
+  background:
+    var(
+      --renix-clock-color,
+      #ff7700
+    );
 
   box-shadow:
     0 0 var(--renix-glow-4,4px)
-      var(--renix-clock-glow-color,#ff3300),
+      var(
+        --renix-clock-glow-color,
+        #ff3300
+      ),
     0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500),
+      var(
+        --renix-clock-glow-color,
+        #ff5500
+      ),
     0 0 var(--renix-glow-20,20px)
-      var(--renix-clock-color,#ff7700);
+      var(
+        --renix-clock-color,
+        #ff7700
+      );
 }
 
 .renix-colon span:first-child{
@@ -368,7 +539,6 @@ const RENIX_CSS = `
   bottom:25px;
 }
 
-
 /* =========================================================
    SECONDS
    ========================================================= */
@@ -377,8 +547,8 @@ const RENIX_CSS = `
   position:absolute;
 
   /*
-   * Позиция теперь рассчитывается в ЭТАЛОННЫХ
-   * 800px координатах.
+   * Reference coordinate.
+   * It is scaled together with the clock.
    */
   left:calc(50% + 4.5em);
 
@@ -391,19 +561,17 @@ const RENIX_CSS = `
 
   font-family:renix1,monospace;
 
-  /*
-   * Не масштабируем отдельно.
-   * Масштабируется вся группа .renix-clock.
-   */
   font-size:6rem;
 
   font-weight:400;
   font-style:normal;
 
   line-height:.95;
+
   letter-spacing:-.12em;
 
   white-space:nowrap;
+
   pointer-events:none;
 }
 
@@ -417,25 +585,48 @@ const RENIX_CSS = `
     0 0 3px rgba(255,80,0,.035);
 
   opacity:.72;
+
   z-index:17;
 }
 
 .renix-seconds-base{
   font-feature-settings:normal;
 
-  color:var(--renix-clock-color,#ff7700);
+  color:
+    var(
+      --renix-clock-color,
+      #ff7700
+    );
 
   text-shadow:
-    0 0 calc(3px * var(--renix-clock-glow,1))
-      var(--renix-clock-glow-color,#ff3300),
-    0 0 calc(7px * var(--renix-clock-glow,1))
-      var(--renix-clock-glow-color,#ff5500),
-    0 0 calc(14px * var(--renix-clock-glow,1))
-      var(--renix-clock-color,#ff7700),
-    0 0 calc(22px * var(--renix-clock-glow,1))
+    0 0 calc(
+      3px * var(--renix-clock-glow,1)
+    )
+      var(
+        --renix-clock-glow-color,
+        #ff3300
+      ),
+    0 0 calc(
+      7px * var(--renix-clock-glow,1)
+    )
+      var(
+        --renix-clock-glow-color,
+        #ff5500
+      ),
+    0 0 calc(
+      14px * var(--renix-clock-glow,1)
+    )
+      var(
+        --renix-clock-color,
+        #ff7700
+      ),
+    0 0 calc(
+      22px * var(--renix-clock-glow,1)
+    )
       rgba(255,85,0,.4);
 
   opacity:1;
+
   z-index:18;
 }
 
@@ -449,13 +640,12 @@ const RENIX_CSS = `
     0 0 2px rgba(70,25,4,.1);
 
   opacity:.68;
+
   z-index:19;
 }
 
 /* =========================================================
    BOTTOM SENSOR BLOCK
-   Reference Y = 330
-   Height = 142
    ========================================================= */
 
 .renix-bottom-area{
@@ -463,11 +653,20 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(300px * var(--renix-scale));
+  /*
+   * Sensor block is deliberately moved down.
+   */
+  top:
+    calc(
+      315px * var(--renix-scale)
+    );
 
   width:100%;
 
-  height:calc(172px * var(--renix-scale));
+  height:
+    calc(
+      157px * var(--renix-scale)
+    );
 
   overflow:visible;
 
@@ -495,19 +694,25 @@ const RENIX_CSS = `
 
 .info-card{
   min-width:0;
+
   height:100%;
 
   overflow:hidden;
 
   background:transparent;
+
   border:none;
+
   box-shadow:none;
 
   font-family:Nixie One,monospace;
 }
 
 .info-title{
-  height:calc(34px * var(--renix-scale));
+  height:
+    calc(
+      34px * var(--renix-scale)
+    );
 
   display:flex;
 
@@ -520,9 +725,10 @@ const RENIX_CSS = `
 
   font-family:Nixie One,monospace;
 
-  font-size:calc(
-    1.8rem * var(--renix-scale)
-  );
+  font-size:
+    calc(
+      1.8rem * var(--renix-scale)
+    );
 
   font-weight:900;
 
@@ -537,10 +743,15 @@ const RENIX_CSS = `
   text-transform:uppercase;
 
   letter-spacing:
-    calc(2px * var(--renix-scale));
+    calc(
+      2px * var(--renix-scale)
+    );
 
   text-shadow:
-    0 0 calc(4px * var(--renix-scale))
+    0 0
+    calc(
+      4px * var(--renix-scale)
+    )
     rgba(255,51,0,.5);
 
   flex-shrink:0;
@@ -549,14 +760,16 @@ const RENIX_CSS = `
 .info-content{
   width:100%;
 
-  height:calc(
-    100% - 34px * var(--renix-scale)
-  );
+  height:
+    calc(
+      100% -
+      34px * var(--renix-scale)
+    );
 
   min-height:0;
 
   padding:
-    20
+    calc(10px * var(--renix-scale))
     calc(16px * var(--renix-scale))
     calc(8px * var(--renix-scale));
 
@@ -577,27 +790,37 @@ const RENIX_CSS = `
 
   font-family:Nixie One,monospace;
 
-  font-size:calc(
-    5rem * var(--renix-scale)
-  );
+  font-size:
+    calc(
+      5rem * var(--renix-scale)
+    );
 
   font-weight:900;
 
-  line-height:1.0;
+  line-height:1;
 
   white-space:nowrap;
 
   color:var(--value-color);
 
   -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
+    calc(
+      1.5px * var(--renix-scale)
+    )
     var(--stroke-color);
 
   text-shadow:
-    0 0 calc(10px * var(--renix-scale))
-      var(--stroke-color),
-    0 0 calc(20px * var(--renix-scale))
-      var(--glow-color);
+    0 0
+    calc(
+      10px * var(--renix-scale)
+    )
+    var(--stroke-color),
+
+    0 0
+    calc(
+      20px * var(--renix-scale)
+    )
+    var(--glow-color);
 }
 
 .info-secondary{
@@ -607,35 +830,48 @@ const RENIX_CSS = `
 
   font-family:Nixie One,monospace;
 
-  font-size:calc(
-    5rem * var(--renix-scale)
-  );
+  font-size:
+    calc(
+      5rem * var(--renix-scale)
+    );
 
   font-weight:900;
 
-  line-height:1.0;
+  line-height:1;
 
   white-space:nowrap;
 
   color:var(--secondary-color);
 
   -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
+    calc(
+      1.5px * var(--renix-scale)
+    )
     var(--secondary-stroke);
 
   text-shadow:
-    0 0 calc(10px * var(--renix-scale))
-      var(--secondary-stroke),
-    0 0 calc(20px * var(--renix-scale))
-      var(--secondary-glow);
+    0 0
+    calc(
+      10px * var(--renix-scale)
+    )
+    var(--secondary-stroke),
+
+    0 0
+    calc(
+      20px * var(--renix-scale)
+    )
+    var(--secondary-glow);
 }
 
-.night .info-title,
-.night .info-value,
-.night .info-secondary{
+.bottom-grid.night .info-title,
+.bottom-grid.night .info-value,
+.bottom-grid.night .info-secondary{
   filter:
     brightness(
-      var(--renix-bottom-brightness,.5)
+      var(
+        --renix-bottom-brightness,
+        .5
+      )
     );
 
   transition:filter .8s ease-in-out;
@@ -648,7 +884,10 @@ const RENIX_CSS = `
 .renix-card.night .renix-top-item{
   filter:
     brightness(
-      var(--renix-top-brightness,.5)
+      var(
+        --renix-top-brightness,
+        .5
+      )
     );
 }
 
@@ -657,7 +896,10 @@ const RENIX_CSS = `
 .renix-card.night .renix-weather-icon{
   filter:
     brightness(
-      var(--renix-top-brightness,.5)
+      var(
+        --renix-top-brightness,
+        .5
+      )
     );
 }
 
@@ -665,33 +907,24 @@ const RENIX_CSS = `
   display:none;
 }
 
-.renix-card.hide-inactive .renix-ss02,
-.renix-card.hide-inactive .renix-ss03,
-.renix-card.hide-inactive .renix-seconds-ss02,
-.renix-card.hide-inactive .renix-seconds-ss03{
+.renix-card.hide-inactive
+.renix-ss02,
+.renix-card.hide-inactive
+.renix-ss03,
+.renix-card.hide-inactive
+.renix-seconds-ss02,
+.renix-card.hide-inactive
+.renix-seconds-ss03{
+  display:none;
+}
+
+.renix-card.hide-seconds
+.renix-seconds-layer{
   display:none;
 }
 
 .empty{
   visibility:hidden;
-}
-
-@supports (-webkit-hyphens:none){
-  .info-value{
-    text-shadow:
-      0 0 calc(5px * var(--renix-scale))
-        var(--stroke-color),
-      0 0 calc(10px * var(--renix-scale))
-        var(--glow-color);
-  }
-
-  .info-secondary{
-    text-shadow:
-      0 0 calc(5px * var(--renix-scale))
-        var(--secondary-stroke),
-      0 0 calc(10px * var(--renix-scale))
-        var(--secondary-glow);
-  }
 }
 
 /* =========================================================
@@ -709,33 +942,71 @@ const RENIX_CSS = `
     translate(-50%,-43%)
     scale(
       calc(
-        var(--renix-scale) *
-        var(--renix-clock-factor)
+        var(--renix-scale)
+        * var(--renix-clock-factor)
       )
     );
 
   transform-origin:center top;
 }
+
 .renix-card.manual .renix-bottom-area{
   top:auto;
+
   bottom:0;
+}
+
+
+/* =========================================================
+   RESPONSIVE SAFETY
+   ========================================================= */
+
+@media(max-width:500px){
+
+  .renix-date{
+    max-width:95%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
+
+
+/* =========================================================
+   SAFETY FOR VERY NARROW CARDS
+   ========================================================= */
+
+@supports not (transform:scale(1)){
+  .renix-clock{
+    width:100%;
+  }
 }
 `;
 
 
+/* =========================================================
+   RENIX CLOCK CARD
+   ========================================================= */
+
 class RenixClockCard extends HTMLElement {
 
   constructor(){
+
     super();
 
-    this.attachShadow({mode:'open'});
+    this.attachShadow({
+      mode:'open'
+    });
 
     this._config={};
+
     this._timer=null;
+
     this._hass=null;
 
     this._resizeObserver=null;
+
     this._resizeQueued=false;
+
     this._lastWidth=0;
   }
 
@@ -747,22 +1018,27 @@ class RenixClockCard extends HTMLElement {
   setConfig(config){
 
     if(!config){
+
       throw new Error(
         'renix-clock-card: configuration is required'
       );
     }
 
-    const legacyNight =
-      config.night_brightness != null
+    const legacyNight=
+      config.night_brightness!=null
         ? Number(config.night_brightness)
-        : 0.5;
+        : .5;
 
     this._config={
 
-      language:config.language||'auto',
+      language:
+        config.language||'auto',
 
-      weather_entity:config.weather_entity||'',
-      night_entity:config.night_entity||'',
+      weather_entity:
+        config.weather_entity||'',
+
+      night_entity:
+        config.night_entity||'',
 
       outside_temperature:
         config.outside_temperature||'',
@@ -779,6 +1055,11 @@ class RenixClockCard extends HTMLElement {
       room_humidity:
         config.room_humidity||'',
 
+
+      /* ===================================================
+         DISPLAY
+         =================================================== */
+
       show_bottom_cards:
         config.show_bottom_cards!==false,
 
@@ -788,13 +1069,24 @@ class RenixClockCard extends HTMLElement {
       show_inactive_threads:
         config.show_inactive_threads!==false,
 
+      /*
+       * NEW:
+       * seconds can now be disabled from editor.
+       */
+      show_seconds:
+        config.show_seconds!==false,
+
+
+      /* ===================================================
+         SIZE
+         =================================================== */
+
       height:
         Number(config.height)||330,
 
-      /* IMPORTANT:
-         adaptive mode is now width based */
       adaptive:
         config.adaptive!==false,
+
 
       /* ===================================================
          TOP BLOCK
@@ -826,77 +1118,82 @@ class RenixClockCard extends HTMLElement {
           ? Number(config.top_gap)
           : 14,
 
+
       /* ===================================================
          CARD
          =================================================== */
 
       card_background:
-        config.card_background ?? null,
+        config.card_background??null,
 
       card_border:
-        config.card_border ?? null,
+        config.card_border??null,
 
       card_shadow:
-        config.card_shadow ?? null,
+        config.card_shadow??null,
 
       card_radius:
-        config.card_radius ?? null,
+        config.card_radius??null,
 
       card_backdrop_blur:
-        config.card_backdrop_blur != null
+        config.card_backdrop_blur!=null
           ? Number(config.card_backdrop_blur)
           :
             (
               config.card_backdrop_filter
-                ? Number(
+                ?
+                  Number(
                     (
                       String(
                         config.card_backdrop_filter
                       ).match(
-                        /blur\\(([-0-9.]+)px\\)/
+                        /blur\(([-0-9.]+)px\)/
                       )||[]
-                    )[1] || 10
+                    )[1]||10
                   )
-                : 10
+                :
+                  10
             ),
 
       card_background_color:
-        config.card_background_color ?? null,
+        config.card_background_color??null,
 
       card_background_opacity:
-        config.card_background_opacity != null
+        config.card_background_opacity!=null
           ? Number(config.card_background_opacity)
-          : 0.08,
+          : .08,
 
       card_border_color:
-        config.card_border_color ?? null,
+        config.card_border_color??null,
 
       card_border_opacity:
-        config.card_border_opacity != null
+        config.card_border_opacity!=null
           ? Number(config.card_border_opacity)
-          : 0.15,
+          : .15,
 
       card_shadow_color:
-        config.card_shadow_color ?? null,
+        config.card_shadow_color??null,
 
       card_shadow_opacity:
-        config.card_shadow_opacity != null
+        config.card_shadow_opacity!=null
           ? Number(config.card_shadow_opacity)
-          : 0.25,
+          : .25,
+
 
       /* ===================================================
          NIGHT
          =================================================== */
 
       top_night_brightness:
-        config.top_night_brightness != null
+        config.top_night_brightness!=null
           ? Number(config.top_night_brightness)
           : legacyNight,
 
       bottom_night_brightness:
-        config.bottom_night_brightness != null
+        config.bottom_night_brightness!=null
           ? Number(config.bottom_night_brightness)
           : legacyNight,
+
 
       /* ===================================================
          COLORS
@@ -909,7 +1206,7 @@ class RenixClockCard extends HTMLElement {
         config.clock_glow_color||'#ff5500',
 
       clock_glow:
-        config.clock_glow != null
+        config.clock_glow!=null
           ? Number(config.clock_glow)
           : 1,
 
@@ -953,7 +1250,9 @@ class RenixClockCard extends HTMLElement {
 
 
   set hass(hass){
+
     this._hass=hass;
+
     this._render();
   }
 
@@ -963,7 +1262,9 @@ class RenixClockCard extends HTMLElement {
      ======================================================= */
 
   connectedCallback(){
+
     this._start();
+
     this._observeSize();
   }
 
@@ -971,10 +1272,13 @@ class RenixClockCard extends HTMLElement {
   disconnectedCallback(){
 
     clearTimeout(this._timer);
+
     this._timer=null;
 
     if(this._resizeObserver){
+
       this._resizeObserver.disconnect();
+
       this._resizeObserver=null;
     }
   }
@@ -997,35 +1301,27 @@ class RenixClockCard extends HTMLElement {
     const delay=
       1000-(Date.now()%1000);
 
-    this._timer=setTimeout(()=>{
+    this._timer=
+      setTimeout(()=>{
 
-      this._timer=null;
+        this._timer=null;
 
-      this._render();
+        this._render();
 
-      this._scheduleNextSecond();
+        this._scheduleNextSecond();
 
-    },delay);
+      },delay);
   }
 
 
   /* =======================================================
      ADAPTIVE SIZE
-     
-     IMPORTANT:
-     scale is calculated ONLY from actual WIDTH.
-     
-     800px => scale 1
-     400px => scale .5
-     1200px => scale 1.5
-     
-     Height config does NOT participate.
      ======================================================= */
 
   _observeSize(){
 
     if(
-      this._resizeObserver ||
+      this._resizeObserver||
       typeof ResizeObserver==='undefined'
     ){
       return;
@@ -1044,7 +1340,9 @@ class RenixClockCard extends HTMLElement {
           entry.contentRect.width;
 
         if(
-          Math.abs(width-this._lastWidth)<0.5
+          Math.abs(
+            width-this._lastWidth
+          )<.5
         ){
           return;
         }
@@ -1062,122 +1360,159 @@ class RenixClockCard extends HTMLElement {
           this._resizeQueued=false;
 
           if(this._config?.adaptive){
+
             this._applyAdaptiveSize();
           }
 
         });
-
       });
 
     this._resizeObserver.observe(this);
 
     requestAnimationFrame(()=>{
+
       this._applyAdaptiveSize();
+
     });
   }
 
 
- _applyAdaptiveSize(){
+  _applyAdaptiveSize(){
 
-  if(
-    !this._config?.adaptive ||
-    !this.shadowRoot
-  ){
-    return;
-  }
+    if(
+      !this._config?.adaptive||
+      !this.shadowRoot
+    ){
+      return;
+    }
 
-  const rect=
-    this.getBoundingClientRect();
+    const rect=
+      this.getBoundingClientRect();
 
-  const width=
-    rect.width || 800;
+    const width=
+      rect.width||800;
 
-  /*
-   * Эталонная ширина карточки = 800px.
-   */
-  const scale=
-    Math.max(
-      .45,
-      Math.min(
-        2.5,
-        width / 800
-      )
+
+    /*
+     * Reference:
+     *
+     * 800px = 1.0
+     *
+     * 400px = .5
+     *
+     * 1200px = 1.5
+     */
+    const scale=
+      Math.max(
+        .45,
+        Math.min(
+          2.5,
+          width/800
+        )
+      );
+
+
+    const cardHeight=
+      480*scale;
+
+
+    this.style.setProperty(
+      '--renix-scale',
+      String(scale)
     );
 
-  const cardHeight=
-    480 * scale;
 
-  this.style.setProperty(
-    '--renix-scale',
-    String(scale)
-  );
+    this.style.setProperty(
+      '--card-height',
+      `${cardHeight}px`
+    );
 
-  this.style.setProperty(
-    '--card-height',
-    `${cardHeight}px`
-  );
 
-  /*
-   * Дополнительное уменьшение часов.
-   *
-   * Было фактически 0.8.
-   * Оставляем 0.8, но теперь оно применяется
-   * ко ВСЕЙ группе часов целиком.
-   */
-  this.style.setProperty(
-    '--renix-clock-factor',
-    '0.8'
-  );
-}
+    /*
+     * The whole clock group is reduced by 20%.
+     */
+    this.style.setProperty(
+      '--renix-clock-factor',
+      '.8'
+    );
+  }
 
 
   /* =======================================================
-     STATE HELPERS
+     STATE
      ======================================================= */
 
   _state(id){
-    return id &&
-      this._hass?.states?.[id] ||
+
+    return id&&
+      this._hass?.states?.[id]||
       null;
   }
 
 
   _val(id){
-    return this._state(id)?.state ?? '—';
+
+    return this._state(id)?.state??'—';
   }
 
 
   _unit(id){
+
     return this._state(id)
       ?.attributes
-      ?.unit_of_measurement || '';
+      ?.unit_of_measurement||'';
   }
 
 
   _weatherIcon(state){
 
     return ({
-      'clear-night':'mdi:weather-night',
-      cloudy:'mdi:weather-cloudy',
-      fog:'mdi:weather-fog',
-      hail:'mdi:weather-hail',
-      lightning:'mdi:weather-lightning',
+      'clear-night':
+        'mdi:weather-night',
+
+      cloudy:
+        'mdi:weather-cloudy',
+
+      fog:
+        'mdi:weather-fog',
+
+      hail:
+        'mdi:weather-hail',
+
+      lightning:
+        'mdi:weather-lightning',
+
       'lightning-rainy':
         'mdi:weather-lightning-rainy',
+
       partlycloudy:
         'mdi:weather-partly-cloudy',
-      pouring:'mdi:weather-pouring',
-      rainy:'mdi:weather-rainy',
-      snowy:'mdi:weather-snowy',
+
+      pouring:
+        'mdi:weather-pouring',
+
+      rainy:
+        'mdi:weather-rainy',
+
+      snowy:
+        'mdi:weather-snowy',
+
       'snowy-rainy':
         'mdi:weather-snowy-rainy',
-      sunny:'mdi:weather-sunny',
-      windy:'mdi:weather-windy',
+
+      sunny:
+        'mdi:weather-sunny',
+
+      windy:
+        'mdi:weather-windy',
+
       'windy-variant':
         'mdi:weather-windy-variant',
+
       exceptional:
         'mdi:weather-cloudy-alert'
-    })[state] ||
+
+    })[state]||
       'mdi:weather-cloudy';
   }
 
@@ -1186,12 +1521,14 @@ class RenixClockCard extends HTMLElement {
 
     return String(v).replace(
       /[&<>"']/g,
+
       c=>({
         '&':'&amp;',
         '<':'&lt;',
         '>':'&gt;',
         '"':'&quot;',
         "'":'&#39;'
+
       }[c])
     );
   }
@@ -1199,7 +1536,7 @@ class RenixClockCard extends HTMLElement {
 
   _css(v){
 
-    return v==null || v===''
+    return v==null||v===''
       ? 'transparent'
       : String(v);
   }
@@ -1245,31 +1582,46 @@ class RenixClockCard extends HTMLElement {
   _render(){
 
     if(
-      !this.shadowRoot ||
+      !this.shadowRoot||
       !this._config
     ){
       return;
     }
 
-    const now=new Date();
+
+    const now=
+      new Date();
+
 
     const h=
-      String(now.getHours()).padStart(2,'0');
+      String(
+        now.getHours()
+      ).padStart(2,'0');
+
 
     const m=
-      String(now.getMinutes()).padStart(2,'0');
+      String(
+        now.getMinutes()
+      ).padStart(2,'0');
+
 
     const s=
-      String(now.getSeconds()).padStart(2,'0');
+      String(
+        now.getSeconds()
+      ).padStart(2,'0');
 
+
+    /* =====================================================
+       LANGUAGE
+       ===================================================== */
 
     const language=
       this._config.language==='auto'
         ?
           String(
-            this._hass?.locale?.language ||
-            this._hass?.language ||
-            navigator.language ||
+            this._hass?.locale?.language||
+            this._hass?.language||
+            navigator.language||
             'en'
           )
           .toLowerCase()
@@ -1284,11 +1636,20 @@ class RenixClockCard extends HTMLElement {
       language==='ru'
         ?
         {
+
           months:[
-            'января','февраля','марта',
-            'апреля','мая','июня',
-            'июля','августа','сентября',
-            'октября','ноября','декабря'
+            'января',
+            'февраля',
+            'марта',
+            'апреля',
+            'мая',
+            'июня',
+            'июля',
+            'августа',
+            'сентября',
+            'октября',
+            'ноября',
+            'декабря'
           ],
 
           days:[
@@ -1302,31 +1663,54 @@ class RenixClockCard extends HTMLElement {
           ],
 
           year:'года',
+
           outside:'Улица',
+
           pressure:'Давление',
+
           room:'Спальня'
         }
         :
         {
+
           months:[
-            'January','February','March',
-            'April','May','June',
-            'July','August','September',
-            'October','November','December'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
           ],
 
           days:[
-            'Monday','Tuesday','Wednesday',
-            'Thursday','Friday','Saturday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
             'Sunday'
           ],
 
           year:'',
+
           outside:'Outside',
+
           pressure:'Pressure',
+
           room:'Bedroom'
         };
 
+
+    /* =====================================================
+       DATE
+       ===================================================== */
 
     const date=
       language==='ru'
@@ -1346,16 +1730,25 @@ class RenixClockCard extends HTMLElement {
       ];
 
 
+    /* =====================================================
+       NIGHT
+       ===================================================== */
+
     const night=
       this._state(
         this._config.night_entity
       )?.state==='on';
 
 
+    /* =====================================================
+       WEATHER
+       ===================================================== */
+
     const weather=
       this._state(
         this._config.weather_entity
       );
+
 
     const wi=
       this._weatherIcon(
@@ -1363,8 +1756,13 @@ class RenixClockCard extends HTMLElement {
       );
 
 
-    const C=this._config;
+    const C=
+      this._config;
 
+
+    /* =====================================================
+       SENSOR VALUES
+       ===================================================== */
 
     const temp=
       this._escape(
@@ -1373,6 +1771,7 @@ class RenixClockCard extends HTMLElement {
         )
       );
 
+
     const hum=
       this._escape(
         this._val(
@@ -1380,10 +1779,12 @@ class RenixClockCard extends HTMLElement {
         )
       );
 
+
     const pressRaw=
       this._val(
         C.pressure_entity
       );
+
 
     const press=
       this._escape(
@@ -1391,10 +1792,13 @@ class RenixClockCard extends HTMLElement {
           Number(pressRaw)
         )
           ?
-            Number(pressRaw).toFixed(1)
+            Number(
+              pressRaw
+            ).toFixed(1)
           :
             pressRaw
       );
+
 
     const rt=
       this._escape(
@@ -1402,6 +1806,7 @@ class RenixClockCard extends HTMLElement {
           C.room_temperature
         )
       );
+
 
     const rh=
       this._escape(
@@ -1411,12 +1816,17 @@ class RenixClockCard extends HTMLElement {
       );
 
 
+    /* =====================================================
+       UNITS
+       ===================================================== */
+
     const tu=
       this._escape(
         this._unit(
           C.outside_temperature
         )
       );
+
 
     const hu=
       this._escape(
@@ -1425,6 +1835,7 @@ class RenixClockCard extends HTMLElement {
         )
       );
 
+
     const pu=
       this._escape(
         this._unit(
@@ -1432,12 +1843,14 @@ class RenixClockCard extends HTMLElement {
         )
       );
 
+
     const ru=
       this._escape(
         this._unit(
           C.room_temperature
         )
       );
+
 
     const rhu=
       this._escape(
@@ -1455,7 +1868,9 @@ class RenixClockCard extends HTMLElement {
       C.show_weather_icon
         ?
         `<span class="renix-weather-icon">
-          <ha-icon icon="${wi}"></ha-icon>
+          <ha-icon
+            icon="${wi}"
+          ></ha-icon>
         </span>`
         :
         '';
@@ -1471,15 +1886,22 @@ class RenixClockCard extends HTMLElement {
 
     const top=
       `<div class="renix-header">
+
         <div class="renix-date">
+
           ${topIcon}
-          <span>${date}${topWeekday}</span>
+
+          <span>
+            ${date}${topWeekday}
+          </span>
+
         </div>
+
       </div>`;
 
 
     /* =====================================================
-       SENSOR BLOCK
+       SENSOR CARD HELPER
        ===================================================== */
 
     const info=(
@@ -1492,6 +1914,7 @@ class RenixClockCard extends HTMLElement {
       stroke,
       glow
     )=>
+
       `<div class="info-card">
 
         <div class="info-title">
@@ -1505,23 +1928,29 @@ class RenixClockCard extends HTMLElement {
             style="
               --value-color:${color};
               --stroke-color:${stroke};
-              --glow-color:${glow}
+              --glow-color:${glow};
             "
           >
+
             ${value}
+
             ${
               unit
                 ?
                 `<span
                   style="
                     font-size:.55em;
-                    margin-left:.08em
+                    margin-left:.08em;
                   "
-                >${unit}</span>`
+                >
+                  ${unit}
+                </span>`
                 :
                 ''
             }
+
           </div>
+
 
           ${
             secondary!==''
@@ -1531,22 +1960,27 @@ class RenixClockCard extends HTMLElement {
                 style="
                   --secondary-color:${color};
                   --secondary-stroke:${stroke};
-                  --secondary-glow:${glow}
+                  --secondary-glow:${glow};
                 "
               >
+
                 ${secondary}
+
                 ${
                   secondaryUnit
                     ?
                     `<span
                       style="
                         font-size:.55em;
-                        margin-left:.08em
+                        margin-left:.08em;
                       "
-                    >${secondaryUnit}</span>`
+                    >
+                      ${secondaryUnit}
+                    </span>`
                     :
                     ''
                 }
+
               </div>`
               :
               ''
@@ -1557,15 +1991,24 @@ class RenixClockCard extends HTMLElement {
       </div>`;
 
 
+    /* =====================================================
+       BOTTOM
+       ===================================================== */
+
     const bottom=
       C.show_bottom_cards
         ?
         `<div
-          class="bottom-grid ${night?'night':''}"
+          class="
+            bottom-grid
+            ${night?'night':''}
+          "
           style="
-            --renix-title-color:${C.title_color};
+            --renix-title-color:
+              ${C.title_color};
+
             --renix-bottom-brightness:
-              ${C.bottom_night_brightness}
+              ${C.bottom_night_brightness};
           "
         >
 
@@ -1616,15 +2059,18 @@ class RenixClockCard extends HTMLElement {
       `${C.top_offset}px`
     );
 
+
     this.style.setProperty(
       '--renix-top-font-size',
       `${C.top_font_size}rem`
     );
 
+
     this.style.setProperty(
       '--renix-top-icon-size',
       `${C.top_icon_size}px`
     );
+
 
     this.style.setProperty(
       '--renix-top-gap',
@@ -1639,86 +2085,147 @@ class RenixClockCard extends HTMLElement {
         '1'
       );
 
+
       this.style.setProperty(
         '--card-height',
         `${C.height}px`
       );
 
+
+      this.style.setProperty(
+        '--renix-clock-factor',
+        '.8'
+      );
+
     }else{
 
-      /*
-       * Do NOT use C.height here.
-       * _applyAdaptiveSize() controls height.
-       */
-
       if(!this._lastWidth){
+
         requestAnimationFrame(()=>{
+
           this._applyAdaptiveSize();
+
         });
       }
     }
 
 
+    /* =====================================================
+       CLOCK SECONDS
+       ===================================================== */
+
+    const seconds=
+      C.show_seconds
+        ?
+        `
+          <div
+            class="
+              renix-seconds-layer
+              renix-top-item
+              renix-seconds-ss03
+            "
+          >
+            <span>${s}</span>
+          </div>
+
+
+          <div
+            class="
+              renix-seconds-layer
+              renix-top-item
+              renix-seconds-base
+            "
+          >
+            <span>${s}</span>
+          </div>
+
+
+          <div
+            class="
+              renix-seconds-layer
+              renix-top-item
+              renix-seconds-ss02
+            "
+          >
+            <span>${s}</span>
+          </div>
+        `
+        :
+        '';
+
+
+    /* =====================================================
+       RENDER
+       ===================================================== */
+
     this.shadowRoot.innerHTML=
-      `<style>${RENIX_CSS}</style>
+
+      `<style>
+        ${RENIX_CSS}
+      </style>
+
 
       <div
         class="renix-shell"
+
         style="
+
           --renix-card-background:
             ${
               C.card_background_color
                 ?
-                this._rgba(
-                  C.card_background_color,
-                  C.card_background_opacity
-                )
+                  this._rgba(
+                    C.card_background_color,
+                    C.card_background_opacity
+                  )
                 :
-                this._css(
-                  C.card_background
-                )
+                  this._css(
+                    C.card_background
+                  )
             };
 
           --renix-card-border:
             ${
               C.card_border_color
                 ?
-                `1px solid ${
-                  this._rgba(
-                    C.card_border_color,
-                    C.card_border_opacity
-                  )
-                }`
+                  `1px solid ${
+                    this._rgba(
+                      C.card_border_color,
+                      C.card_border_opacity
+                    )
+                  }`
                 :
-                this._css(
-                  C.card_border
-                )
+                  this._css(
+                    C.card_border
+                  )
             };
 
           --renix-card-shadow:
             ${
               C.card_shadow_color
                 ?
-                `0 8px 32px ${
-                  this._rgba(
-                    C.card_shadow_color,
-                    C.card_shadow_opacity
-                  )
-                }`
+                  `0 8px 32px ${
+                    this._rgba(
+                      C.card_shadow_color,
+                      C.card_shadow_opacity
+                    )
+                  }`
                 :
-                this._css(
-                  C.card_shadow
-                )
+                  this._css(
+                    C.card_shadow
+                  )
             };
 
           --renix-card-radius:
             ${this._css(C.card_radius)};
 
           --renix-card-backdrop-filter:
-            blur(${Math.max(
-              0,
-              C.card_backdrop_blur
-            )}px);
+            blur(
+              ${Math.max(
+                0,
+                C.card_backdrop_blur
+              )}px
+            );
 
           --renix-clock-color:
             ${C.clock_color};
@@ -1749,24 +2256,38 @@ class RenixClockCard extends HTMLElement {
         "
       >
 
-        <div class="renix-shared-backdrop"></div>
+
+        <div
+          class="renix-shared-backdrop"
+        ></div>
+
 
         <div
           class="
             renix-card
             ${night?'night ':''}
             ${C.show_grid?'':'hide-grid '}
-            ${C.show_inactive_threads?'':'hide-inactive'}
+            ${C.show_inactive_threads?'':'hide-inactive '}
+            ${C.show_seconds?'':'hide-seconds '}
             ${C.adaptive?'adaptive':'manual'}
           "
         >
 
+
           ${top}
+
+
+          <!-- =========================================
+               CLOCK
+               ========================================= -->
 
           <div class="renix-clock">
 
             <div class="renix-top">
 
+
+              <!-- HOURS -->
+
               <div
                 class="
                   renix-digit-layer
@@ -1777,6 +2298,7 @@ class RenixClockCard extends HTMLElement {
               >
                 <span>${h}</span>
               </div>
+
 
               <div
                 class="
@@ -1789,6 +2311,7 @@ class RenixClockCard extends HTMLElement {
                 <span>${h}</span>
               </div>
 
+
               <div
                 class="
                   renix-grid
@@ -1798,6 +2321,7 @@ class RenixClockCard extends HTMLElement {
               >
                 <span>${h}</span>
               </div>
+
 
               <div
                 class="
@@ -1811,6 +2335,8 @@ class RenixClockCard extends HTMLElement {
               </div>
 
 
+              <!-- MINUTES -->
+
               <div
                 class="
                   renix-digit-layer
@@ -1821,6 +2347,7 @@ class RenixClockCard extends HTMLElement {
               >
                 <span>${m}</span>
               </div>
+
 
               <div
                 class="
@@ -1833,6 +2360,7 @@ class RenixClockCard extends HTMLElement {
                 <span>${m}</span>
               </div>
 
+
               <div
                 class="
                   renix-grid
@@ -1842,6 +2370,7 @@ class RenixClockCard extends HTMLElement {
               >
                 <span>${m}</span>
               </div>
+
 
               <div
                 class="
@@ -1854,50 +2383,38 @@ class RenixClockCard extends HTMLElement {
                 <span>${m}</span>
               </div>
 
+
+              <!-- COLON -->
 
               <div class="renix-colon">
+
                 <span></span>
+
                 <span></span>
+
               </div>
 
 
-              <div
-                class="
-                  renix-seconds-layer
-                  renix-top-item
-                  renix-seconds-ss03
-                "
-              >
-                <span>${s}</span>
-              </div>
+              <!-- SECONDS -->
 
-              <div
-                class="
-                  renix-seconds-layer
-                  renix-top-item
-                  renix-seconds-base
-                "
-              >
-                <span>${s}</span>
-              </div>
+              ${seconds}
 
-              <div
-                class="
-                  renix-seconds-layer
-                  renix-top-item
-                  renix-seconds-ss02
-                "
-              >
-                <span>${s}</span>
-              </div>
 
             </div>
 
           </div>
 
+
+          <!-- =========================================
+               SENSOR BLOCK
+               ========================================= -->
+
           <div class="renix-bottom-area">
+
             ${bottom}
+
           </div>
+
 
         </div>
 
@@ -1905,14 +2422,24 @@ class RenixClockCard extends HTMLElement {
   }
 
 
+  /* =======================================================
+     CARD SIZE
+     ======================================================= */
+
   getCardSize(){
+
     return this._config.show_bottom_cards
       ? 5
       : 4;
   }
 
 
+  /* =======================================================
+     EDITOR
+     ======================================================= */
+
   static getConfigElement(){
+
     return document.createElement(
       'renix-clock-card-editor'
     );
@@ -1920,19 +2447,33 @@ class RenixClockCard extends HTMLElement {
 
 
   static getStubConfig(){
+
     return {
-      weather_entity:'weather.yandex_pogoda',
-      night_entity:'input_boolean.night_mode',
+
+      weather_entity:
+        'weather.yandex_pogoda',
+
+      night_entity:
+        'input_boolean.night_mode',
+
       outside_temperature:
         'sensor.spalnia_ulitsa_temperature',
+
       outside_humidity:
         'sensor.spalnia_ulitsa_humidity',
+
       pressure_entity:
         'sensor.spalnia_atmospheric_pressure',
+
       room_temperature:
         'sensor.spalnia_temperature',
+
       room_humidity:
-        'sensor.spalnia_humidity'
+        'sensor.spalnia_humidity',
+
+      show_seconds:true,
+
+      adaptive:true
     };
   }
 }
@@ -1953,135 +2494,210 @@ class RenixClockCardEditor extends HTMLElement {
     });
 
     this._config={};
+
     this._form=null;
 
 
     this._schema=[
 
+
+      /* ===================================================
+         GENERAL
+         =================================================== */
+
       {
         name:'language',
+
         selector:{
           select:{
             options:[
+
               {
                 value:'auto',
                 label:'Автоматически'
               },
+
               {
                 value:'ru',
                 label:'Русский'
               },
+
               {
                 value:'en',
                 label:'English'
               }
+
             ],
+
             mode:'dropdown'
           }
         },
+
         label:'Язык'
       },
 
 
       {
         name:'weather_entity',
+
         selector:{
           entity:{
             domain:'weather'
           }
         },
+
         label:'Погода'
       },
 
+
       {
         name:'night_entity',
+
         selector:{
           entity:{
             domain:'input_boolean'
           }
         },
+
         label:'Ночной режим'
       },
 
 
+      /* ===================================================
+         SENSORS
+         =================================================== */
+
       {
         name:'outside_temperature',
+
         selector:{
           entity:{
             domain:'sensor'
           }
         },
+
         label:'Температура улицы'
       },
 
+
       {
         name:'outside_humidity',
+
         selector:{
           entity:{
             domain:'sensor'
           }
         },
+
         label:'Влажность улицы'
       },
 
+
       {
         name:'pressure_entity',
+
         selector:{
           entity:{
             domain:'sensor'
           }
         },
+
         label:'Давление'
       },
 
+
       {
         name:'room_temperature',
+
         selector:{
           entity:{
             domain:'sensor'
           }
         },
+
         label:'Температура спальни'
       },
 
+
       {
         name:'room_humidity',
+
         selector:{
           entity:{
             domain:'sensor'
           }
         },
+
         label:'Влажность спальни'
       },
 
 
+      /* ===================================================
+         DISPLAY
+         =================================================== */
+
       {
         name:'show_bottom_cards',
+
         selector:{
           boolean:{}
         },
+
         label:'Показывать нижние датчики'
       },
 
+
       {
-        name:'show_grid',
+        name:'show_seconds',
+
         selector:{
           boolean:{}
         },
+
+        label:'Показывать секунды'
+      },
+
+
+      {
+        name:'show_grid',
+
+        selector:{
+          boolean:{}
+        },
+
         label:'Показывать сетку'
       },
 
+
       {
         name:'show_inactive_threads',
+
         selector:{
           boolean:{}
         },
+
         label:'Показывать неактивные нити'
+      },
+
+
+      /* ===================================================
+         SIZE
+         =================================================== */
+
+      {
+        name:'adaptive',
+
+        selector:{
+          boolean:{}
+        },
+
+        label:'Адаптивный размер'
       },
 
 
       {
         name:'height',
+
         selector:{
           number:{
             min:200,
@@ -2090,40 +2706,40 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Высота — ручной режим'
       },
 
-      {
-        name:'adaptive',
-        selector:{
-          boolean:{}
-        },
-        label:'Адаптивный размер'
-      },
 
-
-      /* =====================================================
-         TOP BLOCK SETTINGS
-         ===================================================== */
+      /* ===================================================
+         TOP BLOCK
+         =================================================== */
 
       {
         name:'show_weather_icon',
+
         selector:{
           boolean:{}
         },
+
         label:'Показывать значок погоды'
       },
 
+
       {
         name:'show_weekday',
+
         selector:{
           boolean:{}
         },
+
         label:'Показывать день недели'
       },
 
+
       {
         name:'top_offset',
+
         selector:{
           number:{
             min:0,
@@ -2133,11 +2749,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Верхний блок — отступ сверху'
       },
 
+
       {
         name:'top_font_size',
+
         selector:{
           number:{
             min:.5,
@@ -2147,11 +2766,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Верхний блок — размер текста'
       },
 
+
       {
         name:'top_icon_size',
+
         selector:{
           number:{
             min:16,
@@ -2161,11 +2783,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Верхний блок — размер иконки'
       },
 
+
       {
         name:'top_gap',
+
         selector:{
           number:{
             min:0,
@@ -2175,24 +2800,29 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Верхний блок — расстояние'
       },
 
 
-      /* =====================================================
+      /* ===================================================
          CARD BACKGROUND
-         ===================================================== */
+         =================================================== */
 
       {
         name:'card_background_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет фона'
       },
 
+
       {
         name:'card_background_opacity',
+
         selector:{
           number:{
             min:0,
@@ -2201,19 +2831,25 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Прозрачность фона'
       },
 
+
       {
         name:'card_border_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет рамки'
       },
 
+
       {
         name:'card_border_opacity',
+
         selector:{
           number:{
             min:0,
@@ -2222,19 +2858,25 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Прозрачность рамки'
       },
 
+
       {
         name:'card_shadow_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет тени'
       },
 
+
       {
         name:'card_shadow_opacity',
+
         selector:{
           number:{
             min:0,
@@ -2243,11 +2885,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Прозрачность тени'
       },
 
+
       {
         name:'card_radius',
+
         selector:{
           number:{
             min:0,
@@ -2257,11 +2902,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
+
         label:'Скругление'
       },
 
+
       {
         name:'card_backdrop_blur',
+
         selector:{
           number:{
             min:0,
@@ -2271,16 +2919,18 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Размытие фона'
       },
 
 
-      /* =====================================================
+      /* ===================================================
          NIGHT
-         ===================================================== */
+         =================================================== */
 
       {
         name:'top_night_brightness',
+
         selector:{
           number:{
             min:.05,
@@ -2289,11 +2939,14 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Ночная яркость — верх'
       },
 
+
       {
         name:'bottom_night_brightness',
+
         selector:{
           number:{
             min:.05,
@@ -2302,32 +2955,40 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Ночная яркость — низ'
       },
 
 
-      /* =====================================================
+      /* ===================================================
          COLORS
-         ===================================================== */
+         =================================================== */
 
       {
         name:'clock_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет часов'
       },
 
+
       {
         name:'clock_glow_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет свечения часов'
       },
 
+
       {
         name:'clock_glow',
+
         selector:{
           number:{
             min:0,
@@ -2336,38 +2997,51 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
+
         label:'Интенсивность свечения'
       },
 
+
       {
         name:'outside_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет улицы'
       },
 
+
       {
         name:'pressure_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет давления'
       },
 
+
       {
         name:'room_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет спальни'
       },
 
+
       {
         name:'title_color',
+
         selector:{
           color:{}
         },
+
         label:'Цвет заголовков'
       }
 
@@ -2375,7 +3049,12 @@ class RenixClockCardEditor extends HTMLElement {
   }
 
 
+  /* =======================================================
+     CONFIG
+     ======================================================= */
+
   setConfig(config){
+
     this._config={
       ...config
     };
@@ -2384,10 +3063,19 @@ class RenixClockCardEditor extends HTMLElement {
   }
 
 
+  /* =======================================================
+     LIFECYCLE
+     ======================================================= */
+
   connectedCallback(){
+
     this._render();
   }
 
+
+  /* =======================================================
+     RENDER EDITOR
+     ======================================================= */
 
   _render(){
 
@@ -2395,8 +3083,12 @@ class RenixClockCardEditor extends HTMLElement {
       return;
     }
 
-    this.shadowRoot.innerHTML=`
+
+    this.shadowRoot.innerHTML=
+
+      `
       <style>
+
         :host{
           display:block;
         }
@@ -2405,10 +3097,11 @@ class RenixClockCardEditor extends HTMLElement {
           display:block;
           padding:8px;
         }
+
       </style>
 
       <ha-form></ha-form>
-    `;
+      `;
 
 
     this._form=
@@ -2420,12 +3113,14 @@ class RenixClockCardEditor extends HTMLElement {
     this._form.schema=
       this._schema;
 
+
     this._form.data={
       ...this._config
     };
 
 
     if(this._hass){
+
       this._form.hass=
         this._hass;
     }
@@ -2433,25 +3128,34 @@ class RenixClockCardEditor extends HTMLElement {
 
     this._form.addEventListener(
       'value-changed',
+
       e=>{
 
         const config={
           ...e.detail.value
         };
 
-        this._config=config;
+
+        this._config=
+          config;
+
 
         this.dispatchEvent(
+
           new CustomEvent(
             'config-changed',
             {
-              detail:{config},
+              detail:{
+                config
+              },
+
               bubbles:true,
+
               composed:true
             }
           )
-        );
 
+        );
       }
     );
   }
@@ -2459,9 +3163,12 @@ class RenixClockCardEditor extends HTMLElement {
 
   set hass(hass){
 
-    this._hass=hass;
+    this._hass=
+      hass;
+
 
     if(this._form){
+
       this._form.hass=
         hass;
     }
@@ -2478,18 +3185,25 @@ customElements.define(
   RenixClockCardEditor
 );
 
+
 customElements.define(
   'renix-clock-card',
   RenixClockCard
 );
 
+
 window.customCards=
   window.customCards||[];
 
+
 window.customCards.push({
+
   type:'renix-clock-card',
+
   name:'Renix Clock Card',
+
   description:
-    'Neon reNix clock with weather, date and three information panels. Font is embedded.',
+    'Neon reNix clock with weather, date, seconds and three information panels. Font is embedded.',
+
   preview:true
 });
