@@ -1431,10 +1431,14 @@ class RenixClockCard extends HTMLElement {
     /*
      * The whole clock group is reduced by 20%.
      */
-    this.style.setProperty(
-      '--renix-clock-factor',
-      '.8'
-    );
+this.style.setProperty(
+  '--renix-clock-factor',
+  String(
+    this._config.clock_factor != null
+      ? this._config.clock_factor
+      : 0.6
+  )
+);
   }
 
 
