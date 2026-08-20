@@ -158,12 +158,12 @@ const RENIX_CSS = `
   position:absolute;
 
   left:50%;
-  top:calc(86px * var(--renix-scale));
+  top:calc(76px * var(--renix-scale));
 
   transform:translateX(-50%);
 
   width:100%;
-  height:calc(164px * var(--renix-scale));
+  height:calc(184px * var(--renix-scale));
 
   overflow:visible;
   z-index:20;
