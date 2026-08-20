@@ -495,11 +495,11 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(280px * var(--renix-scale));
+  top:calc(300px * var(--renix-scale));
 
   width:100%;
 
-  height:calc(142px * var(--renix-scale));
+  height:calc(172px * var(--renix-scale));
 
   overflow:visible;
 
