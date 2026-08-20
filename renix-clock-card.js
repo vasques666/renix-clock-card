@@ -296,20 +296,20 @@ const RENIX_CSS = `
     repeating-linear-gradient(
       0deg,
       rgba(0,0,0,0) 0,
-      rgba(0,0,0,0) calc(5px * var(--renix-scale)),
+      rgba(0,0,0,0) 5px,
       rgba(0,0,0,.9)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(0,0,0,.4)
-        calc(6px * var(--renix-scale))
+        6px
     ),
     repeating-linear-gradient(
       90deg,
       rgba(0,0,0,0) 0,
-      rgba(0,0,0,0) calc(5px * var(--renix-scale)),
+      rgba(0,0,0,0) 5px,
       rgba(0,0,0,.9)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(0,0,0,.4)
-        calc(6px * var(--renix-scale))
+       6px
     );
 
   -webkit-background-clip:text;
@@ -677,16 +677,16 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-.renix-card.night .renix-top-item{
+.renix-card.night .renix-top-item,
+.renix-card.night .renix-date,
+.renix-card.night .renix-weather-icon{
   filter:
     brightness(
       var(--renix-top-brightness,.5)
     );
 }
 
-.renix-card.night .renix-colon,
-.renix-card.night .renix-date,
-.renix-card.night .renix-weather-icon{
+.renix-card.night .renix-colon{
   filter:
     brightness(
       var(--renix-top-brightness,.5)
@@ -825,6 +825,9 @@ class RenixClockCard extends HTMLElement {
 
       show_weather_icon:
         config.show_weather_icon!==false,
+
+      show_date:
+        config.show_date!==false,
 
       show_weekday:
         config.show_weekday!==false,
@@ -1468,31 +1471,32 @@ class RenixClockCard extends HTMLElement {
        TOP BLOCK
        ===================================================== */
 
-    const topIcon=
-      C.show_weather_icon
-        ?
-        `<span class="renix-weather-icon">
-          <ha-icon icon="${wi}"></ha-icon>
-        </span>`
-        :
-        '';
-
-
-    const topWeekday=
-      C.show_weekday
-        ?
-        `, <span>${weekday}</span>`
-        :
-        '';
-
-
     const top=
-      `<div class="renix-header">
-        <div class="renix-date">
-          ${topIcon}
-          <span>${date}${topWeekday}</span>
-        </div>
-      </div>`;
+  `<div class="renix-header">
+    <div class="renix-date">
+
+      ${
+        C.show_weather_icon
+          ?
+          `<span class="renix-weather-icon">
+            <ha-icon icon="${wi}"></ha-icon>
+          </span>`
+          :
+          ''
+      }
+
+      ${
+        C.show_date
+          ?
+          `<span>
+            ${date}${topWeekday}
+          </span>`
+          :
+          ''
+      }
+
+    </div>
+  </div>`;
 
 
     /* =====================================================
@@ -2132,6 +2136,14 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       {
+        name:'show_date',
+        selector:{
+          boolean:{}
+        },
+        label:'Показывать дату'
+      },
+      
+      {
         name:'show_weekday',
         selector:{
           boolean:{}
@@ -2306,7 +2318,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Ночная яркость — верх'
+        label:'Ночная яркость — часы'
       },
 
       {
@@ -2319,7 +2331,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Ночная яркость — низ'
+        label:'Ночная яркость — остальное'
       },
 
 
