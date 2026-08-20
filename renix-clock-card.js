@@ -18,7 +18,7 @@ const RENIX_CSS = `
   --renix-card-base-height:480;
 
   /* clock reduced by 40% */
-  --renix-clock-factor:.75;
+  --renix-clock-factor:.6;
 }
 
 *{
@@ -553,7 +553,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    1.5rem * var(--renix-scale)
+    1.8rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -610,7 +610,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    4rem * var(--renix-scale)
+    5rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -640,7 +640,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    4rem * var(--renix-scale)
+    5rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -825,9 +825,6 @@ class RenixClockCard extends HTMLElement {
 
       show_weather_icon:
         config.show_weather_icon!==false,
-
-      show_date:
-        config.show_date!==false,
 
       show_weekday:
         config.show_weekday!==false,
@@ -1146,7 +1143,7 @@ class RenixClockCard extends HTMLElement {
 
     this.style.setProperty(
       '--renix-clock-factor',
-      '.75'
+      '.8'
     );
   }
 
@@ -1489,32 +1486,13 @@ class RenixClockCard extends HTMLElement {
         '';
 
 
-const top=
-  `<div class="renix-header">
-    <div class="renix-date">
-
-      ${
-        C.show_weather_icon
-          ?
-          `<span class="renix-weather-icon">
-            <ha-icon icon="${wi}"></ha-icon>
-          </span>`
-          :
-          ''
-      }
-
-      ${
-        C.show_date
-          ?
-          `<span>
-            ${date}${topWeekday}
-          </span>`
-          :
-          ''
-      }
-
-    </div>
-  </div>`;
+    const top=
+      `<div class="renix-header">
+        <div class="renix-date">
+          ${topIcon}
+          <span>${date}${topWeekday}</span>
+        </div>
+      </div>`;
 
 
     /* =====================================================
@@ -2145,29 +2123,21 @@ class RenixClockCardEditor extends HTMLElement {
          TOP BLOCK SETTINGS
          ===================================================== */
 
-{
-  name:'show_weather_icon',
-  selector:{
-    boolean:{}
-  },
-  label:'Показывать значок погоды'
-},
+      {
+        name:'show_weather_icon',
+        selector:{
+          boolean:{}
+        },
+        label:'Показывать значок погоды'
+      },
 
-{
-  name:'show_date',
-  selector:{
-    boolean:{}
-  },
-  label:'Показывать дату'
-},
-
-{
-  name:'show_weekday',
-  selector:{
-    boolean:{}
-  },
-  label:'Показывать день недели'
-},
+      {
+        name:'show_weekday',
+        selector:{
+          boolean:{}
+        },
+        label:'Показывать день недели'
+      },
 
       {
         name:'top_offset',
