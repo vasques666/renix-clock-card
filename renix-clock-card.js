@@ -499,7 +499,7 @@ const RENIX_CSS = `
 
   width:100%;
 
-  height:calc(142px * var(--renix-scale));
+  height:calc(136px * var(--renix-scale));
 
   overflow:visible;
 
@@ -677,15 +677,16 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-.renix-card.night .renix-top-item,
-.renix-card.night .renix-date,
-.renix-card.night .renix-weather-icon{
+/*.renix-card.night .renix-weather-icon,*/
+.renix-card.night .renix-date
+{
   filter:
     brightness(
-      var(--renix-top-brightness,.5)
+      var(--renix-bottom-brightness,.5)
     );
 }
 
+.renix-card.night .renix-top-item,
 .renix-card.night .renix-colon{
   filter:
     brightness(
