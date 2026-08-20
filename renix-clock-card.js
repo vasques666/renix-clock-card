@@ -79,7 +79,7 @@ const RENIX_CSS = `
   left:0;
   top:calc(var(--renix-top-offset,30px) * var(--renix-scale));
   width:100%;
-  height:calc(48px * var(--renix-scale));
+  height:calc(40px * var(--renix-scale));
 
   display:flex;
   align-items:center;
@@ -158,12 +158,12 @@ const RENIX_CSS = `
   position:absolute;
 
   left:50%;
-  top:calc(96px * var(--renix-scale));
+  top:calc(86px * var(--renix-scale));
 
   transform:translateX(-50%);
 
   width:100%;
-  height:calc(184px * var(--renix-scale));
+  height:calc(174px * var(--renix-scale));
 
   overflow:visible;
   z-index:20;
@@ -327,21 +327,21 @@ const RENIX_CSS = `
       0deg,
       rgba(255,190,90,0) 0,
       rgba(255,190,90,0)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(255,190,90,.48)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(255,190,90,.48)
-        calc(6px * var(--renix-scale))
+        6px
     ),
     repeating-linear-gradient(
       90deg,
       rgba(255,190,90,0) 0,
       rgba(255,190,90,0)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(255,190,90,.42)
-        calc(5px * var(--renix-scale)),
+        5px,
       rgba(255,190,90,.42)
-        calc(6px * var(--renix-scale))
+        6px
     );
 
   -webkit-background-clip:text;
