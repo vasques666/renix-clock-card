@@ -1471,33 +1471,35 @@ class RenixClockCard extends HTMLElement {
        TOP BLOCK
        ===================================================== */
 
+    const topIcon=
+      C.show_weather_icon
+        ?
+        `<span class="renix-weather-icon">
+          <ha-icon icon="${wi}"></ha-icon>
+        </span>`
+        :
+        '';
+
+
+    const topWeekday=
+      C.show_weekday
+        ?
+        `, <span>${weekday}</span>`
+        :
+        '';
+
+
     const top=
-  `<div class="renix-header">
-    <div class="renix-date">
-
-      ${
-        C.show_weather_icon
-          ?
-          `<span class="renix-weather-icon">
-            <ha-icon icon="${wi}"></ha-icon>
-          </span>`
-          :
-          ''
-      }
-
-      ${
-        C.show_date
-          ?
-          `<span>
-            ${date}${topWeekday}
-          </span>`
-          :
-          ''
-      }
-
-    </div>
-  </div>`;
-
+      C.show_date
+        ?
+          `<div class="renix-header">
+            <div class="renix-date">
+              ${topIcon}
+              <span>${date}${topWeekday}</span>
+            </div>
+          </div>`
+        :
+        '';
 
     /* =====================================================
        SENSOR BLOCK
