@@ -17,8 +17,8 @@ const RENIX_CSS = `
   --renix-card-base-width:800;
   --renix-card-base-height:480;
 
-  /* clock reduced by 20% */
-  --renix-clock-factor:.7;
+  /* clock reduced by 40% */
+  --renix-clock-factor:.6;
 }
 
 *{
@@ -373,8 +373,8 @@ const RENIX_CSS = `
 
   left:50%;
 
-  width:calc(13px * var(--renix-scale) * var(--renix-clock-factor));
-  height:calc(13px * var(--renix-scale) * var(--renix-clock-factor));
+  width:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
+  height:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
 
   margin-left:
     calc(-6.5px * var(--renix-scale) * var(--renix-clock-factor));
@@ -495,7 +495,7 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(330px * var(--renix-scale));
+  top:calc(280px * var(--renix-scale));
 
   width:100%;
 
