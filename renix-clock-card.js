@@ -1302,12 +1302,7 @@ class RenixClockCard extends HTMLElement {
   }
 
 
-  _val(id){
-
-    return (
-      this._state(id)?.state
-    ?? '—';
-  }
+  _val(id){return this._state(id)?.state ?? '—'}
 
 
   _unit(id){
