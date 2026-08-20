@@ -610,7 +610,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    5rem * var(--renix-scale)
+    4.5rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -640,14 +640,14 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    5rem * var(--renix-scale)
+    4.5rem * var(--renix-scale)
   );
 
   font-weight:900;
 
   line-height:1.0;
 
-  white-space:normal;
+  white-space:nowrap;
 
   color:var(--secondary-color);
 
