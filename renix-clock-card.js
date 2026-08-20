@@ -11,14 +11,19 @@ const RENIX_CSS = `
   --renix-frame:rgba(255,119,0,.42);
   --renix-frame-glow:rgba(255,70,0,.22);
 
-  --renix-scale:1;
+--renix-scale:1;
+--renix-scale-x:1;
+--renix-scale-y:1;
 
-  /* 800 x 480 reference geometry */
-  --renix-card-base-width:800;
-  --renix-card-base-height:480;
+/* 800 × 480 reference geometry */
+--renix-card-base-width:800;
+--renix-card-base-height:480;
 
-  /* clock reduced by 40% */
-  --renix-clock-factor:.75;
+/* общий масштаб элементов */
+--renix-ui-scale:1;
+
+/* clock reduced by 40% */
+--renix-clock-factor:.75;
 }
 
 *{
@@ -32,7 +37,7 @@ const RENIX_CSS = `
 .renix-shell{
   position:relative;
   width:100%;
-  height:calc(480px * var(--renix-scale));
+  height:100%;
   min-height:0;
   overflow:visible;
 }
@@ -77,9 +82,9 @@ const RENIX_CSS = `
 .renix-header{
   position:absolute;
   left:0;
-  top:calc(var(--renix-top-offset,30px) * var(--renix-scale));
+  top:calc(var(--renix-top-offset,30px) * var(--renix-scale-y));
   width:100%;
-  height:calc(40px * var(--renix-scale));
+  height:calc(40px * var(--renix-ui-scale));
 
   display:flex;
   align-items:center;
@@ -495,7 +500,7 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(300px * var(--renix-scale));
+  top:calc(290px * var(--renix-scale));
 
   width:100%;
 
