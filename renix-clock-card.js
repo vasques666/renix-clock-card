@@ -17,8 +17,8 @@ const RENIX_CSS = `
   --renix-card-base-width:800;
   --renix-card-base-height:480;
 
-  /* clock reduced by 40% */
-  --renix-clock-factor:.6;
+  /* clock reduced by 25% */
+  --renix-clock-factor:.75;
 }
 
 *{
@@ -553,7 +553,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    1.8rem * var(--renix-scale)
+    1.5rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -610,7 +610,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    5rem * var(--renix-scale)
+    4rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -640,7 +640,7 @@ const RENIX_CSS = `
   font-family:Nixie One,monospace;
 
   font-size:calc(
-    5rem * var(--renix-scale)
+    4rem * var(--renix-scale)
   );
 
   font-weight:900;
@@ -1143,7 +1143,7 @@ class RenixClockCard extends HTMLElement {
 
     this.style.setProperty(
       '--renix-clock-factor',
-      '.8'
+      '.75'
     );
   }
 
