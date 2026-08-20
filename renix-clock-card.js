@@ -163,7 +163,7 @@ const RENIX_CSS = `
   transform:translateX(-50%);
 
   width:100%;
-  height:calc(184px * var(--renix-scale));
+  height:calc(164px * var(--renix-scale));
 
   overflow:visible;
   z-index:20;
