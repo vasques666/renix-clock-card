@@ -79,7 +79,7 @@ const RENIX_CSS = `
   left:0;
   top:calc(var(--renix-top-offset,30px) * var(--renix-scale));
   width:100%;
-  height:calc(48px * var(--renix-scale));
+  height:calc(42px * var(--renix-scale));
 
   display:flex;
   align-items:center;
@@ -158,7 +158,7 @@ const RENIX_CSS = `
   position:absolute;
 
   left:50%;
-  top:calc(96px * var(--renix-scale));
+  top:calc(86px * var(--renix-scale));
 
   transform:translateX(-50%);
 
@@ -495,7 +495,7 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(300px * var(--renix-scale));
+  top:calc(290px * var(--renix-scale));
 
   width:100%;
 
