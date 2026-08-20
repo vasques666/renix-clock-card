@@ -17,8 +17,8 @@ const RENIX_CSS = `
   --renix-card-base-width:800;
   --renix-card-base-height:480;
 
-  /* clock reduced by 40% */
-  --renix-clock-factor:.6;
+  /* clock reduced by 20% */
+  --renix-clock-factor:.8;
 }
 
 *{
@@ -147,11 +147,6 @@ const RENIX_CSS = `
 
 /* =========================================================
    CLOCK AREA
-   Reference:
-   X = 0..800
-   Y = 96
-   Height = 184
-   (230 x 0.8)
    ========================================================= */
 
 .renix-clock{
@@ -160,19 +155,46 @@ const RENIX_CSS = `
   left:50%;
   top:calc(96px * var(--renix-scale));
 
-  transform:translateX(-50%);
+  /*
+   * ВАЖНО:
+   * часы теперь имеют собственную ширину,
+   * а не 100% ширины карточки.
+   */
+  width:800px;
+  height:184px;
 
-  width:100%;
-  height:calc(184px * var(--renix-scale));
+  /*
+   * Целая группа часов масштабируется целиком.
+   * Это масштабирует:
+   * - часы
+   * - двоеточие
+   * - секунды
+   * - расстояния между ними
+   */
+  transform:
+    translateX(-50%)
+    scale(
+      calc(
+        var(--renix-scale) *
+        var(--renix-clock-factor)
+      )
+    );
+
+  transform-origin:center top;
 
   overflow:visible;
   z-index:20;
 }
 
+/* =========================================================
+   CLOCK INTERNAL REFERENCE GEOMETRY
+   ========================================================= */
+
 .renix-top{
   position:relative;
-  width:100%;
-  height:100%;
+
+  width:800px;
+  height:184px;
 }
 
 /* =========================================================
@@ -181,14 +203,24 @@ const RENIX_CSS = `
 
 .renix-digit-layer{
   position:absolute;
+
   top:0;
-  height:100%;
+
+  height:184px;
 
   display:flex;
   align-items:flex-end;
 
   font-family:renix1,monospace;
-  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));
+
+  /*
+   * Здесь БОЛЬШЕ НЕ нужно умножать размер
+   * на --renix-scale.
+   *
+   * Весь clock масштабируется целиком.
+   */
+  font-size:17rem;
+
   font-weight:400;
   font-style:normal;
 
@@ -199,13 +231,6 @@ const RENIX_CSS = `
   pointer-events:none;
 }
 
-.renix-digit-layer span,
-.renix-grid span,
-.renix-seconds-layer span{
-  display:block;
-  white-space:nowrap;
-}
-
 .renix-hours-layer{
   right:calc(50% + .2em);
 }
@@ -214,71 +239,25 @@ const RENIX_CSS = `
   left:calc(50% + .07em);
 }
 
-/* =========================================================
-   reNix LAYERS
-   ========================================================= */
-
-.renix-ss03{
-  font-feature-settings:"ss03" 1;
-
-  color:rgba(255,119,0,.13);
-
-  text-shadow:
-    0 0 2px rgba(255,80,0,.07),
-    0 0 4px rgba(255,80,0,.035);
-
-  opacity:.72;
-  z-index:1;
-}
-
-.renix-base{
-  font-feature-settings:normal;
-
-  color:var(--renix-clock-color,#ff7700);
-
-  text-shadow:
-    0 0 var(--renix-glow-4,4px)
-      var(--renix-clock-glow-color,#ff3300),
-    0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500),
-    0 0 var(--renix-glow-20,20px)
-      var(--renix-clock-color,#ff7700),
-    0 0 var(--renix-glow-30,30px)
-      rgba(255,85,0,.4);
-
-  opacity:1;
-  z-index:2;
-}
-
-.renix-ss02{
-  font-feature-settings:"ss02" 1;
-
-  color:rgba(75,32,7,.62);
-
-  text-shadow:
-    0 0 1px rgba(80,30,5,.25),
-    0 0 2px rgba(70,25,4,.1);
-
-  opacity:.68;
-  z-index:4;
-}
 
 /* =========================================================
    GRID
-   IMPORTANT:
-   grid line spacing now scales too
    ========================================================= */
 
 .renix-grid{
   position:absolute;
+
   top:0;
-  height:100%;
+
+  height:184px;
 
   display:flex;
   align-items:flex-end;
 
   font-family:renix1,monospace;
-  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));
+
+  font-size:17rem;
+
   font-weight:400;
   font-style:normal;
 
@@ -296,20 +275,16 @@ const RENIX_CSS = `
     repeating-linear-gradient(
       0deg,
       rgba(0,0,0,0) 0,
-      rgba(0,0,0,0) calc(5px * var(--renix-scale)),
-      rgba(0,0,0,.9)
-        calc(5px * var(--renix-scale)),
-      rgba(0,0,0,.4)
-        calc(6px * var(--renix-scale))
+      rgba(0,0,0,0) 5px,
+      rgba(0,0,0,.9) 5px,
+      rgba(0,0,0,.4) 6px
     ),
     repeating-linear-gradient(
       90deg,
       rgba(0,0,0,0) 0,
-      rgba(0,0,0,0) calc(5px * var(--renix-scale)),
-      rgba(0,0,0,.9)
-        calc(5px * var(--renix-scale)),
-      rgba(0,0,0,.4)
-        calc(6px * var(--renix-scale))
+      rgba(0,0,0,0) 5px,
+      rgba(0,0,0,.9) 5px,
+      rgba(0,0,0,.4) 6px
     );
 
   -webkit-background-clip:text;
@@ -317,8 +292,7 @@ const RENIX_CSS = `
   -webkit-text-fill-color:transparent;
 
   text-shadow:
-    0 0 calc(2px * var(--renix-scale))
-    rgba(255,110,0,.25);
+    0 0 2px rgba(255,110,0,.25);
 }
 
 .renix-grid span{
@@ -326,28 +300,23 @@ const RENIX_CSS = `
     repeating-linear-gradient(
       0deg,
       rgba(255,190,90,0) 0,
-      rgba(255,190,90,0)
-        calc(5px * var(--renix-scale)),
-      rgba(255,190,90,.48)
-        calc(5px * var(--renix-scale)),
-      rgba(255,190,90,.48)
-        calc(6px * var(--renix-scale))
+      rgba(255,190,90,0) 5px,
+      rgba(255,190,90,.48) 5px,
+      rgba(255,190,90,.48) 6px
     ),
     repeating-linear-gradient(
       90deg,
       rgba(255,190,90,0) 0,
-      rgba(255,190,90,0)
-        calc(5px * var(--renix-scale)),
-      rgba(255,190,90,.42)
-        calc(5px * var(--renix-scale)),
-      rgba(255,190,90,.42)
-        calc(6px * var(--renix-scale))
+      rgba(255,190,90,0) 5px,
+      rgba(255,190,90,.42) 5px,
+      rgba(255,190,90,.42) 6px
     );
 
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
 }
+
 
 /* =========================================================
    COLON
@@ -361,8 +330,8 @@ const RENIX_CSS = `
 
   transform:translate(-50%,-50%);
 
-  width:calc(18px * var(--renix-scale) * var(--renix-clock-factor));
-  height:calc(150px * var(--renix-scale) * var(--renix-clock-factor));
+  width:18px;
+  height:150px;
 
   z-index:10;
   pointer-events:none;
@@ -373,11 +342,10 @@ const RENIX_CSS = `
 
   left:50%;
 
-  width:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
-  height:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
+  width:23px;
+  height:23px;
 
-  margin-left:
-    calc(-6.5px * var(--renix-scale) * var(--renix-clock-factor));
+  margin-left:-6.5px;
 
   border-radius:50%;
 
@@ -393,16 +361,13 @@ const RENIX_CSS = `
 }
 
 .renix-colon span:first-child{
-  top:calc(
-    25px * var(--renix-scale) * var(--renix-clock-factor)
-  );
+  top:25px;
 }
 
 .renix-colon span:last-child{
-  bottom:calc(
-    25px * var(--renix-scale) * var(--renix-clock-factor)
-  );
+  bottom:25px;
 }
+
 
 /* =========================================================
    SECONDS
@@ -411,13 +376,13 @@ const RENIX_CSS = `
 .renix-seconds-layer{
   position:absolute;
 
-  left:calc(
-    50% + 4.5em
-  );
+  /*
+   * Позиция теперь рассчитывается в ЭТАЛОННЫХ
+   * 800px координатах.
+   */
+  left:calc(50% + 4.5em);
 
-  bottom:calc(
-    4px * var(--renix-scale) * var(--renix-clock-factor)
-  );
+  bottom:4px;
 
   width:max-content;
   height:auto;
@@ -425,9 +390,12 @@ const RENIX_CSS = `
   display:block;
 
   font-family:renix1,monospace;
-  font-size:calc(
-    6rem * var(--renix-scale) * var(--renix-clock-factor)
-  );
+
+  /*
+   * Не масштабируем отдельно.
+   * Масштабируется вся группа .renix-clock.
+   */
+  font-size:6rem;
 
   font-weight:400;
   font-style:normal;
@@ -736,9 +704,18 @@ const RENIX_CSS = `
 
 .renix-card.manual .renix-clock{
   top:50%;
-  transform:translate(-50%,-43%);
-}
 
+  transform:
+    translate(-50%,-43%)
+    scale(
+      calc(
+        var(--renix-scale) *
+        var(--renix-clock-factor)
+      )
+    );
+
+  transform-origin:center top;
+}
 .renix-card.manual .renix-bottom-area{
   top:auto;
   bottom:0;
@@ -1100,52 +1077,58 @@ class RenixClockCard extends HTMLElement {
   }
 
 
-  _applyAdaptiveSize(){
+ _applyAdaptiveSize(){
 
-    if(
-      !this._config?.adaptive ||
-      !this.shadowRoot
-    ){
-      return;
-    }
-
-    const rect=
-      this.getBoundingClientRect();
-
-    const width=
-      rect.width || 800;
-
-    /*
-     * Reference geometry = 800 x 480.
-     * Height is derived from width.
-     */
-    const scale=
-      Math.max(
-        .45,
-        Math.min(
-          2.5,
-          width/800
-        )
-      );
-
-    const cardHeight=
-      480*scale;
-
-    this.style.setProperty(
-      '--renix-scale',
-      String(scale)
-    );
-
-    this.style.setProperty(
-      '--card-height',
-      `${cardHeight}px`
-    );
-
-    this.style.setProperty(
-      '--renix-clock-factor',
-      '.8'
-    );
+  if(
+    !this._config?.adaptive ||
+    !this.shadowRoot
+  ){
+    return;
   }
+
+  const rect=
+    this.getBoundingClientRect();
+
+  const width=
+    rect.width || 800;
+
+  /*
+   * Эталонная ширина карточки = 800px.
+   */
+  const scale=
+    Math.max(
+      .45,
+      Math.min(
+        2.5,
+        width / 800
+      )
+    );
+
+  const cardHeight=
+    480 * scale;
+
+  this.style.setProperty(
+    '--renix-scale',
+    String(scale)
+  );
+
+  this.style.setProperty(
+    '--card-height',
+    `${cardHeight}px`
+  );
+
+  /*
+   * Дополнительное уменьшение часов.
+   *
+   * Было фактически 0.8.
+   * Оставляем 0.8, но теперь оно применяется
+   * ко ВСЕЙ группе часов целиком.
+   */
+  this.style.setProperty(
+    '--renix-clock-factor',
+    '0.8'
+  );
+}
 
 
   /* =======================================================
