@@ -664,7 +664,9 @@ const RENIX_CSS = `
 
 .night .info-title,
 .night .info-value,
-.night .info-secondary{
+.night .info-secondary,
+.renix-card.night .renix-date,
+.renix-card.night .renix-weather-icon{
   filter:
     brightness(
       var(--renix-bottom-brightness,.5)
@@ -677,9 +679,7 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-.renix-card.night .renix-top-item,
-.renix-card.night .renix-date,
-.renix-card.night .renix-weather-icon{
+.renix-card.night .renix-top-item{
   filter:
     brightness(
       var(--renix-top-brightness,.5)
