@@ -15,7 +15,7 @@ const RENIX_CSS = `
 
   /* 800 x 480 reference geometry */
   --renix-card-base-width:800;
-  --renix-card-base-height:470;
+  --renix-card-base-height:460;
 
   /* clock reduced by 40% */
   --renix-clock-factor:.75;
@@ -32,7 +32,7 @@ const RENIX_CSS = `
 .renix-shell{
   position:relative;
   width:100%;
-  height:calc(470px * var(--renix-scale));
+  height:calc(460px * var(--renix-scale));
   min-height:0;
   overflow:visible;
 }
