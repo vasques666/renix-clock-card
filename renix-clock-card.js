@@ -504,7 +504,7 @@ const RENIX_CSS = `
 
   width:100%;
 
-  height:calc(162px * var(--renix-scale));
+  height:calc(172px * var(--renix-scale));
 
   overflow:visible;
 
@@ -593,7 +593,7 @@ const RENIX_CSS = `
   min-height:0;
 
   padding:
-    10
+    15
     calc(16px * var(--renix-scale))
     calc(8px * var(--renix-scale));
 
