@@ -158,7 +158,7 @@ const RENIX_CSS = `
   position:absolute;
 
   left:50%;
-  top:calc(76px * var(--renix-scale));
+  top:calc(86px * var(--renix-scale));
 
   transform:translateX(-50%);
 
