@@ -647,7 +647,7 @@ const RENIX_CSS = `
 
   line-height:1.0;
 
-  white-space:nowrap;
+  white-space:wrap;
 
   color:var(--secondary-color);
 
