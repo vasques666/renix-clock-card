@@ -500,7 +500,7 @@ const RENIX_CSS = `
 
   left:0;
 
-  top:calc(290px * var(--renix-scale));
+  top:calc(280px * var(--renix-scale));
 
   width:100%;
 
@@ -593,7 +593,7 @@ const RENIX_CSS = `
   min-height:0;
 
   padding:
-    20
+    10
     calc(16px * var(--renix-scale))
     calc(8px * var(--renix-scale));
 
