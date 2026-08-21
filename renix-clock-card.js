@@ -625,11 +625,15 @@ const RENIX_CSS = `
     calc(1.5px * var(--renix-scale))
     var(--stroke-color);
 
-  text-shadow:
-    0 0 calc(10px * var(--renix-scale))
+        text-shadow:
+    0 0 var(--renix-glow-4,4px)
       var(--stroke-color),
-    0 0 calc(20px * var(--renix-scale))
-      var(--glow-color);
+    0 0 var(--renix-glow-10,10px)
+      var(--stroke-color),
+    0 0 var(--renix-glow-20,20px)
+      var(---stroke-color),
+    0 0 var(--renix-glow-30,30px)
+      rgba(255,85,0,.4);
 }
 
 .info-secondary{
@@ -655,11 +659,15 @@ const RENIX_CSS = `
     calc(1.5px * var(--renix-scale))
     var(--secondary-stroke);
 
-  text-shadow:
-    0 0 calc(10px * var(--renix-scale))
+        text-shadow:
+    0 0 var(--renix-glow-4,4px)
       var(--secondary-stroke),
-    0 0 calc(20px * var(--renix-scale))
-      var(--secondary-glow);
+    0 0 var(--renix-glow-10,10px)
+      var(--secondary-stroke),
+    0 0 var(--renix-glow-20,20px)
+      var(---secondary-stroke),
+    0 0 var(--renix-glow-30,30px)
+      rgba(255,85,0,.4);
 }
 
 .night .info-title,
