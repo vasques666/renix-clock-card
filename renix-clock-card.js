@@ -614,10 +614,6 @@ const RENIX_CSS = `
   white-space:nowrap;
   color:var(--value-color);
 
-  -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
-    var(--stroke-color);
-
   text-shadow:
     0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
       var(--stroke-color),
@@ -639,9 +635,6 @@ const RENIX_CSS = `
   white-space:nowrap;
   color:var(--secondary-color);
 
-  -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
-    var(--secondary-stroke);
 
   text-shadow:
     0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
