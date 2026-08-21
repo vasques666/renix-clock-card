@@ -604,64 +604,46 @@ const RENIX_CSS = `
 
 .info-value{
   width:100%;
-
   text-align:center;
-
   font-family:Nixie One,monospace;
-
   font-size:calc(
-    4rem * var(--renix-scale)
+    3.6rem * var(--renix-scale)
   );
-
   font-weight:900;
-
   line-height:1.0;
-
   white-space:nowrap;
-
   color:var(--value-color);
 
-  -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
-    var(--stroke-color);
-
   text-shadow:
-    0 0 calc(10px * var(--renix-scale))
+    0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
       var(--stroke-color),
-    0 0 calc(20px * var(--renix-scale))
-      var(--glow-color);
+    0 0 calc(10px * var(--renix-scale) * var(--renix-clock-glow,1))
+      var(--glow-color),
+    0 0 calc(20px * var(--renix-scale) * var(--renix-clock-glow,1))
+      var(--value-color);
 }
 
 .info-secondary{
   width:100%;
-
   text-align:center;
-
   font-family:Nixie One,monospace;
-
   font-size:calc(
-    4rem * var(--renix-scale)
+    3.6rem * var(--renix-scale)
   );
-
   font-weight:900;
-
   line-height:1.0;
-
   white-space:nowrap;
-
   color:var(--secondary-color);
 
-  -webkit-text-stroke:
-    calc(1.5px * var(--renix-scale))
-    var(--secondary-stroke);
 
   text-shadow:
-    0 0 calc(10px * var(--renix-scale))
+    0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
       var(--secondary-stroke),
-    0 0 calc(20px * var(--renix-scale))
-      var(--secondary-glow);
+    0 0 calc(10px * var(--renix-scale) * var(--renix-clock-glow,1))
+      var(--secondary-glow),
+    0 0 calc(20px * var(--renix-scale) * var(--renix-clock-glow,1))
+      var(--secondary-color);
 }
-
 .night .info-title,
 .night .info-value,
 .night .info-secondary{
@@ -709,23 +691,7 @@ const RENIX_CSS = `
   visibility:hidden;
 }
 
-@supports (-webkit-hyphens:none){
-  .info-value{
-    text-shadow:
-      0 0 calc(5px * var(--renix-scale))
-        var(--stroke-color),
-      0 0 calc(10px * var(--renix-scale))
-        var(--glow-color);
-  }
 
-  .info-secondary{
-    text-shadow:
-      0 0 calc(5px * var(--renix-scale))
-        var(--secondary-stroke),
-      0 0 calc(10px * var(--renix-scale))
-        var(--secondary-glow);
-  }
-}
 
 /* =========================================================
    MANUAL MODE
