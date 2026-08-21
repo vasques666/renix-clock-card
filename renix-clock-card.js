@@ -631,9 +631,7 @@ const RENIX_CSS = `
     0 0 var(--renix-glow-10,10px)
       var(--stroke-color),
     0 0 var(--renix-glow-20,20px)
-      var(---stroke-color),
-    0 0 var(--renix-glow-30,30px)
-      rgba(255,85,0,.4);
+      var(---stroke-color)
 }
 
 .info-secondary{
@@ -665,9 +663,7 @@ const RENIX_CSS = `
     0 0 var(--renix-glow-10,10px)
       var(--secondary-stroke),
     0 0 var(--renix-glow-20,20px)
-      var(---secondary-stroke),
-    0 0 var(--renix-glow-30,30px)
-      rgba(255,85,0,.4);
+      var(---secondary-stroke)
 }
 
 .night .info-title,
