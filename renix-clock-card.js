@@ -400,7 +400,7 @@ const RENIX_CSS = `
 
 .renix-colon span:last-child{
   bottom:calc(
-    25px * var(--renix-scale) * var(--renix-clock-factor)
+    5px * var(--renix-scale) * var(--renix-clock-factor)
   );
 }
 
