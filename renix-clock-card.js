@@ -7,8 +7,15 @@ const RENIX_CSS = `
 :host{
   display:block;
   width:100%;
+  --renix-orange:#ff7700;
+  --renix-frame:rgba(255,119,0,.42);
+  --renix-frame-glow:rgba(255,70,0,.22);
 
   --renix-scale:1;
+
+  /* 800 x 480 reference geometry */
+  --renix-card-base-width:800;
+  --renix-card-base-height:460;
 
   /* clock reduced by 40% */
   --renix-clock-factor:.75;
@@ -811,7 +818,7 @@ class RenixClockCard extends HTMLElement {
                       String(
                         config.card_backdrop_filter
                       ).match(
-                        /blur\(([-0-9.]+)px\)/
+                        /blur\\(([-0-9.]+)px\\)/
                       )||[]
                     )[1] || 10
                   )
@@ -963,6 +970,15 @@ class RenixClockCard extends HTMLElement {
 
   /* =======================================================
      ADAPTIVE SIZE
+     
+     IMPORTANT:
+     scale is calculated ONLY from actual WIDTH.
+     
+     800px => scale 1
+     400px => scale .5
+     1200px => scale 1.5
+     
+     Height config does NOT participate.
      ======================================================= */
 
   _observeSize(){
@@ -1029,6 +1045,10 @@ class RenixClockCard extends HTMLElement {
     const width=
       rect.width || 800;
 
+    /*
+     * Reference geometry = 800 x 480.
+     * Height is derived from width.
+     */
     const scale=
       Math.max(
         .45,
@@ -1110,229 +1130,43 @@ class RenixClockCard extends HTMLElement {
     );
   }
 
-  /* =======================================================
-     COLOR HELPERS
-     ======================================================= */
-
   _css(v){
 
-    if(v==null){
-      return 'transparent';
-    }
-
-    /*
-     * HA 2026.8+ ui_color normally returns a string.
-     * Keep this defensive handling so old YAML values
-     * and possible object-shaped values do not break CSS.
-     */
-    if(typeof v==='object'){
-
-      if(typeof v.value==='string'){
-        return v.value;
-      }
-
-      if(typeof v.color==='string'){
-        return v.color;
-      }
-
-      if(typeof v.hex==='string'){
-        return v.hex;
-      }
-
-      return 'transparent';
-    }
-
-    const value=String(v).trim();
-
-    return value===''
+    return v==null || v===''
       ? 'transparent'
-      : value;
+      : String(v);
   }
 
-  _colorToRgba(color,opacity){
+  _rgba(color,opacity){
 
-    const value=
-      this._css(color);
+    if(!color){
+      return 'transparent';
+    }
 
-    const alpha=
-      Math.max(
+    const m=
+      String(color).match(
+        /^#([0-9a-f]{6})$/i
+      );
+
+    if(!m){
+      return color;
+    }
+
+    const n=
+      parseInt(m[1],16);
+
+    return `rgba(
+      ${n>>16},
+      ${(n>>8)&255},
+      ${n&255},
+      ${Math.max(
         0,
         Math.min(
           1,
           Number(opacity)
         )
-      );
-
-    /*
-     * No color.
-     */
-    if(
-      !value ||
-      value==='transparent'
-    ){
-      return 'transparent';
-    }
-
-    /*
-     * #RGB
-     */
-    let m=
-      value.match(
-        /^#([0-9a-f]{3})$/i
-      );
-
-    if(m){
-
-      const r=
-        parseInt(
-          m[1][0]+m[1][0],
-          16
-        );
-
-      const g=
-        parseInt(
-          m[1][1]+m[1][1],
-          16
-        );
-
-      const b=
-        parseInt(
-          m[1][2]+m[1][2],
-          16
-        );
-
-      return `rgba(${r},${g},${b},${alpha})`;
-    }
-
-    /*
-     * #RRGGBB
-     */
-    m=
-      value.match(
-        /^#([0-9a-f]{6})$/i
-      );
-
-    if(m){
-
-      const n=
-        parseInt(
-          m[1],
-          16
-        );
-
-      return `rgba(
-        ${n>>16},
-        ${(n>>8)&255},
-        ${n&255},
-        ${alpha}
-      )`;
-    }
-
-    /*
-     * #RRGGBBAA
-     *
-     * Preserve the color but combine its alpha
-     * with the configured opacity.
-     */
-    m=
-      value.match(
-        /^#([0-9a-f]{8})$/i
-      );
-
-    if(m){
-
-      const n=
-        parseInt(
-          m[1].substring(0,6),
-          16
-        );
-
-      const sourceAlpha=
-        parseInt(
-          m[1].substring(6,8),
-          16
-        )/255;
-
-      return `rgba(
-        ${n>>16},
-        ${(n>>8)&255},
-        ${n&255},
-        ${sourceAlpha*alpha}
-      )`;
-    }
-
-    /*
-     * rgb(...)
-     */
-    m=
-      value.match(
-        /^rgb\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\)$/i
-      );
-
-    if(m){
-
-      return `rgba(
-        ${m[1]},
-        ${m[2]},
-        ${m[3]},
-        ${alpha}
-      )`;
-    }
-
-    /*
-     * rgba(...)
-     */
-    m=
-      value.match(
-        /^rgba\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\)$/i
-      );
-
-    if(m){
-
-      const sourceAlpha=
-        Math.max(
-          0,
-          Math.min(
-            1,
-            Number(m[4])
-          )
-        );
-
-      return `rgba(
-        ${m[1]},
-        ${m[2]},
-        ${m[3]},
-        ${sourceAlpha*alpha}
-      )`;
-    }
-
-    /*
-     * Any other valid CSS color:
-     *
-     * CSS color names, variables, color-mix(),
-     * modern CSS color functions, etc.
-     *
-     * We cannot safely convert these to RGB without
-     * browser color parsing, so return them unchanged.
-     *
-     * Opacity is therefore intentionally not applied
-     * here. For the standard HA color picker values
-     * (#RRGGBB) the branch above is used.
-     */
-    return value;
-  }
-
-  /*
-   * Backwards-compatible method name.
-   *
-   * Existing _render() code can continue to call _rgba().
-   */
-  _rgba(color,opacity){
-
-    return this._colorToRgba(
-      color,
-      opacity
-    );
+      )}
+    )`;
   }
 
   /* =======================================================
@@ -1591,9 +1425,9 @@ class RenixClockCard extends HTMLElement {
           <div
             class="info-value"
             style="
-              --value-color:${this._css(color)};
-              --stroke-color:${this._css(stroke)};
-              --glow-color:${this._css(glow)}
+              --value-color:${color};
+              --stroke-color:${stroke};
+              --glow-color:${glow}
             "
           >
             ${value}
@@ -1617,9 +1451,9 @@ class RenixClockCard extends HTMLElement {
               `<div
                 class="info-secondary"
                 style="
-                  --secondary-color:${this._css(color)};
-                  --secondary-stroke:${this._css(stroke)};
-                  --secondary-glow:${this._css(glow)}
+                  --secondary-color:${color};
+                  --secondary-stroke:${stroke};
+                  --secondary-glow:${glow}
                 "
               >
                 ${secondary}
@@ -1650,7 +1484,7 @@ class RenixClockCard extends HTMLElement {
         `<div
           class="bottom-grid ${night?'night':''}"
           style="
-            --renix-title-color:${this._css(C.title_color)};
+            --renix-title-color:${C.title_color};
             --renix-bottom-brightness:
               ${C.bottom_night_brightness}
           "
@@ -1785,10 +1619,10 @@ class RenixClockCard extends HTMLElement {
             )}px);
 
           --renix-clock-color:
-            ${this._css(C.clock_color)};
+            ${C.clock_color};
 
           --renix-clock-glow-color:
-            ${this._css(C.clock_glow_color)};
+            ${C.clock_glow_color};
 
           --renix-glow-4:
             ${4*C.clock_glow}px;
@@ -1806,7 +1640,7 @@ class RenixClockCard extends HTMLElement {
             ${C.clock_glow};
 
           --renix-title-color:
-            ${this._css(C.title_color)};
+            ${C.title_color};
 
           --renix-top-brightness:
             ${C.top_night_brightness};
@@ -2134,7 +1968,7 @@ class RenixClockCardEditor extends HTMLElement {
         },
         label:'Показывать дату'
       },
-
+      
       {
         name:'show_weekday',
         selector:{
@@ -2206,9 +2040,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_background_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет фона'
       },
@@ -2229,9 +2061,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_border_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет рамки'
       },
@@ -2252,9 +2082,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_shadow_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет тени'
       },
@@ -2337,9 +2165,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'clock_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет часов'
       },
@@ -2347,9 +2173,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'clock_glow_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет свечения часов'
       },
@@ -2370,9 +2194,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'outside_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет улицы'
       },
@@ -2380,9 +2202,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'pressure_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет давления'
       },
@@ -2390,9 +2210,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'room_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет спальни'
       },
@@ -2400,9 +2218,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'title_color',
         selector:{
-          ui_color:{
-            include_none:true
-          }
+          color:{}
         },
         label:'Цвет заголовков'
       }
