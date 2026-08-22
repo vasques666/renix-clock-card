@@ -25,7 +25,7 @@ const RENIX_CSS = `
 .renix-shell{
   position:relative;
   width:100%;
-  height:calc(470px * var(--renix-scale));
+  height:calc(465px * var(--renix-scale));
   min-height:0;
   overflow:visible;
 }
@@ -611,9 +611,7 @@ const RENIX_CSS = `
     0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
       var(--stroke-color),
     0 0 calc(10px * var(--renix-scale) * var(--renix-clock-glow,1))
-      var(--glow-color),
-    0 0 calc(20px * var(--renix-scale) * var(--renix-clock-glow,1))
-      var(--value-color);
+      var(--glow-color);
 }
 
 .info-secondary{
@@ -632,9 +630,7 @@ const RENIX_CSS = `
     0 0 calc(4px * var(--renix-scale) * var(--renix-clock-glow,1))
       var(--secondary-stroke),
     0 0 calc(10px * var(--renix-scale) * var(--renix-clock-glow,1))
-      var(--secondary-glow),
-    0 0 calc(20px * var(--renix-scale) * var(--renix-clock-glow,1))
-      var(--secondary-color);
+      var(--secondary-glow);
 }
 .night .info-title,
 .night .info-value,
