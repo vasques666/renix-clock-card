@@ -7,17 +7,8 @@ const RENIX_CSS = `
 :host{
   display:block;
   width:100%;
-  --renix-orange:#ff7700;
-  --renix-frame:rgba(255,119,0,.42);
-  --renix-frame-glow:rgba(255,70,0,.22);
 
   --renix-scale:1;
-
-  /* 800 x 480 reference geometry */
-  --renix-card-base-width:800;
-  --renix-card-base-height:460;
-
-  /* clock reduced by 40% */
   --renix-clock-factor:.75;
 }
 
@@ -2033,101 +2024,100 @@ class RenixClockCardEditor extends HTMLElement {
         label:'Верхний блок — расстояние'
       },
 
-      /* =====================================================
-         CARD BACKGROUND
-         ===================================================== */
+/* =====================================================
+   CARD APPEARANCE
+   ===================================================== */
 
-      {
-        name:'card_background_color',
-        selector:{
-          color:{}
-        },
-        label:'Цвет фона'
-      },
+{
+  name:'card_background_color',
+  selector:{
+    color:{}
+  },
+  label:'Цвет фона карточки'
+},
 
-      {
-        name:'card_background_opacity',
-        selector:{
-          number:{
-            min:0,
-            max:1,
-            step:.01,
-            mode:'slider'
-          }
-        },
-        label:'Прозрачность фона'
-      },
+{
+  name:'card_background_opacity',
+  selector:{
+    number:{
+      min:0,
+      max:1,
+      step:.01,
+      mode:'slider'
+    }
+  },
+  label:'Прозрачность фона карточки'
+},
 
-      {
-        name:'card_border_color',
-        selector:{
-          color:{}
-        },
-        label:'Цвет рамки'
-      },
+{
+  name:'card_border_color',
+  selector:{
+    color:{}
+  },
+  label:'Цвет рамки карточки'
+},
 
-      {
-        name:'card_border_opacity',
-        selector:{
-          number:{
-            min:0,
-            max:1,
-            step:.01,
-            mode:'slider'
-          }
-        },
-        label:'Прозрачность рамки'
-      },
+{
+  name:'card_border_opacity',
+  selector:{
+    number:{
+      min:0,
+      max:1,
+      step:.01,
+      mode:'slider'
+    }
+  },
+  label:'Прозрачность рамки карточки'
+},
 
-      {
-        name:'card_shadow_color',
-        selector:{
-          color:{}
-        },
-        label:'Цвет тени'
-      },
+{
+  name:'card_shadow_color',
+  selector:{
+    color:{}
+  },
+  label:'Цвет тени карточки'
+},
 
-      {
-        name:'card_shadow_opacity',
-        selector:{
-          number:{
-            min:0,
-            max:1,
-            step:.01,
-            mode:'slider'
-          }
-        },
-        label:'Прозрачность тени'
-      },
+{
+  name:'card_shadow_opacity',
+  selector:{
+    number:{
+      min:0,
+      max:1,
+      step:.01,
+      mode:'slider'
+    }
+  },
+  label:'Прозрачность тени карточки'
+},
 
-      {
-        name:'card_radius',
-        selector:{
-          number:{
-            min:0,
-            max:100,
-            step:1,
-            unit_of_measurement:'px',
-            mode:'box'
-          }
-        },
-        label:'Скругление'
-      },
+{
+  name:'card_radius',
+  selector:{
+    number:{
+      min:0,
+      max:100,
+      step:1,
+      unit_of_measurement:'px',
+      mode:'box'
+    }
+  },
+  label:'Скругление карточки'
+},
 
-      {
-        name:'card_backdrop_blur',
-        selector:{
-          number:{
-            min:0,
-            max:50,
-            step:1,
-            unit_of_measurement:'px',
-            mode:'slider'
-          }
-        },
-        label:'Размытие фона'
-      },
-
+{
+  name:'card_backdrop_blur',
+  selector:{
+    number:{
+      min:0,
+      max:50,
+      step:1,
+      unit_of_measurement:'px',
+      mode:'slider'
+    }
+  },
+  label:'Размытие фона карточки'
+},
       /* =====================================================
          NIGHT
          ===================================================== */
