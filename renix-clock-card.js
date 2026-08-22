@@ -7,15 +7,8 @@ const RENIX_CSS = `
 :host{
   display:block;
   width:100%;
-  --renix-orange:#ff7700;
-  --renix-frame:rgba(255,119,0,.42);
-  --renix-frame-glow:rgba(255,70,0,.22);
 
   --renix-scale:1;
-
-  /* 800 x 480 reference geometry */
-  --renix-card-base-width:800;
-  --renix-card-base-height:460;
 
   /* clock reduced by 40% */
   --renix-clock-factor:.75;
@@ -32,7 +25,7 @@ const RENIX_CSS = `
 .renix-shell{
   position:relative;
   width:100%;
-  height:calc(460px * var(--renix-scale));
+  height:calc(470px * var(--renix-scale));
   min-height:0;
   overflow:visible;
 }
