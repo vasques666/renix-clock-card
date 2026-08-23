@@ -1830,21 +1830,21 @@ class RenixClockCardEditor extends HTMLElement {
             options:[
               {
                 value:'auto',
-                label:'Автоматически'
+                label: () =>'Автоматически'
               },
               {
                 value:'ru',
-                label:'Русский'
+                label: () =>'Русский'
               },
               {
                 value:'en',
-                label:'English'
+                label: () =>'English'
               }
             ],
             mode:'dropdown'
           }
         },
-        label:'Язык'
+        label: () =>'Язык'
       },
 
       {
@@ -1854,7 +1854,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'weather'
           }
         },
-        label:'Погода'
+        label: () =>'Погода'
       },
 
       {
@@ -1864,7 +1864,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'input_boolean'
           }
         },
-        label:'Ночной режим'
+        label: () =>'Ночной режим'
       },
 
       {
@@ -1874,7 +1874,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'sensor'
           }
         },
-        label:'Температура улицы'
+        label: () =>'Температура улицы'
       },
 
       {
@@ -1884,7 +1884,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'sensor'
           }
         },
-        label:'Влажность улицы'
+        label: () =>'Влажность улицы'
       },
 
       {
@@ -1894,7 +1894,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'sensor'
           }
         },
-        label:'Давление'
+        label: () =>'Давление'
       },
 
       {
@@ -1904,7 +1904,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'sensor'
           }
         },
-        label:'Температура спальни'
+        label: () =>'Температура спальни'
       },
 
       {
@@ -1914,7 +1914,7 @@ class RenixClockCardEditor extends HTMLElement {
             domain:'sensor'
           }
         },
-        label:'Влажность спальни'
+        label: () =>'Влажность спальни'
       },
 
       {
@@ -1922,7 +1922,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать нижние датчики'
+        label: () =>'Показывать нижние датчики'
       },
 
       {
@@ -1930,7 +1930,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать секунды'
+        label: () =>'Показывать секунды'
       },
 
       {
@@ -1938,7 +1938,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать сетку'
+        label: () =>'Показывать сетку'
       },
 
       {
@@ -1946,7 +1946,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать неактивные нити'
+        label: () =>'Показывать неактивные нити'
       },
 
       /* =====================================================
@@ -1958,7 +1958,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать значок погоды'
+        label: () =>'Показывать значок погоды'
       },
 
       {
@@ -1966,7 +1966,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать дату'
+        label: () =>'Показывать дату'
       },
       
       {
@@ -1974,7 +1974,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           boolean:{}
         },
-        label:'Показывать день недели'
+        label: () =>'Показывать день недели'
       },
 
       {
@@ -1988,7 +1988,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
-        label:'Верхний блок — отступ сверху'
+        label: () =>'Верхний блок — отступ сверху'
       },
 
       {
@@ -2002,7 +2002,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
-        label:'Верхний блок — размер текста'
+        label: () =>'Верхний блок — размер текста'
       },
 
       {
@@ -2016,7 +2016,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
-        label:'Верхний блок — размер иконки'
+        label: () =>'Верхний блок — размер иконки'
       },
 
       {
@@ -2030,7 +2030,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
-        label:'Верхний блок — расстояние'
+        label: () =>'Верхний блок — расстояние'
       },
 
       /* =====================================================
@@ -2042,7 +2042,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет фона'
+        label: () =>'Цвет фона'
       },
 
       {
@@ -2055,7 +2055,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность фона'
+        label: () =>'Прозрачность фона'
       },
 
       {
@@ -2063,7 +2063,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет рамки'
+        label: () =>'Цвет рамки'
       },
 
       {
@@ -2076,7 +2076,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность рамки'
+        label: () =>'Прозрачность рамки'
       },
 
       {
@@ -2084,7 +2084,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет тени'
+        label: () =>'Цвет тени'
       },
 
       {
@@ -2097,7 +2097,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность тени'
+        label: () =>'Прозрачность тени'
       },
 
       {
@@ -2111,7 +2111,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'box'
           }
         },
-        label:'Скругление'
+        label: () =>'Скругление'
       },
 
       {
@@ -2125,7 +2125,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Размытие фона'
+        label: () =>'Размытие фона'
       },
 
       /* =====================================================
@@ -2142,7 +2142,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Ночная яркость — часы'
+        label: () =>'Ночная яркость — часы'
       },
 
       {
@@ -2155,7 +2155,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Ночная яркость — остальное'
+        label: () =>'Ночная яркость — остальное'
       },
 
       /* =====================================================
@@ -2167,7 +2167,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет часов'
+        label: () =>'Цвет часов'
       },
 
       {
@@ -2175,7 +2175,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет свечения часов'
+        label: () =>'Цвет свечения часов'
       },
 
       {
@@ -2188,7 +2188,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Интенсивность свечения'
+        label: () =>'Интенсивность свечения'
       },
 
       {
@@ -2196,7 +2196,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет улицы'
+        label: () =>'Цвет улицы'
       },
 
       {
@@ -2204,7 +2204,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет давления'
+        label: () =>'Цвет давления'
       },
 
       {
@@ -2212,7 +2212,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет спальни'
+        label: () =>'Цвет спальни'
       },
 
       {
@@ -2220,7 +2220,7 @@ class RenixClockCardEditor extends HTMLElement {
         selector:{
           color_rgb:{}
         },
-        label:'Цвет заголовков'
+        label: () =>'Цвет заголовков'
       }
 
     ];
