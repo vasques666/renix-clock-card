@@ -1,5 +1,5 @@
 type: custom:renix-clock-card
-language: auto
+language: ru
 weather_entity: weather.yandex_pogoda
 night_entity: input_boolean.night_mode
 outside_temperature: sensor.spalnia_ulitsa_temperature
@@ -8,12 +8,60 @@ pressure_entity: sensor.spalnia_atmospheric_pressure
 room_temperature: sensor.spalnia_temperature
 room_humidity: sensor.spalnia_humidity
 show_bottom_cards: true
-height: 330
-card_background: null
-card_border: null
-card_shadow: null
-card_radius: null
+card_radius: 20
 card_backdrop_blur: 10
 night_brightness: 0.5
-top_night_brightness: 0.5
-bottom_night_brightness: 0.5
+top_night_brightness: 0.75
+bottom_night_brightness: 0.3
+show_grid: true
+show_inactive_threads: true
+show_top_block: true
+show_top_weather: true
+show_top_date: true
+show_top_weekday: true
+show_weather_icon: true
+show_date: true
+show_weekday: true
+top_offset: 10
+clock_glow: 1.35
+show_seconds: true
+card_shadow_opacity: 0.23
+card_shadow_color: primary
+card_background_opacity: 0.22
+card_background_color: primary
+card_border_color: primary
+card_border_opacity: 0.43
+clock_color: rgba(255,127,0,1)
+clock_glow_color: '#ff5500'
+card_border_color_rgb:
+  - 107
+  - 81
+  - 179
+card_shadow_color_rgb:
+  - 122
+  - 54
+  - 5
+outside_color_rgb:
+  - 0
+  - 148
+  - 71
+pressure_color_rgb:
+  - 0
+  - 96
+  - 250
+room_color_rgb:
+  - 194
+  - 187
+  - 0
+title_color_rgb:
+  - 255
+  - 109
+  - 0
+clock_glow_color_rgb:
+  - 255
+  - 80
+  - 0
+clock_color_rgb:
+  - 255
+  - 127
+  - 0
