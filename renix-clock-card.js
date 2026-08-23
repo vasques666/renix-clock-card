@@ -2238,67 +2238,91 @@ class RenixClockCardEditor extends HTMLElement {
     this._render();
   }
 
-  _render(){
+_render(){
 
-    if(!this.shadowRoot){
-      return;
-    }
+  if(!this.shadowRoot){
+    return;
+  }
 
-    this.shadowRoot.innerHTML=`
-      <style>
-        :host{
-          display:block;
-        }
+  this.shadowRoot.innerHTML=`
+    <style>
+      :host{
+        display:block;
+      }
 
-        ha-form{
-          display:block;
-          padding:8px;
-        }
-      </style>
+      ha-form{
+        display:block;
+        padding:8px;
+      }
+    </style>
 
-      <ha-form></ha-form>
-    `;
+    <ha-form></ha-form>
+  `;
 
-    this._form=
-      this.shadowRoot.querySelector(
-        'ha-form'
-      );
+  this._form=
+    this.shadowRoot.querySelector(
+      'ha-form'
+    );
 
-    this._form.schema=
-      this._schema;
+  this._form.schema=
+    this._schema;
 
-    this._form.data={
-      ...this._config
+  /*
+   * Home Assistant 2026.8.x:
+   * label из отдельных элементов schema
+   * не используется как подпись поля.
+   *
+   * Передаём собственный computeLabel,
+   * который берёт уже существующий label
+   * из нашей schema.
+   */
+  this._form.computeLabel =
+    schema => {
+
+      if(
+        schema &&
+        schema.label
+      ){
+        return typeof schema.label === 'function'
+          ? schema.label(schema)
+          : schema.label;
+      }
+
+      return schema?.name || '';
     };
 
-    if(this._hass){
-      this._form.hass=
-        this._hass;
-    }
+  this._form.data={
+    ...this._config
+  };
 
-    this._form.addEventListener(
-      'value-changed',
-      e=>{
-
-        const config={
-          ...e.detail.value
-        };
-
-        this._config=config;
-
-        this.dispatchEvent(
-          new CustomEvent(
-            'config-changed',
-            {
-              detail:{config},
-              bubbles:true,
-              composed:true
-            }
-          )
-        );
-      }
-    );
+  if(this._hass){
+    this._form.hass=
+      this._hass;
   }
+
+  this._form.addEventListener(
+    'value-changed',
+    e=>{
+
+      const config={
+        ...e.detail.value
+      };
+
+      this._config=config;
+
+      this.dispatchEvent(
+        new CustomEvent(
+          'config-changed',
+          {
+            detail:{config},
+            bubbles:true,
+            composed:true
+          }
+        )
+      );
+    }
+  );
+}
 
   set hass(hass){
 
