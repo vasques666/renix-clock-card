@@ -501,12 +501,12 @@ const RENIX_CSS = `
     sans-serif;
 
   font-size:calc(
-    4rem *
+    6rem *
     var(--renix-scale) *
     var(--renix-clock-factor)
   );
 
-  font-weight:500;
+  font-weight:400;
 
   line-height:1;
 
