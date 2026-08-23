@@ -2296,7 +2296,6 @@ class RenixClockCardEditor extends HTMLElement {
             }
           )
         );
-
       }
     );
   }
@@ -2336,3 +2335,4 @@ window.customCards.push({
     'Neon reNix clock with weather, date and three information panels. Font is embedded.',
   preview:true
 });
+
