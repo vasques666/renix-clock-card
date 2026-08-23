@@ -1119,11 +1119,11 @@ class RenixClockCard extends HTMLElement {
   }
 
   _css(v){
-
-    return v==null || v===''
-      ? 'transparent'
-      : String(v);
-  }
+    if (v === null || v === undefined || v === '') return '';
+    if (typeof v === 'number') return `${v}px`;
+    if (/^\d+(\.\d+)?$/.test(String(v).trim())) return `${String(v).trim()}px`;
+      return String(v);
+    }
 
   _rgba(color,opacity=1){
 
