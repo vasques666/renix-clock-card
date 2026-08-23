@@ -492,13 +492,16 @@ const RENIX_CSS = `
     10px * var(--renix-scale) * var(--renix-clock-factor)
   );
 
+  width:max-content;
+  height:auto;
+
   font-family:
     Roboto,
     Arial,
     sans-serif;
 
   font-size:calc(
-    1.15rem *
+    4rem *
     var(--renix-scale) *
     var(--renix-clock-factor)
   );
