@@ -2029,7 +2029,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_background_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет фона'
       },
@@ -2050,7 +2050,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_border_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет рамки'
       },
@@ -2071,7 +2071,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'card_shadow_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет тени'
       },
@@ -2154,7 +2154,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'clock_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет часов'
       },
@@ -2162,7 +2162,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'clock_glow_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет свечения часов'
       },
@@ -2183,7 +2183,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'outside_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет улицы'
       },
@@ -2191,7 +2191,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'pressure_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет давления'
       },
@@ -2199,7 +2199,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'room_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет спальни'
       },
@@ -2207,7 +2207,7 @@ class RenixClockCardEditor extends HTMLElement {
       {
         name:'title_color',
         selector:{
-          text:{type:'color'}
+          color:{}
         },
         label:'Цвет заголовков'
       }
