@@ -1968,7 +1968,7 @@ class RenixClockCardEditor extends HTMLElement {
         },
         label:'Показывать дату'
       },
-      
+
       {
         name:'show_weekday',
         selector:{
@@ -2224,9 +2224,241 @@ class RenixClockCardEditor extends HTMLElement {
       }
 
     ];
+
+    /*
+     * =====================================================
+     * CONFIGURATION LABELS
+     * =====================================================
+     *
+     * ru = русский
+     * en = English
+     */
+
+    this._labels={
+
+      language:{
+        ru:'Язык',
+        en:'Language'
+      },
+
+      weather_entity:{
+        ru:'Погода',
+        en:'Weather'
+      },
+
+      night_entity:{
+        ru:'Ночной режим',
+        en:'Night mode'
+      },
+
+      outside_temperature:{
+        ru:'Температура улицы',
+        en:'Outside temperature'
+      },
+
+      outside_humidity:{
+        ru:'Влажность улицы',
+        en:'Outside humidity'
+      },
+
+      pressure_entity:{
+        ru:'Давление',
+        en:'Pressure'
+      },
+
+      room_temperature:{
+        ru:'Температура спальни',
+        en:'Bedroom temperature'
+      },
+
+      room_humidity:{
+        ru:'Влажность спальни',
+        en:'Bedroom humidity'
+      },
+
+      show_bottom_cards:{
+        ru:'Показывать нижние датчики',
+        en:'Show bottom sensors'
+      },
+
+      show_seconds:{
+        ru:'Показывать секунды',
+        en:'Show seconds'
+      },
+
+      show_grid:{
+        ru:'Показывать сетку',
+        en:'Show grid'
+      },
+
+      show_inactive_threads:{
+        ru:'Показывать неактивные нити',
+        en:'Show inactive threads'
+      },
+
+      show_weather_icon:{
+        ru:'Показывать значок погоды',
+        en:'Show weather icon'
+      },
+
+      show_date:{
+        ru:'Показывать дату',
+        en:'Show date'
+      },
+
+      show_weekday:{
+        ru:'Показывать день недели',
+        en:'Show weekday'
+      },
+
+      top_offset:{
+        ru:'Верхний блок — отступ сверху',
+        en:'Top block — top offset'
+      },
+
+      top_font_size:{
+        ru:'Верхний блок — размер текста',
+        en:'Top block — text size'
+      },
+
+      top_icon_size:{
+        ru:'Верхний блок — размер иконки',
+        en:'Top block — icon size'
+      },
+
+      top_gap:{
+        ru:'Верхний блок — расстояние',
+        en:'Top block — spacing'
+      },
+
+      card_background_color_rgb:{
+        ru:'Цвет фона',
+        en:'Background color'
+      },
+
+      card_background_opacity:{
+        ru:'Прозрачность фона',
+        en:'Background opacity'
+      },
+
+      card_border_color_rgb:{
+        ru:'Цвет рамки',
+        en:'Border color'
+      },
+
+      card_border_opacity:{
+        ru:'Прозрачность рамки',
+        en:'Border opacity'
+      },
+
+      card_shadow_color_rgb:{
+        ru:'Цвет тени',
+        en:'Shadow color'
+      },
+
+      card_shadow_opacity:{
+        ru:'Прозрачность тени',
+        en:'Shadow opacity'
+      },
+
+      card_radius:{
+        ru:'Скругление',
+        en:'Corner radius'
+      },
+
+      card_backdrop_blur:{
+        ru:'Размытие фона',
+        en:'Background blur'
+      },
+
+      top_night_brightness:{
+        ru:'Ночная яркость — часы',
+        en:'Night brightness — clock'
+      },
+
+      bottom_night_brightness:{
+        ru:'Ночная яркость — остальное',
+        en:'Night brightness — other elements'
+      },
+
+      clock_color_rgb:{
+        ru:'Цвет часов',
+        en:'Clock color'
+      },
+
+      clock_glow_color_rgb:{
+        ru:'Цвет свечения часов',
+        en:'Clock glow color'
+      },
+
+      clock_glow:{
+        ru:'Интенсивность свечения',
+        en:'Glow intensity'
+      },
+
+      outside_color_rgb:{
+        ru:'Цвет улицы',
+        en:'Outside color'
+      },
+
+      pressure_color_rgb:{
+        ru:'Цвет давления',
+        en:'Pressure color'
+      },
+
+      room_color_rgb:{
+        ru:'Цвет спальни',
+        en:'Bedroom color'
+      },
+
+      title_color_rgb:{
+        ru:'Цвет заголовков',
+        en:'Title color'
+      }
+
+    };
   }
 
+  /*
+   * =====================================================
+   * LANGUAGE
+   * =====================================================
+   */
+
+  _getEditorLanguage(){
+
+    /*
+     * Язык выбран вручную.
+     */
+    if(
+      this._config.language === 'ru'
+    ){
+      return 'ru';
+    }
+
+    if(
+      this._config.language === 'en'
+    ){
+      return 'en';
+    }
+
+    /*
+     * auto:
+     * используем язык Home Assistant.
+     */
+    return this._hass?.language === 'ru'
+      ? 'ru'
+      : 'en';
+  }
+
+  /*
+   * =====================================================
+   * CONFIG
+   * =====================================================
+   */
+
   setConfig(config){
+
     this._config={
       ...config
     };
@@ -2234,203 +2466,162 @@ class RenixClockCardEditor extends HTMLElement {
     this._render();
   }
 
+  /*
+   * =====================================================
+   * CONNECTED
+   * =====================================================
+   */
+
   connectedCallback(){
+
     this._render();
   }
 
-_render(){
-
-  if(!this.shadowRoot){
-    return;
-  }
-
-  this.shadowRoot.innerHTML=`
-    <style>
-      :host{
-        display:block;
-      }
-
-      ha-form{
-        display:block;
-        padding:8px;
-      }
-    </style>
-
-    <ha-form></ha-form>
-  `;
-
-  this._form=
-    this.shadowRoot.querySelector(
-      'ha-form'
-    );
-
   /*
-   * Русские названия полей конфигуратора.
-   *
-   * Home Assistant использует computeLabel()
-   * для отображаемого имени поля.
+   * =====================================================
+   * RENDER
+   * =====================================================
    */
-  const labels={
 
-    language:
-      'Язык',
+  _render(){
 
-    weather_entity:
-      'Погода',
+    if(!this.shadowRoot){
+      return;
+    }
 
-    night_entity:
-      'Ночной режим',
+    this.shadowRoot.innerHTML=`
+      <style>
+        :host{
+          display:block;
+        }
 
-    outside_temperature:
-      'Температура улицы',
+        ha-form{
+          display:block;
+          padding:8px;
+        }
+      </style>
 
-    outside_humidity:
-      'Влажность улицы',
+      <ha-form></ha-form>
+    `;
 
-    pressure_entity:
-      'Давление',
+    this._form=
+      this.shadowRoot.querySelector(
+        'ha-form'
+      );
 
-    room_temperature:
-      'Температура спальни',
+    /*
+     * Передаём схему.
+     */
+    this._form.schema=
+      this._schema;
 
-    room_humidity:
-      'Влажность спальни',
+    /*
+     * Передаём функцию формирования
+     * названия каждого пункта.
+     */
+    this._form.computeLabel=
+      schema => {
 
-    show_bottom_cards:
-      'Показывать нижние датчики',
+        const language=
+          this._getEditorLanguage();
 
-    show_seconds:
-      'Показывать секунды',
-
-    show_grid:
-      'Показывать сетку',
-
-    show_inactive_threads:
-      'Показывать неактивные нити',
-
-    show_weather_icon:
-      'Показывать значок погоды',
-
-    show_date:
-      'Показывать дату',
-
-    show_weekday:
-      'Показывать день недели',
-
-    top_offset:
-      'Верхний блок — отступ сверху',
-
-    top_font_size:
-      'Верхний блок — размер текста',
-
-    top_icon_size:
-      'Верхний блок — размер иконки',
-
-    top_gap:
-      'Верхний блок — расстояние',
-
-    card_background_color_rgb:
-      'Цвет фона',
-
-    card_background_opacity:
-      'Прозрачность фона',
-
-    card_border_color_rgb:
-      'Цвет рамки',
-
-    card_border_opacity:
-      'Прозрачность рамки',
-
-    card_shadow_color_rgb:
-      'Цвет тени',
-
-    card_shadow_opacity:
-      'Прозрачность тени',
-
-    card_radius:
-      'Скругление',
-
-    card_backdrop_blur:
-      'Размытие фона',
-
-    top_night_brightness:
-      'Ночная яркость — часы',
-
-    bottom_night_brightness:
-      'Ночная яркость — остальное',
-
-    clock_color_rgb:
-      'Цвет часов',
-
-    clock_glow_color_rgb:
-      'Цвет свечения часов',
-
-    clock_glow:
-      'Интенсивность свечения',
-
-    outside_color_rgb:
-      'Цвет улицы',
-
-    pressure_color_rgb:
-      'Цвет давления',
-
-    room_color_rgb:
-      'Цвет спальни',
-
-    title_color_rgb:
-      'Цвет заголовков'
-  };
-
-  this._form.schema=
-    this._schema;
-
-  this._form.computeLabel=
-    schema => {
-
-      return labels[schema.name]
-        || schema.name;
-    };
-
-  this._form.data={
-    ...this._config
-  };
-
-  if(this._hass){
-    this._form.hass=
-      this._hass;
-  }
-
-  this._form.addEventListener(
-    'value-changed',
-    e=>{
-
-      const config={
-        ...e.detail.value
+        return (
+          this._labels[schema.name]?.[language]
+          ||
+          schema.name
+        );
       };
 
-      this._config=config;
+    /*
+     * Передаём текущую конфигурацию.
+     */
+    this._form.data={
+      ...this._config
+    };
 
-      this.dispatchEvent(
-        new CustomEvent(
-          'config-changed',
-          {
-            detail:{config},
-            bubbles:true,
-            composed:true
-          }
-        )
-      );
+    /*
+     * Передаём Home Assistant.
+     */
+    if(this._hass){
+
+      this._form.hass=
+        this._hass;
     }
-  );
-}
+
+    /*
+     * Изменение любого параметра.
+     */
+    this._form.addEventListener(
+      'value-changed',
+      e=>{
+
+        const config={
+          ...e.detail.value
+        };
+
+        this._config=
+          config;
+
+        /*
+         * Если изменили язык,
+         * заставляем ha-form пересчитать
+         * подписи полей.
+         */
+        if(
+          this._form &&
+          this._form.computeLabel
+        ){
+
+          this._form.requestUpdate();
+        }
+
+        /*
+         * Сообщаем редактору HA
+         * об изменении конфигурации.
+         */
+        this.dispatchEvent(
+          new CustomEvent(
+            'config-changed',
+            {
+              detail:{
+                config
+              },
+              bubbles:true,
+              composed:true
+            }
+          )
+        );
+      }
+    );
+  }
+
+  /*
+   * =====================================================
+   * HASS
+   * =====================================================
+   */
 
   set hass(hass){
 
-    this._hass=hass;
+    this._hass=
+      hass;
 
     if(this._form){
+
       this._form.hass=
         hass;
+
+      /*
+       * Если language:auto,
+       * изменение языка самого HA
+       * должно обновить подписи.
+       */
+      if(
+        this._config.language === 'auto'
+      ){
+
+        this._form.requestUpdate();
+      }
     }
   }
 }
