@@ -699,6 +699,26 @@ const RENIX_CSS = `
 }
 
 /* =========================================================
+   SENSOR HISTORY
+   ========================================================= */
+
+.renix-clickable{
+  cursor:pointer;
+
+  transition:
+    filter .15s ease,
+    transform .15s ease;
+}
+
+.renix-clickable:hover{
+  filter:brightness(1.15);
+}
+
+.renix-clickable:active{
+  transform:scale(.97);
+}
+
+/* =========================================================
    STATES
    ========================================================= */
 
@@ -1485,79 +1505,100 @@ const ampm=
        SENSOR BLOCK
        ===================================================== */
 
-    const info=(
-      title,
-      value,
-      unit,
-      secondary,
-      secondaryUnit,
-      color,
-      stroke,
-      glow
-    )=>
-      `<div class="info-card">
+ const info=(
+  title,
+  value,
+  unit,
+  secondary,
+  secondaryUnit,
+  color,
+  stroke,
+  glow,
+  entityId,
+  secondaryEntityId
+)=>
+  `<div class="info-card">
 
-        <div class="info-title">
-          ${title}
-        </div>
+    <div class="info-title">
+      ${title}
+    </div>
 
-        <div class="info-content">
+    <div class="info-content">
 
-          <div
-            class="info-value"
+      <div
+        class="info-value ${entityId ? 'renix-clickable' : ''}"
+        ${
+          entityId
+            ?
+              `data-entity-id="${this._escape(entityId)}"`
+            :
+              ''
+        }
+        style="
+          --value-color:${color};
+          --stroke-color:${stroke};
+          --glow-color:${glow}
+        "
+      >
+        ${value}
+        ${
+          unit
+            ?
+            `<span
+              style="
+                font-size:.55em;
+                margin-left:.08em
+              "
+            >${unit}</span>`
+            :
+            ''
+        }
+      </div>
+
+      ${
+        secondary!==''
+          ?
+          `<div
+            class="
+              info-secondary
+              ${secondaryEntityId ? 'renix-clickable' : ''}
+            "
+            ${
+              secondaryEntityId
+                ?
+                  `data-entity-id="${this._escape(
+                    secondaryEntityId
+                  )}"`
+                :
+                  ''
+            }
             style="
-              --value-color:${color};
-              --stroke-color:${stroke};
-              --glow-color:${glow}
+              --secondary-color:${color};
+              --secondary-stroke:${stroke};
+              --secondary-glow:${glow}
             "
           >
-            ${value}
+            ${secondary}
             ${
-              unit
+              secondaryUnit
                 ?
                 `<span
                   style="
                     font-size:.55em;
                     margin-left:.08em
                   "
-                >${unit}</span>`
+                >${secondaryUnit}</span>`
                 :
                 ''
             }
-          </div>
+          </div>`
+          :
+          ''
+      }
 
-          ${
-            secondary!==''
-              ?
-              `<div
-                class="info-secondary"
-                style="
-                  --secondary-color:${color};
-                  --secondary-stroke:${stroke};
-                  --secondary-glow:${glow}
-                "
-              >
-                ${secondary}
-                ${
-                  secondaryUnit
-                    ?
-                    `<span
-                      style="
-                        font-size:.55em;
-                        margin-left:.08em
-                      "
-                    >${secondaryUnit}</span>`
-                    :
-                    ''
-                }
-              </div>`
-              :
-              ''
-          }
+    </div>
 
-        </div>
-
-      </div>`;
+  </div>`;
 
     const bottom=
       C.show_bottom_cards
@@ -1571,38 +1612,43 @@ const ampm=
           "
         >
 
-          ${info(
-            L.outside,
-            temp,
-            tu,
-            hum,
-            hu,
-            this._rgba(C.outside_color_rgb,1),
-            C.outside_stroke,
-            C.outside_glow
-          )}
+${info(
+  L.outside,
+  temp,
+  tu,
+  hum,
+  hu,
+  this._rgba(C.outside_color_rgb,1),
+  C.outside_stroke,
+  C.outside_glow,
+  C.outside_temperature,
+  C.outside_humidity
+)}
 
-          ${info(
-            L.pressure,
-            press,
-            pu,
-            '',
-            '',
-            this._rgba(C.pressure_color_rgb,1),
-            C.pressure_stroke,
-            C.pressure_glow
-          )}
+${info(
+  L.pressure,
+  press,
+  pu,
+  '',
+  '',
+  this._rgba(C.pressure_color_rgb,1),
+  C.pressure_stroke,
+  C.pressure_glow,
+  C.pressure_entity
+)}
 
-          ${info(
-            L.room,
-            rt,
-            ru,
-            rh,
-            rhu,
-            this._rgba(C.room_color_rgb,1),
-            C.room_stroke,
-            C.room_glow
-          )}
+${info(
+  L.room,
+  rt,
+  ru,
+  rh,
+  rhu,
+  this._rgba(C.room_color_rgb,1),
+  C.room_stroke,
+  C.room_glow,
+  C.room_temperature,
+  C.room_humidity
+)}
 
         </div>`
         :
@@ -1859,6 +1905,43 @@ const ampm=
         </div>
 
       </div>`;
+  
+this.shadowRoot
+  .querySelectorAll(
+    '.renix-clickable[data-entity-id]'
+  )
+  .forEach(element=>{
+
+    element.addEventListener(
+      'click',
+      event=>{
+
+        event.stopPropagation();
+
+        const entityId=
+          element.dataset.entityId;
+
+        if(!entityId){
+          return;
+        }
+
+        this.dispatchEvent(
+          new CustomEvent(
+            'hass-more-info',
+            {
+              detail:{
+                entityId
+              },
+              bubbles:true,
+              composed:true
+            }
+          )
+        );
+
+      }
+    );
+
+  });
   }
 
   getCardSize(){
