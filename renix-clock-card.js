@@ -1968,7 +1968,7 @@ class RenixClockCardEditor extends HTMLElement {
         },
         label:'Показывать дату'
       },
-      
+
       {
         name:'show_weekday',
         selector:{
@@ -2224,9 +2224,241 @@ class RenixClockCardEditor extends HTMLElement {
       }
 
     ];
+
+    /*
+     * =====================================================
+     * CONFIGURATION LABELS
+     * =====================================================
+     *
+     * ru = русский
+     * en = English
+     */
+
+    this._labels={
+
+      language:{
+        ru:'Язык',
+        en:'Language'
+      },
+
+      weather_entity:{
+        ru:'Погода',
+        en:'Weather'
+      },
+
+      night_entity:{
+        ru:'Ночной режим',
+        en:'Night mode'
+      },
+
+      outside_temperature:{
+        ru:'Температура улицы',
+        en:'Outside temperature'
+      },
+
+      outside_humidity:{
+        ru:'Влажность улицы',
+        en:'Outside humidity'
+      },
+
+      pressure_entity:{
+        ru:'Давление',
+        en:'Pressure'
+      },
+
+      room_temperature:{
+        ru:'Температура спальни',
+        en:'Bedroom temperature'
+      },
+
+      room_humidity:{
+        ru:'Влажность спальни',
+        en:'Bedroom humidity'
+      },
+
+      show_bottom_cards:{
+        ru:'Показывать нижние датчики',
+        en:'Show bottom sensors'
+      },
+
+      show_seconds:{
+        ru:'Показывать секунды',
+        en:'Show seconds'
+      },
+
+      show_grid:{
+        ru:'Показывать сетку',
+        en:'Show grid'
+      },
+
+      show_inactive_threads:{
+        ru:'Показывать неактивные нити',
+        en:'Show inactive threads'
+      },
+
+      show_weather_icon:{
+        ru:'Показывать значок погоды',
+        en:'Show weather icon'
+      },
+
+      show_date:{
+        ru:'Показывать дату',
+        en:'Show date'
+      },
+
+      show_weekday:{
+        ru:'Показывать день недели',
+        en:'Show weekday'
+      },
+
+      top_offset:{
+        ru:'Верхний блок — отступ сверху',
+        en:'Top block — top offset'
+      },
+
+      top_font_size:{
+        ru:'Верхний блок — размер текста',
+        en:'Top block — text size'
+      },
+
+      top_icon_size:{
+        ru:'Верхний блок — размер иконки',
+        en:'Top block — icon size'
+      },
+
+      top_gap:{
+        ru:'Верхний блок — расстояние',
+        en:'Top block — spacing'
+      },
+
+      card_background_color_rgb:{
+        ru:'Цвет фона',
+        en:'Background color'
+      },
+
+      card_background_opacity:{
+        ru:'Прозрачность фона',
+        en:'Background opacity'
+      },
+
+      card_border_color_rgb:{
+        ru:'Цвет рамки',
+        en:'Border color'
+      },
+
+      card_border_opacity:{
+        ru:'Прозрачность рамки',
+        en:'Border opacity'
+      },
+
+      card_shadow_color_rgb:{
+        ru:'Цвет тени',
+        en:'Shadow color'
+      },
+
+      card_shadow_opacity:{
+        ru:'Прозрачность тени',
+        en:'Shadow opacity'
+      },
+
+      card_radius:{
+        ru:'Скругление',
+        en:'Corner radius'
+      },
+
+      card_backdrop_blur:{
+        ru:'Размытие фона',
+        en:'Background blur'
+      },
+
+      top_night_brightness:{
+        ru:'Ночная яркость — часы',
+        en:'Night brightness — clock'
+      },
+
+      bottom_night_brightness:{
+        ru:'Ночная яркость — остальное',
+        en:'Night brightness — other elements'
+      },
+
+      clock_color_rgb:{
+        ru:'Цвет часов',
+        en:'Clock color'
+      },
+
+      clock_glow_color_rgb:{
+        ru:'Цвет свечения часов',
+        en:'Clock glow color'
+      },
+
+      clock_glow:{
+        ru:'Интенсивность свечения',
+        en:'Glow intensity'
+      },
+
+      outside_color_rgb:{
+        ru:'Цвет улицы',
+        en:'Outside color'
+      },
+
+      pressure_color_rgb:{
+        ru:'Цвет давления',
+        en:'Pressure color'
+      },
+
+      room_color_rgb:{
+        ru:'Цвет спальни',
+        en:'Bedroom color'
+      },
+
+      title_color_rgb:{
+        ru:'Цвет заголовков',
+        en:'Title color'
+      }
+
+    };
   }
 
+  /*
+   * =====================================================
+   * LANGUAGE
+   * =====================================================
+   */
+
+  _getEditorLanguage(){
+
+    /*
+     * Язык выбран вручную.
+     */
+    if(
+      this._config.language === 'ru'
+    ){
+      return 'ru';
+    }
+
+    if(
+      this._config.language === 'en'
+    ){
+      return 'en';
+    }
+
+    /*
+     * auto:
+     * используем язык Home Assistant.
+     */
+    return this._hass?.language === 'ru'
+      ? 'ru'
+      : 'en';
+  }
+
+  /*
+   * =====================================================
+   * CONFIG
+   * =====================================================
+   */
+
   setConfig(config){
+
     this._config={
       ...config
     };
@@ -2234,9 +2466,22 @@ class RenixClockCardEditor extends HTMLElement {
     this._render();
   }
 
+  /*
+   * =====================================================
+   * CONNECTED
+   * =====================================================
+   */
+
   connectedCallback(){
+
     this._render();
   }
+
+  /*
+   * =====================================================
+   * RENDER
+   * =====================================================
+   */
 
   _render(){
 
@@ -2264,18 +2509,48 @@ class RenixClockCardEditor extends HTMLElement {
         'ha-form'
       );
 
+    /*
+     * Передаём схему.
+     */
     this._form.schema=
       this._schema;
 
+    /*
+     * Передаём функцию формирования
+     * названия каждого пункта.
+     */
+    this._form.computeLabel=
+      schema => {
+
+        const language=
+          this._getEditorLanguage();
+
+        return (
+          this._labels[schema.name]?.[language]
+          ||
+          schema.name
+        );
+      };
+
+    /*
+     * Передаём текущую конфигурацию.
+     */
     this._form.data={
       ...this._config
     };
 
+    /*
+     * Передаём Home Assistant.
+     */
     if(this._hass){
+
       this._form.hass=
         this._hass;
     }
 
+    /*
+     * Изменение любого параметра.
+     */
     this._form.addEventListener(
       'value-changed',
       e=>{
@@ -2284,13 +2559,33 @@ class RenixClockCardEditor extends HTMLElement {
           ...e.detail.value
         };
 
-        this._config=config;
+        this._config=
+          config;
 
+        /*
+         * Если изменили язык,
+         * заставляем ha-form пересчитать
+         * подписи полей.
+         */
+        if(
+          this._form &&
+          this._form.computeLabel
+        ){
+
+          this._form.requestUpdate();
+        }
+
+        /*
+         * Сообщаем редактору HA
+         * об изменении конфигурации.
+         */
         this.dispatchEvent(
           new CustomEvent(
             'config-changed',
             {
-              detail:{config},
+              detail:{
+                config
+              },
               bubbles:true,
               composed:true
             }
@@ -2300,13 +2595,33 @@ class RenixClockCardEditor extends HTMLElement {
     );
   }
 
+  /*
+   * =====================================================
+   * HASS
+   * =====================================================
+   */
+
   set hass(hass){
 
-    this._hass=hass;
+    this._hass=
+      hass;
 
     if(this._form){
+
       this._form.hass=
         hass;
+
+      /*
+       * Если language:auto,
+       * изменение языка самого HA
+       * должно обновить подписи.
+       */
+      if(
+        this._config.language === 'auto'
+      ){
+
+        this._form.requestUpdate();
+      }
     }
   }
 }
