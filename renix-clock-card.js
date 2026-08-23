@@ -478,6 +478,61 @@ const RENIX_CSS = `
 }
 
 /* =========================================================
+   AM / PM
+   ========================================================= */
+
+.renix-ampm{
+  position:absolute;
+
+  left:calc(
+    50% + 4.5em
+  );
+
+  top:calc(
+    10px * var(--renix-scale) * var(--renix-clock-factor)
+  );
+
+  width:max-content;
+  height:auto;
+
+  font-family:
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size:calc(
+    6rem *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  font-weight:400;
+
+  line-height:1;
+
+  letter-spacing:.08em;
+
+  white-space:nowrap;
+
+  pointer-events:none;
+
+  color:
+    var(--renix-clock-color,#ff7700);
+
+  text-shadow:
+    0 0 var(--renix-glow-4,4px)
+      var(--renix-clock-glow-color,#ff3300),
+
+    0 0 var(--renix-glow-10,10px)
+      var(--renix-clock-glow-color,#ff5500),
+
+    0 0 var(--renix-glow-20,20px)
+      var(--renix-clock-color,#ff7700);
+
+  z-index:21;
+}
+
+/* =========================================================
    BOTTOM SENSOR BLOCK
    Reference Y = 330
    Height = 142
@@ -717,6 +772,9 @@ class RenixClockCard extends HTMLElement {
 
       language:config.language||'auto',
 
+      time_format:
+        config.time_format||'24',
+      
       weather_entity:config.weather_entity||'',
       night_entity:config.night_entity||'',
 
@@ -1184,14 +1242,37 @@ class RenixClockCard extends HTMLElement {
 
     const now=new Date();
 
-    const h=
-      String(now.getHours()).padStart(2,'0');
+const isAmPm=
+  this._config.time_format==='ampm';
 
-    const m=
-      String(now.getMinutes()).padStart(2,'0');
+const currentHour=
+  now.getHours();
 
-    const s=
-      String(now.getSeconds()).padStart(2,'0');
+const h=
+  isAmPm
+    ?
+      String(
+        currentHour % 12 || 12
+      ).padStart(2,'0')
+    :
+      String(
+        currentHour
+      ).padStart(2,'0');
+
+const m=
+  String(
+    now.getMinutes()
+  ).padStart(2,'0');
+
+const s=
+  String(
+    now.getSeconds()
+  ).padStart(2,'0');
+
+const ampm=
+  currentHour>=12
+    ? 'PM'
+    : 'AM';
 
     const language=
       this._config.language==='auto'
@@ -1761,6 +1842,12 @@ class RenixClockCard extends HTMLElement {
                 <div class="renix-seconds-layer renix-top-item renix-seconds-ss02"><span>${s}</span></div>
               ` : ''}
 
+              ${C.time_format==='ampm' ? `
+                <div class="renix-ampm renix-top-item">
+                  ${ampm}
+                </div>
+              ` : ''}
+              
             </div>
 
           </div>
@@ -1847,6 +1934,26 @@ class RenixClockCardEditor extends HTMLElement {
         label:'Язык'
       },
 
+{
+  name:'time_format',
+  selector:{
+    select:{
+      options:[
+        {
+          value:'24',
+          label:'24 h'
+        },
+        {
+          value:'ampm',
+          label:'AM / PM'
+        }
+      ],
+      mode:'dropdown'
+    }
+  },
+  label:'Формат времени'
+},
+      
       {
         name:'weather_entity',
         selector:{
@@ -2239,6 +2346,11 @@ class RenixClockCardEditor extends HTMLElement {
       language:{
         ru:'Язык',
         en:'Language'
+      },
+
+      time_format:{
+        ru:'Формат времени',
+        en:'Time format'
       },
 
       weather_entity:{
