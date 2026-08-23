@@ -814,24 +814,24 @@ class RenixClockCard extends HTMLElement {
                 : 10
             ),
 
-      card_background_color:
-        config.card_background_color ?? null,
+      card_background_color_rgb:
+        config.card_background_color_rgb ?? config.card_background_color ?? null,
 
       card_background_opacity:
         config.card_background_opacity != null
           ? Number(config.card_background_opacity)
           : 0.08,
 
-      card_border_color:
-        config.card_border_color ?? null,
+      card_border_color_rgb:
+        config.card_border_color_rgb ?? config.card_border_color ?? null,
 
       card_border_opacity:
         config.card_border_opacity != null
           ? Number(config.card_border_opacity)
           : 0.15,
 
-      card_shadow_color:
-        config.card_shadow_color ?? null,
+      card_shadow_color_rgb:
+        config.card_shadow_color_rgb ?? config.card_shadow_color ?? null,
 
       card_shadow_opacity:
         config.card_shadow_opacity != null
@@ -856,19 +856,19 @@ class RenixClockCard extends HTMLElement {
          COLORS
          =================================================== */
 
-      clock_color:
-        config.clock_color||'#ff7700',
+      clock_color_rgb:
+        config.clock_color_rgb ?? config.clock_color ?? [255,119,0],
 
-      clock_glow_color:
-        config.clock_glow_color||'#ff5500',
+      clock_glow_color_rgb:
+        config.clock_glow_color_rgb ?? config.clock_glow_color ?? [255,85,0],
 
       clock_glow:
         config.clock_glow != null
           ? Number(config.clock_glow)
           : 1,
 
-      outside_color:
-        config.outside_color||'#009030',
+      outside_color_rgb:
+        config.outside_color_rgb ?? config.outside_color ?? [0,144,48],
 
       outside_stroke:
         config.outside_stroke||'#209030',
@@ -877,8 +877,8 @@ class RenixClockCard extends HTMLElement {
         config.outside_glow||
         'rgba(0,153,16,.5)',
 
-      pressure_color:
-        config.pressure_color||'#0099bb',
+      pressure_color_rgb:
+        config.pressure_color_rgb ?? config.pressure_color ?? [0,153,187],
 
       pressure_stroke:
         config.pressure_stroke||'#3377dd',
@@ -887,8 +887,8 @@ class RenixClockCard extends HTMLElement {
         config.pressure_glow||
         'rgba(0,153,187,.5)',
 
-      room_color:
-        config.room_color||'#bbbb00',
+      room_color_rgb:
+        config.room_color_rgb ?? config.room_color ?? [187,187,0],
 
       room_stroke:
         config.room_stroke||'#bbbb55',
@@ -897,9 +897,8 @@ class RenixClockCard extends HTMLElement {
         config.room_glow||
         'rgba(187,187,0,.5)',
 
-      title_color:
-        config.title_color||
-        'rgba(255,119,0,.8)'
+      title_color_rgb:
+        config.title_color_rgb ?? config.title_color ?? [255,119,0]
     };
 
     this._render();
@@ -1126,36 +1125,48 @@ class RenixClockCard extends HTMLElement {
       : String(v);
   }
 
-  _rgba(color,opacity){
+  _rgba(color,opacity=1){
 
-    if(!color){
+    if(color==null || color===''){
       return 'transparent';
     }
 
-    const m=
-      String(color).match(
-        /^#([0-9a-f]{6})$/i
+    let r,g,b;
+
+    if(Array.isArray(color) && color.length>=3){
+      [r,g,b]=color;
+    }else{
+      const value=String(color).trim();
+
+      const rgb=value.match(
+        /^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/i
       );
 
-    if(!m){
-      return color;
+      if(rgb){
+        r=rgb[1];
+        g=rgb[2];
+        b=rgb[3];
+      }else{
+        const hex=value.match(/^#([0-9a-f]{6})$/i);
+        if(!hex){
+          return value;
+        }
+        const n=parseInt(hex[1],16);
+        r=n>>16;
+        g=(n>>8)&255;
+        b=n&255;
+      }
     }
 
-    const n=
-      parseInt(m[1],16);
+    const a=Math.max(
+      0,
+      Math.min(
+        1,
+        Number(opacity)
+      )
+    );
 
-    return `rgba(
-      ${n>>16},
-      ${(n>>8)&255},
-      ${n&255},
-      ${Math.max(
-        0,
-        Math.min(
-          1,
-          Number(opacity)
-        )
-      )}
-    )`;
+    return `rgba(${Number(r)},${Number(g)},${Number(b)},${a})`;
   }
 
   /* =======================================================
@@ -1473,7 +1484,7 @@ class RenixClockCard extends HTMLElement {
         `<div
           class="bottom-grid ${night?'night':''}"
           style="
-            --renix-title-color:${C.title_color};
+            --renix-title-color:${this._rgba(C.title_color_rgb,.8)};
             --renix-bottom-brightness:
               ${C.bottom_night_brightness}
           "
@@ -1485,7 +1496,7 @@ class RenixClockCard extends HTMLElement {
             tu,
             hum,
             hu,
-            C.outside_color,
+            this._rgba(C.outside_color_rgb,1),
             C.outside_stroke,
             C.outside_glow
           )}
@@ -1496,7 +1507,7 @@ class RenixClockCard extends HTMLElement {
             pu,
             '',
             '',
-            C.pressure_color,
+            this._rgba(C.pressure_color_rgb,1),
             C.pressure_stroke,
             C.pressure_glow
           )}
@@ -1507,7 +1518,7 @@ class RenixClockCard extends HTMLElement {
             ru,
             rh,
             rhu,
-            C.room_color,
+            this._rgba(C.room_color_rgb,1),
             C.room_stroke,
             C.room_glow
           )}
@@ -1554,10 +1565,10 @@ class RenixClockCard extends HTMLElement {
         style="
           --renix-card-background:
             ${
-              C.card_background_color
+              C.card_background_color_rgb
                 ?
                 this._rgba(
-                  C.card_background_color,
+                  C.card_background_color_rgb,
                   C.card_background_opacity
                 )
                 :
@@ -1568,11 +1579,11 @@ class RenixClockCard extends HTMLElement {
 
           --renix-card-border:
             ${
-              C.card_border_color
+              C.card_border_color_rgb
                 ?
                 `1px solid ${
                   this._rgba(
-                    C.card_border_color,
+                    C.card_border_color_rgb,
                     C.card_border_opacity
                   )
                 }`
@@ -1584,11 +1595,11 @@ class RenixClockCard extends HTMLElement {
 
           --renix-card-shadow:
             ${
-              C.card_shadow_color
+              C.card_shadow_color_rgb
                 ?
                 `0 8px 32px ${
                   this._rgba(
-                    C.card_shadow_color,
+                    C.card_shadow_color_rgb,
                     C.card_shadow_opacity
                   )
                 }`
@@ -1608,10 +1619,10 @@ class RenixClockCard extends HTMLElement {
             )}px);
 
           --renix-clock-color:
-            ${C.clock_color};
+            ${this._rgba(C.clock_color_rgb,1)};
 
           --renix-clock-glow-color:
-            ${C.clock_glow_color};
+            ${this._rgba(C.clock_glow_color_rgb,1)};
 
           --renix-glow-4:
             ${4*C.clock_glow}px;
@@ -1629,7 +1640,7 @@ class RenixClockCard extends HTMLElement {
             ${C.clock_glow};
 
           --renix-title-color:
-            ${C.title_color};
+            ${this._rgba(C.title_color_rgb,.8)};
 
           --renix-top-brightness:
             ${C.top_night_brightness};
@@ -2027,9 +2038,9 @@ class RenixClockCardEditor extends HTMLElement {
          ===================================================== */
 
       {
-        name:'card_background_color',
+        name:'card_background_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет фона'
       },
@@ -2048,9 +2059,9 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       {
-        name:'card_border_color',
+        name:'card_border_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет рамки'
       },
@@ -2069,9 +2080,9 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       {
-        name:'card_shadow_color',
+        name:'card_shadow_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет тени'
       },
@@ -2152,17 +2163,17 @@ class RenixClockCardEditor extends HTMLElement {
          ===================================================== */
 
       {
-        name:'clock_color',
+        name:'clock_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет часов'
       },
 
       {
-        name:'clock_glow_color',
+        name:'clock_glow_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет свечения часов'
       },
@@ -2181,33 +2192,33 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       {
-        name:'outside_color',
+        name:'outside_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет улицы'
       },
 
       {
-        name:'pressure_color',
+        name:'pressure_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет давления'
       },
 
       {
-        name:'room_color',
+        name:'room_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет спальни'
       },
 
       {
-        name:'title_color',
+        name:'title_color_rgb',
         selector:{
-          color:{}
+          color_rgb:{}
         },
         label:'Цвет заголовков'
       }
