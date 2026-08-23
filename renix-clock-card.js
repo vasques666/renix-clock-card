@@ -2264,31 +2264,131 @@ _render(){
       'ha-form'
     );
 
+  /*
+   * Русские названия полей конфигуратора.
+   *
+   * Home Assistant использует computeLabel()
+   * для отображаемого имени поля.
+   */
+  const labels={
+
+    language:
+      'Язык',
+
+    weather_entity:
+      'Погода',
+
+    night_entity:
+      'Ночной режим',
+
+    outside_temperature:
+      'Температура улицы',
+
+    outside_humidity:
+      'Влажность улицы',
+
+    pressure_entity:
+      'Давление',
+
+    room_temperature:
+      'Температура спальни',
+
+    room_humidity:
+      'Влажность спальни',
+
+    show_bottom_cards:
+      'Показывать нижние датчики',
+
+    show_seconds:
+      'Показывать секунды',
+
+    show_grid:
+      'Показывать сетку',
+
+    show_inactive_threads:
+      'Показывать неактивные нити',
+
+    show_weather_icon:
+      'Показывать значок погоды',
+
+    show_date:
+      'Показывать дату',
+
+    show_weekday:
+      'Показывать день недели',
+
+    top_offset:
+      'Верхний блок — отступ сверху',
+
+    top_font_size:
+      'Верхний блок — размер текста',
+
+    top_icon_size:
+      'Верхний блок — размер иконки',
+
+    top_gap:
+      'Верхний блок — расстояние',
+
+    card_background_color_rgb:
+      'Цвет фона',
+
+    card_background_opacity:
+      'Прозрачность фона',
+
+    card_border_color_rgb:
+      'Цвет рамки',
+
+    card_border_opacity:
+      'Прозрачность рамки',
+
+    card_shadow_color_rgb:
+      'Цвет тени',
+
+    card_shadow_opacity:
+      'Прозрачность тени',
+
+    card_radius:
+      'Скругление',
+
+    card_backdrop_blur:
+      'Размытие фона',
+
+    top_night_brightness:
+      'Ночная яркость — часы',
+
+    bottom_night_brightness:
+      'Ночная яркость — остальное',
+
+    clock_color_rgb:
+      'Цвет часов',
+
+    clock_glow_color_rgb:
+      'Цвет свечения часов',
+
+    clock_glow:
+      'Интенсивность свечения',
+
+    outside_color_rgb:
+      'Цвет улицы',
+
+    pressure_color_rgb:
+      'Цвет давления',
+
+    room_color_rgb:
+      'Цвет спальни',
+
+    title_color_rgb:
+      'Цвет заголовков'
+  };
+
   this._form.schema=
     this._schema;
 
-  /*
-   * Home Assistant 2026.8.x:
-   * label из отдельных элементов schema
-   * не используется как подпись поля.
-   *
-   * Передаём собственный computeLabel,
-   * который берёт уже существующий label
-   * из нашей schema.
-   */
-  this._form.computeLabel =
+  this._form.computeLabel=
     schema => {
 
-      if(
-        schema &&
-        schema.label
-      ){
-        return typeof schema.label === 'function'
-          ? schema.label(schema)
-          : schema.label;
-      }
-
-      return schema?.name || '';
+      return labels[schema.name]
+        || schema.name;
     };
 
   this._form.data={
