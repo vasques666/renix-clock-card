@@ -863,28 +863,38 @@ class RenixClockCard extends HTMLElement {
 
     this.attachShadow({mode:'open'});
 
-    this._config={};
-    this._timer=null;
-    this._hass=null;
+this._config={};
+this._originalConfig={};
 
-    this._resizeObserver=null;
-    this._resizeQueued=false;
-    this._lastWidth=0;
+this._timer=null;
+this._hass=null;
+
+this._resizeObserver=null;
+this._resizeQueued=false;
+this._lastWidth=0;
   }
 
   /* =======================================================
      CONFIG
      ======================================================= */
 
-  setConfig(config){
+setConfig(config){
 
-    if(!config){
-      throw new Error(
-        'renix-clock-card: configuration is required'
-      );
-    }
+  if(!config){
+    throw new Error(
+      'renix-clock-card: configuration is required'
+    );
+  }
 
-    this._config={
+  /*
+   * Сохраняем именно конфигурацию,
+   * пришедшую от Home Assistant.
+   */
+  this._originalConfig={
+    ...config
+  };
+
+  this._config={
 
       language:config.language||'auto',
 
@@ -1343,6 +1353,84 @@ class RenixClockCard extends HTMLElement {
     return `rgba(${Number(r)},${Number(g)},${Number(b)},${a})`;
   }
 
+  /* =======================================================
+     UPDATE CONFIGURATION
+     ======================================================= */
+
+  _updateConfig(changes){
+
+    if(!changes || typeof changes!=='object'){
+      return;
+    }
+
+    /*
+     * Обновляем текущую конфигурацию карточки.
+     */
+    this._config={
+      ...this._config,
+      ...changes
+    };
+
+    /*
+     * Обновляем только реальные пользовательские
+     * параметры поверх исходной конфигурации.
+     *
+     * Это важно:
+     * не записываем в Lovelace все внутренние
+     * значения по умолчанию.
+     */
+    const config={
+      ...this._originalConfig,
+      ...changes
+    };
+
+    /*
+     * Если параметр уже был изменён ранее,
+     * сохраняем его новое значение.
+     */
+    Object.keys(this._config).forEach(key=>{
+
+      if(
+        Object.prototype.hasOwnProperty.call(
+          this._originalConfig,
+          key
+        )
+      ){
+        config[key]=this._config[key];
+      }
+
+    });
+
+    /*
+     * Синхронизируем внутреннюю копию.
+     */
+    this._originalConfig={
+      ...config
+    };
+
+    /*
+     * Немедленно обновляем отображение.
+     */
+    this._render();
+
+    /*
+     * Сообщаем редактору Home Assistant,
+     * что конфигурация карточки изменилась.
+     */
+    this.dispatchEvent(
+      new CustomEvent(
+        'config-changed',
+        {
+          detail:{
+            config
+          },
+          bubbles:true,
+          composed:true
+        }
+      )
+    );
+  }
+  
   /* =======================================================
      RENDER
      ======================================================= */
@@ -2072,7 +2160,7 @@ this.shadowRoot
 
   });
 
-    /* =====================================================
+/* =====================================================
    HOURS CLICK
    Toggle 24 h / AM PM
    ===================================================== */
@@ -2090,96 +2178,48 @@ if(hoursClickLayer){
 
       event.stopPropagation();
 
-      /*
-       * Toggle time format.
-       */
       const newFormat=
         this._config.time_format==='24'
           ? 'ampm'
           : '24';
 
-      /*
-       * Update current configuration.
-       */
-      this._config={
-        ...this._config,
+      this._updateConfig({
         time_format:newFormat
-      };
-
-      /*
-       * Re-render immediately.
-       */
-      this._render();
-
-      /*
-       * Save configuration in Home Assistant.
-       */
-      this.dispatchEvent(
-        new CustomEvent(
-          'config-changed',
-          {
-            detail:{
-              config:{
-                ...this._config
-              }
-            },
-            bubbles:true,
-            composed:true
-          }
-        )
-      );
+      });
 
     }
   );
 
 }
-  /* =====================================================
-     SECONDS CLICK
-     Toggle seconds ON / OFF
-     ===================================================== */
+/* =====================================================
+   SECONDS CLICK
+   Toggle seconds ON / OFF
+   ===================================================== */
 
-  const secondsClickLayer=
-    this.shadowRoot.querySelector(
-      '.renix-seconds-click-layer'
-    );
+const secondsClickLayer=
+  this.shadowRoot.querySelector(
+    '.renix-seconds-click-layer'
+  );
 
-  if(secondsClickLayer){
+if(secondsClickLayer){
 
-    secondsClickLayer.addEventListener(
-      'click',
-      event=>{
+  secondsClickLayer.addEventListener(
+    'click',
+    event=>{
 
-        event.stopPropagation();
+      event.stopPropagation();
 
-        const newValue=
-          this._config.show_seconds===false;
+      const newValue=
+        this._config.show_seconds===false;
 
-        this._config={
-          ...this._config,
-          show_seconds:newValue
-        };
+      this._updateConfig({
+        show_seconds:newValue
+      });
 
-        this._render();
+    }
+  );
 
-        this.dispatchEvent(
-          new CustomEvent(
-            'config-changed',
-            {
-              detail:{
-                config:{
-                  ...this._config
-                }
-              },
-              bubbles:true,
-              composed:true
-            }
-          )
-        );
-
-      }
-    );
-
-  }
+}
 
 }
 
