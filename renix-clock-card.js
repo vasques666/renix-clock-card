@@ -286,7 +286,7 @@ const RENIX_CSS = `
 @keyframes renixDigitFadeOut{
 
   0%{
-    opacity:1;
+    opacity:0.6;
   }
 
   100%{
@@ -2168,16 +2168,23 @@ class RenixClockCard extends HTMLElement {
         C.pressure_entity
       );
 
-    const press=
-      this._escape(
-        Number.isFinite(
-          Number(pressRaw)
-        )
-          ?
-            Number(pressRaw).toFixed(1)
-          :
-            pressRaw
-      );
+const pressRaw =
+  this._val(
+    C.pressure_entity
+  );
+
+const pressNumber =
+  parseFloat(
+    String(pressRaw)
+      .replace(',', '.')
+  );
+
+const press =
+  this._escape(
+    Number.isFinite(pressNumber)
+      ? pressNumber.toFixed(1)
+      : pressRaw
+  );
 
     const rt=
       this._escape(
@@ -3356,9 +3363,18 @@ class RenixClockCard extends HTMLElement {
       },
 
       {
-        value:this._val(
-          C.pressure_entity
-        ),
+const raw =
+  this._val(C.pressure_entity);
+
+const number =
+  parseFloat(
+    String(raw).replace(',', '.')
+  );
+
+element.textContent =
+  Number.isFinite(number)
+    ? number.toFixed(1)
+    : raw;
         unit:this._unit(
           C.pressure_entity
         ),
