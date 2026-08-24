@@ -722,8 +722,8 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-.night .renix-weather-icon,
-.night .renix-date
+/*.renix-card.night .renix-weather-icon,*/
+.renix-card.night .renix-date
 {
   filter:
     brightness(
