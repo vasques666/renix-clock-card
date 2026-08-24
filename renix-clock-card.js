@@ -260,6 +260,51 @@ const RENIX_CSS = `
 }
 
 /* =========================================================
+   SECONDS CLICK LAYER
+   ========================================================= */
+
+.renix-seconds-click-layer{
+  position:absolute;
+
+  left:calc(
+    50% + 4.5em
+  );
+
+  bottom:calc(
+    4px * var(--renix-scale) * var(--renix-clock-factor)
+  );
+
+  width:max-content;
+  height:auto;
+
+  display:block;
+
+  font-family:renix1,monospace;
+
+  font-size:calc(
+    6rem *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  font-weight:400;
+  font-style:normal;
+
+  line-height:.95;
+  letter-spacing:-.12em;
+
+  white-space:nowrap;
+
+  color:transparent;
+
+  pointer-events:auto;
+
+  cursor:pointer;
+
+  z-index:30;
+}
+
+/* =========================================================
    reNix LAYERS
    ========================================================= */
 
@@ -1956,6 +2001,16 @@ ${info(
                 <span></span>
               </div>
 
+<!-- =================================================
+     SECONDS CLICK LAYER
+     ================================================= -->
+
+<div
+  class="renix-seconds-click-layer"
+>
+  <span>${s}</span>
+</div>
+
               ${C.show_seconds ? `
                 <div class="renix-seconds-layer renix-top-item renix-seconds-ss03"><span>${s}</span></div>
                 <div class="renix-seconds-layer renix-top-item renix-seconds-base"><span>${s}</span></div>
@@ -2078,8 +2133,55 @@ if(hoursClickLayer){
   );
 
 }
-    
+  /* =====================================================
+     SECONDS CLICK
+     Toggle seconds ON / OFF
+     ===================================================== */
+
+  const secondsClickLayer=
+    this.shadowRoot.querySelector(
+      '.renix-seconds-click-layer'
+    );
+
+  if(secondsClickLayer){
+
+    secondsClickLayer.addEventListener(
+      'click',
+      event=>{
+
+        event.stopPropagation();
+
+        const newValue=
+          this._config.show_seconds===false;
+
+        this._config={
+          ...this._config,
+          show_seconds:newValue
+        };
+
+        this._render();
+
+        this.dispatchEvent(
+          new CustomEvent(
+            'config-changed',
+            {
+              detail:{
+                config:{
+                  ...this._config
+                }
+              },
+              bubbles:true,
+              composed:true
+            }
+          )
+        );
+
+      }
+    );
+
   }
+
+}
 
   getCardSize(){
     return this._config.show_bottom_cards
