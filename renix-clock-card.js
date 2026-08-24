@@ -176,24 +176,37 @@ const RENIX_CSS = `
    MAIN DIGITS
    ========================================================= */
 
-.renix-digit-layer{
-  position:absolute;
-  top:0;
-  height:100%;
+.renix-digit-layer {
+  position: absolute;
+  top: 0;
+  height: 100%;
 
-  display:flex;
-  align-items:flex-end;
+  display: flex;
+  align-items: flex-end;
 
-  font-family:renix1,monospace;
-  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));
-  font-weight:400;
-  font-style:normal;
+  font-family: renix1, monospace;
+  font-size: calc(17rem * var(--renix-scale) * var(--renix-clock-factor));
+  font-weight: 400;
+  font-style: normal;
 
-  line-height:.95;
-  letter-spacing:-.12em;
+  line-height: .95;
+  letter-spacing: -.12em;
 
-  white-space:nowrap;
-  pointer-events:none;
+  white-space: nowrap;
+  pointer-events: none;
+
+  /* 1. ГАЗОВОЕ ОБЛАКО ЛАМПЫ (Перенесено сюда) */
+  /* В Chrome тени от родительского слоя красиво размываются ЗА текстом, */
+  /* создавая объемный ореол вокруг стеклянной колбы цифры */
+  text-shadow:
+    0 0 var(--renix-glow-4, 4px)
+      var(--renix-clock-glow-color, rgba(255, 51, 0, 0.6)),
+    0 0 var(--renix-glow-10, 10px)
+      var(--renix-clock-glow-color, rgba(255, 85, 0, 0.4)),
+    0 0 var(--renix-glow-20, 20px)
+      var(--renix-clock-color, rgba(255, 119, 0, 0.2)),
+    0 0 var(--renix-glow-30, 30px)
+      rgba(255, 85, 0, 0.1);
 }
 
 .renix-digit-layer span,
@@ -321,33 +334,25 @@ const RENIX_CSS = `
   z-index:1;
 }
 
-.renix-base{
-  font-feature-settings:normal;
+.renix-base {
+  font-feature-settings: normal;
 
-  background: radial-gradient(
-    circle, 
-    #ffffff 0%, 
-    #ffeedd 20%,
-    var(--renix-clock-color, #ff7700) 75%, 
+  /* 2. РАСКАЛЕННЫЙ КАТОД (ВНУТРИ ЛИНИИ) */
+  /* Создает яркую центральную ось, которая теперь не перекрывается тенями */
+  background: linear-gradient(
+    to right,
+    var(--renix-clock-glow-color, #ff3300) 0%,
+    var(--renix-clock-color, #ff7700) 30%,
+    #ffffff 50%,                 /* Белый центр (нить накала) */
+    var(--renix-clock-color, #ff7700) 70%,
     var(--renix-clock-glow-color, #ff3300) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent; /* Скрывает сплошной color, проявляя градиент */
+  -webkit-text-fill-color: transparent;
 
-
-  text-shadow:
-    0 0 var(--renix-glow-4,4px)
-      var(--renix-clock-glow-color,#ff3300),
-    0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500),
-    0 0 var(--renix-glow-20,20px)
-      var(--renix-clock-color,#ff7700),
-    0 0 var(--renix-glow-30,30px)
-      rgba(255,85,0,.4);
-
-  opacity:1;
-  z-index:2;
+  opacity: 1;
+  z-index: 2;
 }
 
 .renix-ss02{
