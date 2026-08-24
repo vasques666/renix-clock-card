@@ -79,7 +79,7 @@ const RENIX_CSS = `
   justify-content:center;
 
   z-index:40;
-  pointer-events:none;
+
 }
 
 .renix-date{
@@ -109,6 +109,10 @@ const RENIX_CSS = `
 
   white-space:nowrap;
   z-index:40;
+  
+ /* CLICK */
+  pointer-events:auto;
+  cursor:pointer;
 }
 
 .renix-weather-icon{
@@ -1488,17 +1492,31 @@ const ampm=
         :
         '';
 
-    const top=
-      C.show_date
-        ?
-          `<div class="renix-header">
-            <div class="renix-date">
-              ${topIcon}
-              <span>${date}${topWeekday}</span>
-            </div>
-          </div>`
-        :
-        '';
+const top=
+  C.show_date
+    ?
+      `<div class="renix-header">
+        <div
+          class="
+            renix-date
+            ${C.weather_entity ? 'renix-clickable' : ''}
+          "
+          ${
+            C.weather_entity
+              ?
+                `data-entity-id="${this._escape(
+                  C.weather_entity
+                )}"`
+              :
+                ''
+          }
+        >
+          ${topIcon}
+          <span>${date}${topWeekday}</span>
+        </div>
+      </div>`
+    :
+      '';
 
     /* =====================================================
        SENSOR BLOCK
