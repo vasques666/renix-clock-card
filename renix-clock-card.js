@@ -378,7 +378,7 @@ const RENIX_CSS = `
    ========================================================= */
 
 .renix-seconds-core{
-  filter:url(#renix-inner-core);
+  filter:url(#renix-inner-core-seconds);
 
   color:
     var(--renix-clock-core-color,#fff1d0);
@@ -1604,6 +1604,23 @@ const ampm=
     )
   );
     
+const fontScale=
+  Math.max(
+    .45,
+    Math.min(
+      2.5,
+      (this._lastWidth || 800) / 800
+    )
+  );
+
+const coreRadius=
+  3 * fontScale;
+
+const secondsCoreRadius=
+  3 *
+  (6 / 17) *
+  fontScale;
+
 const coreFilter=`
 <svg
   width="0"
@@ -1612,6 +1629,12 @@ const coreFilter=`
   aria-hidden="true"
 >
   <defs>
+
+    <!-- ===============================================
+         MAIN DIGITS
+         17rem
+         Base radius = 3px
+         =============================================== -->
 
     <filter
       id="renix-inner-core"
@@ -1626,6 +1649,48 @@ const coreFilter=`
         in="SourceAlpha"
         operator="erode"
         radius="${coreRadius.toFixed(2)}"
+        result="inner"
+      />
+
+      <feFlood
+        flood-color="white"
+        flood-opacity="1"
+        result="coreColor"
+      />
+
+      <feComposite
+        in="coreColor"
+        in2="inner"
+        operator="in"
+        result="core"
+      />
+
+      <feMerge>
+        <feMergeNode in="core"/>
+      </feMerge>
+
+    </filter>
+
+
+    <!-- ===============================================
+         SECONDS
+         6rem
+         Radius proportional to font size
+         =============================================== -->
+
+    <filter
+      id="renix-inner-core-seconds"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+      color-interpolation-filters="sRGB"
+    >
+
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="${secondsCoreRadius.toFixed(2)}"
         result="inner"
       />
 
