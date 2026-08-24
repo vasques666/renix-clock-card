@@ -340,6 +340,57 @@ const RENIX_CSS = `
   z-index:2;
 }
 
+/* =========================================================
+   INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-core{
+  position:absolute;
+
+  /*
+   * Same glyph and same geometry as renix-base.
+   */
+  font-feature-settings:normal;
+
+  /*
+   * The SVG filter extracts the inner part
+   * of the existing glyph.
+   */
+  filter:url(#renix-inner-core);
+
+  /*
+   * Core color is deliberately brighter than
+   * the normal filament.
+   */
+  color:var(--renix-clock-core-color,#fff1d0);
+
+  opacity:
+    var(--renix-clock-core-opacity,.85);
+
+  z-index:3;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   SECONDS INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-seconds-core{
+  filter:url(#renix-inner-core-seconds);
+
+  color:
+    var(--renix-clock-core-color,#fff1d0);
+
+  opacity:
+    var(--renix-seconds-core-opacity,.55);
+
+  z-index:19;
+
+  pointer-events:none;
+}
+
 .renix-ss02{
   font-feature-settings:"ss02" 1;
 
@@ -378,7 +429,7 @@ const RENIX_CSS = `
   white-space:nowrap;
   pointer-events:none;
 
-  z-index:3;
+  z-index:5;
 
   color:transparent;
 
@@ -463,11 +514,24 @@ const RENIX_CSS = `
 
   left:50%;
 
-  width:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
-  height:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
+  width:calc(
+    23px *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  height:calc(
+    23px *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
 
   margin-left:
-    calc(-6.5px * var(--renix-scale) * var(--renix-clock-factor));
+    calc(
+      -6.5px *
+      var(--renix-scale) *
+      var(--renix-clock-factor)
+    );
 
   border-radius:50%;
 
@@ -476,10 +540,42 @@ const RENIX_CSS = `
   box-shadow:
     0 0 var(--renix-glow-4,4px)
       var(--renix-clock-glow-color,#ff3300),
+
     0 0 var(--renix-glow-10,10px)
       var(--renix-clock-glow-color,#ff5500),
+
     0 0 var(--renix-glow-20,20px)
       var(--renix-clock-color,#ff7700);
+
+  /*
+   * Needed for the inner bright core.
+   */
+  overflow:visible;
+}
+
+.renix-colon span::after{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:42%;
+  height:42%;
+
+  transform:translate(-50%,-50%);
+
+  border-radius:50%;
+
+  background:
+    rgba(255,245,220,.95);
+
+  box-shadow:
+    0 0 2px rgba(255,245,220,.9),
+    0 0 4px rgba(255,210,140,.7);
+
+  pointer-events:none;
 }
 
 .renix-colon span:first-child{
@@ -833,6 +929,18 @@ const RENIX_CSS = `
     brightness(
       var(--renix-top-brightness,.5)
     );
+}
+/* =========================================================
+   NIGHT MODE — DISABLE INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-card.night .renix-core,
+.renix-card.night .renix-seconds-core{
+  display:none !important;
+}
+
+.renix-card.night .renix-colon span::after{
+  display:none;
 }
 
 .renix-card.hide-grid .renix-grid{
@@ -1485,7 +1593,128 @@ const ampm=
       );
 
     const C=this._config;
+    
+const fontScale=
+  Math.max(
+    .45,
+    Math.min(
+      2.5,
+      (this._lastWidth || 800) / 800
+    )
+  );
 
+const coreRadius=
+  3 * fontScale;
+    
+const secondsCoreOpacity=
+  Math.min(
+    .65,
+    Math.max(
+      .35,
+      .55 * fontScale
+    )
+  );
+
+const secondsCoreRadius=
+  3 *
+  (6 / 17) *
+  fontScale;
+
+const coreFilter=`
+<svg
+  width="0"
+  height="0"
+  style="position:absolute"
+  aria-hidden="true"
+>
+  <defs>
+
+    <!-- ===============================================
+         MAIN DIGITS
+         17rem
+         Base radius = 3px
+         =============================================== -->
+
+    <filter
+      id="renix-inner-core"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+      color-interpolation-filters="sRGB"
+    >
+
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="${coreRadius.toFixed(2)}"
+        result="inner"
+      />
+
+      <feFlood
+        flood-color="white"
+        flood-opacity="1"
+        result="coreColor"
+      />
+
+      <feComposite
+        in="coreColor"
+        in2="inner"
+        operator="in"
+        result="core"
+      />
+
+      <feMerge>
+        <feMergeNode in="core"/>
+      </feMerge>
+
+    </filter>
+
+
+    <!-- ===============================================
+         SECONDS
+         6rem
+         Radius proportional to font size
+         =============================================== -->
+
+    <filter
+      id="renix-inner-core-seconds"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+      color-interpolation-filters="sRGB"
+    >
+
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="${secondsCoreRadius.toFixed(2)}"
+        result="inner"
+      />
+
+      <feFlood
+        flood-color="white"
+        flood-opacity="1"
+        result="coreColor"
+      />
+
+      <feComposite
+        in="coreColor"
+        in2="inner"
+        operator="in"
+        result="core"
+      />
+
+      <feMerge>
+        <feMergeNode in="core"/>
+      </feMerge>
+
+    </filter>
+
+  </defs>
+</svg>`;
+    
     const temp=
       this._escape(
         this._val(
@@ -1795,6 +2024,8 @@ ${info(
     this.shadowRoot.innerHTML=
       `<style>${RENIX_CSS}</style>
 
+  ${coreFilter}
+
       <div
         class="renix-shell"
         style="
@@ -1855,6 +2086,26 @@ ${info(
 
           --renix-clock-color:
             ${this._rgba(C.clock_color_rgb,1)};
+
+            --renix-clock-core-color:
+  rgba(
+    255,
+    245,
+    220,
+    ${Math.min(
+      1,
+      0.72 + C.clock_glow * 0.14
+    )}
+  );
+
+--renix-clock-core-opacity:
+  ${Math.min(
+    1,
+    0.72 + C.clock_glow * 0.14
+  )};
+
+  --renix-seconds-core-opacity:
+  ${secondsCoreOpacity};
 
           --renix-clock-glow-color:
             ${this._rgba(C.clock_glow_color_rgb,1)};
@@ -1932,6 +2183,17 @@ ${info(
                 <span>${h}</span>
               </div>
 
+<div
+  class="
+    renix-digit-layer
+    renix-top-item
+    renix-hours-layer
+    renix-core
+  "
+>
+  <span>${h}</span>
+</div>
+
               <div
                 class="
                   renix-grid
@@ -1976,6 +2238,17 @@ ${info(
               </div>
 
               <div
+  class="
+    renix-digit-layer
+    renix-top-item
+    renix-minutes-layer
+    renix-core
+  "
+>
+  <span>${m}</span>
+</div>
+
+              <div
                 class="
                   renix-grid
                   renix-top-item
@@ -2011,11 +2284,47 @@ ${info(
   <span>${s}</span>
 </div>
 
-              ${C.show_seconds ? `
-                <div class="renix-seconds-layer renix-top-item renix-seconds-ss03"><span>${s}</span></div>
-                <div class="renix-seconds-layer renix-top-item renix-seconds-base"><span>${s}</span></div>
-                <div class="renix-seconds-layer renix-top-item renix-seconds-ss02"><span>${s}</span></div>
-              ` : ''}
+${C.show_seconds ? `
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-ss03
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-base
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-core
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-ss02
+    "
+  >
+    <span>${s}</span>
+  </div>
+` : ''}
 
               ${C.time_format==='ampm' ? `
                 <div class="renix-ampm renix-top-item">
