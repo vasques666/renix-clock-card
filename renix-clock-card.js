@@ -340,80 +340,6 @@ const RENIX_CSS = `
   z-index:2;
 }
 
-/* =========================================================
-   BRIGHT FILAMENT CORE
-   Bright ~3px center of the active reNix filament.
-   ========================================================= */
-
-.renix-core{
-  font-feature-settings:normal;
-
-  /*
-   * Core is drawn over the normal active filament.
-   */
-  color:var(--renix-clock-core-color,#fff2d0);
-
-  /*
-   * Keep the core narrow and bright.
-   */
-  -webkit-text-stroke:
-    calc(.05px * var(--renix-scale))
-    var(--renix-clock-core-color,#fff2d0);
-
-  text-shadow:
-    0 0 calc(1px * var(--renix-scale))
-      var(--renix-clock-core-color,#fff2d0),
-
-    0 0 calc(2px * var(--renix-scale))
-      var(--renix-clock-core-glow,rgba(255,220,150,.95)),
-
-    0 0 calc(3px * var(--renix-scale))
-      var(--renix-clock-core-glow,rgba(255,180,80,.65));
-
-  /*
-   * The bright center must remain inside the
-   * normal filament glow.
-   */
-  opacity:
-    var(--renix-clock-core-opacity,.9);
-
-  z-index:3;
-
-  pointer-events:none;
-}
-
-
-/* =========================================================
-   SECONDS BRIGHT FILAMENT CORE
-   ========================================================= */
-
-.renix-seconds-core{
-  font-feature-settings:normal;
-
-  color:var(--renix-clock-core-color,#fff2d0);
-
-  -webkit-text-stroke:
-    calc(.0px * var(--renix-scale))
-    var(--renix-clock-core-color,#fff2d0);
-
-  text-shadow:
-    0 0 calc(1px * var(--renix-scale))
-      var(--renix-clock-core-color,#fff2d0),
-
-    0 0 calc(2px * var(--renix-scale))
-      var(--renix-clock-core-glow,rgba(255,220,150,.95)),
-
-    0 0 calc(3px * var(--renix-scale))
-      var(--renix-clock-core-glow,rgba(255,180,80,.65));
-
-  opacity:
-    var(--renix-clock-core-opacity,.9);
-
-  z-index:19;
-
-  pointer-events:none;
-}
-
 .renix-ss02{
   font-feature-settings:"ss02" 1;
 
@@ -452,7 +378,7 @@ const RENIX_CSS = `
   white-space:nowrap;
   pointer-events:none;
 
-  z-index:5;
+  z-index:3;
 
   color:transparent;
 
@@ -1933,27 +1859,6 @@ ${info(
           --renix-clock-glow-color:
             ${this._rgba(C.clock_glow_color_rgb,1)};
 
-            --renix-clock-core-color:
-  rgba(255,245,220,${Math.min(
-    1,
-    0.72 + C.clock_glow * 0.14
-  )});
-
---renix-clock-core-glow:
-  ${this._rgba(
-    C.clock_glow_color_rgb,
-    Math.min(
-      1,
-      0.55 + C.clock_glow * 0.25
-    )
-  )};
-
---renix-clock-core-opacity:
-  ${Math.min(
-    1,
-    0.72 + C.clock_glow * 0.14
-  )};
-
           --renix-glow-4:
             ${4*C.clock_glow}px;
 
@@ -2027,17 +1932,6 @@ ${info(
                 <span>${h}</span>
               </div>
 
-<div
-  class="
-    renix-digit-layer
-    renix-top-item
-    renix-hours-layer
-    renix-core
-  "
->
-  <span>${h}</span>
-</div>
-
               <div
                 class="
                   renix-grid
@@ -2082,17 +1976,6 @@ ${info(
               </div>
 
               <div
-  class="
-    renix-digit-layer
-    renix-top-item
-    renix-minutes-layer
-    renix-core
-  "
->
-  <span>${m}</span>
-</div>
-
-              <div
                 class="
                   renix-grid
                   renix-top-item
@@ -2128,47 +2011,11 @@ ${info(
   <span>${s}</span>
 </div>
 
-${C.show_seconds ? `
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-ss03
-    "
-  >
-    <span>${s}</span>
-  </div>
-
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-base
-    "
-  >
-    <span>${s}</span>
-  </div>
-
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-core
-    "
-  >
-    <span>${s}</span>
-  </div>
-
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-ss02
-    "
-  >
-    <span>${s}</span>
-  </div>
-` : ''}
+              ${C.show_seconds ? `
+                <div class="renix-seconds-layer renix-top-item renix-seconds-ss03"><span>${s}</span></div>
+                <div class="renix-seconds-layer renix-top-item renix-seconds-base"><span>${s}</span></div>
+                <div class="renix-seconds-layer renix-top-item renix-seconds-ss02"><span>${s}</span></div>
+              ` : ''}
 
               ${C.time_format==='ampm' ? `
                 <div class="renix-ampm renix-top-item">
