@@ -340,6 +340,57 @@ const RENIX_CSS = `
   z-index:2;
 }
 
+/* =========================================================
+   INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-core{
+  position:absolute;
+
+  /*
+   * Same glyph and same geometry as renix-base.
+   */
+  font-feature-settings:normal;
+
+  /*
+   * The SVG filter extracts the inner part
+   * of the existing glyph.
+   */
+  filter:url(#renix-inner-core);
+
+  /*
+   * Core color is deliberately brighter than
+   * the normal filament.
+   */
+  color:var(--renix-clock-core-color,#fff1d0);
+
+  opacity:
+    var(--renix-clock-core-opacity,.85);
+
+  z-index:3;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   SECONDS INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-seconds-core{
+  filter:url(#renix-inner-core);
+
+  color:
+    var(--renix-clock-core-color,#fff1d0);
+
+  opacity:
+    var(--renix-clock-core-opacity,.85);
+
+  z-index:19;
+
+  pointer-events:none;
+}
+
 .renix-ss02{
   font-feature-settings:"ss02" 1;
 
@@ -1486,6 +1537,56 @@ const ampm=
 
     const C=this._config;
 
+const coreFilter=`
+<svg
+  width="0"
+  height="0"
+  style="position:absolute"
+  aria-hidden="true"
+>
+  <defs>
+
+    <filter
+      id="renix-inner-core"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+      color-interpolation-filters="sRGB"
+    >
+      <!--
+        Берём только внутреннюю часть существующего глифа.
+        Внешняя геометрия цифры не увеличивается.
+      -->
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="1.5"
+        result="inner"
+      />
+
+      <feFlood
+        flood-color="white"
+        flood-opacity="1"
+        result="coreColor"
+      />
+
+      <feComposite
+        in="coreColor"
+        in2="inner"
+        operator="in"
+        result="core"
+      />
+
+      <feMerge>
+        <feMergeNode in="core"/>
+      </feMerge>
+
+    </filter>
+
+  </defs>
+</svg>`;
+    
     const temp=
       this._escape(
         this._val(
@@ -1795,6 +1896,8 @@ ${info(
     this.shadowRoot.innerHTML=
       `<style>${RENIX_CSS}</style>
 
+  ${coreFilter}
+
       <div
         class="renix-shell"
         style="
@@ -1855,6 +1958,23 @@ ${info(
 
           --renix-clock-color:
             ${this._rgba(C.clock_color_rgb,1)};
+
+            --renix-clock-core-color:
+  rgba(
+    255,
+    245,
+    220,
+    ${Math.min(
+      1,
+      0.72 + C.clock_glow * 0.14
+    )}
+  );
+
+--renix-clock-core-opacity:
+  ${Math.min(
+    1,
+    0.72 + C.clock_glow * 0.14
+  )};
 
           --renix-clock-glow-color:
             ${this._rgba(C.clock_glow_color_rgb,1)};
@@ -1932,6 +2052,17 @@ ${info(
                 <span>${h}</span>
               </div>
 
+<div
+  class="
+    renix-digit-layer
+    renix-top-item
+    renix-hours-layer
+    renix-core
+  "
+>
+  <span>${h}</span>
+</div>
+
               <div
                 class="
                   renix-grid
@@ -1976,6 +2107,17 @@ ${info(
               </div>
 
               <div
+  class="
+    renix-digit-layer
+    renix-top-item
+    renix-minutes-layer
+    renix-core
+  "
+>
+  <span>${m}</span>
+</div>
+
+              <div
                 class="
                   renix-grid
                   renix-top-item
@@ -2011,11 +2153,47 @@ ${info(
   <span>${s}</span>
 </div>
 
-              ${C.show_seconds ? `
-                <div class="renix-seconds-layer renix-top-item renix-seconds-ss03"><span>${s}</span></div>
-                <div class="renix-seconds-layer renix-top-item renix-seconds-base"><span>${s}</span></div>
-                <div class="renix-seconds-layer renix-top-item renix-seconds-ss02"><span>${s}</span></div>
-              ` : ''}
+${C.show_seconds ? `
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-ss03
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-base
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-core
+    "
+  >
+    <span>${s}</span>
+  </div>
+
+  <div
+    class="
+      renix-seconds-layer
+      renix-top-item
+      renix-seconds-ss02
+    "
+  >
+    <span>${s}</span>
+  </div>
+` : ''}
 
               ${C.time_format==='ampm' ? `
                 <div class="renix-ampm renix-top-item">
