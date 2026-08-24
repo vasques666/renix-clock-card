@@ -320,38 +320,26 @@ const RENIX_CSS = `
 .renix-hours-click-layer{
   position:absolute;
 
-  top:0;
+  inset:0;
 
-  right:calc(50% + .2em);
+  z-index:200;
 
-  height:100%;
-
-  display:flex;
-  align-items:flex-end;
-
-  font-family:renix1,monospace;
-
-  font-size:
-    calc(
-      17rem *
-      var(--renix-scale) *
-      var(--renix-clock-factor)
-    );
-
-  font-weight:400;
-  font-style:normal;
-
-  line-height:.95;
-  letter-spacing:-.12em;
-
-  white-space:nowrap;
-
-  color:transparent;
+  display:block;
 
   pointer-events:auto;
+
   cursor:pointer;
 
-  z-index:30;
+  /*
+   * Сам слой существует только как
+   * прозрачная область клика.
+   */
+  opacity:0;
+
+  /*
+   * Не допускаем участия в flex-раскладке.
+   */
+  flex:none;
 }
 
 /* =========================================================
@@ -397,42 +385,19 @@ const RENIX_CSS = `
 .renix-seconds-click-layer{
   position:absolute;
 
-  left:calc(50% + 4.5em);
+  inset:0;
 
-  bottom:
-    calc(
-      4px *
-      var(--renix-scale) *
-      var(--renix-clock-factor)
-    );
-
-  width:max-content;
-  height:auto;
+  z-index:200;
 
   display:block;
 
-  font-family:renix1,monospace;
-
-  font-size:
-    calc(
-      6rem *
-      var(--renix-scale) *
-      var(--renix-clock-factor)
-    );
-
-  font-weight:400;
-
-  line-height:.95;
-  letter-spacing:-.12em;
-
-  white-space:nowrap;
-
-  color:transparent;
-
   pointer-events:auto;
+
   cursor:pointer;
 
-  z-index:30;
+  opacity:0;
+
+  flex:none;
 }
 
 /* =========================================================
