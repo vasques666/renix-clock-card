@@ -1561,7 +1561,7 @@ const coreFilter=`
       <feMorphology
         in="SourceAlpha"
         operator="erode"
-        radius="2"
+        radius="3"
         result="inner"
       />
 
