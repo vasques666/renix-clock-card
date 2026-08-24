@@ -324,7 +324,17 @@ const RENIX_CSS = `
 .renix-base{
   font-feature-settings:normal;
 
-  color:var(--renix-clock-color,#ff7700);
+  background: radial-gradient(
+    circle, 
+    #ffffff 0%, 
+    #ffeedd 20%,
+    var(--renix-clock-color, #ff7700) 75%, 
+    var(--renix-clock-glow-color, #ff3300) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent; /* Скрывает сплошной color, проявляя градиент */
+
 
   text-shadow:
     0 0 var(--renix-glow-4,4px)
