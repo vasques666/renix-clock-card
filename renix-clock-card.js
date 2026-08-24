@@ -722,7 +722,6 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-/*.renix-card.night .renix-weather-icon,*/
 .renix-card.night .renix-date
 {
   filter:
@@ -1606,9 +1605,7 @@ const ampm=
         `<div
           class="bottom-grid ${night?'night':''}"
           style="
-            --renix-title-color:${this._rgba(C.title_color_rgb,.8)};
-            --renix-bottom-brightness:
-              ${C.bottom_night_brightness}
+            --renix-title-color:${this._rgba(C.title_color_rgb,.8)}
           "
         >
 
@@ -1771,6 +1768,9 @@ ${info(
 
           --renix-top-brightness:
             ${C.top_night_brightness};
+
+          --renix-bottom-brightness:
+            ${C.bottom_night_brightness};
         "
       >
 
@@ -2245,7 +2245,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность фона'
+        label:'Непрозрачность фона'
       },
 
       {
@@ -2266,7 +2266,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность рамки'
+        label:'Непрозрачность рамки'
       },
 
       {
@@ -2287,7 +2287,7 @@ class RenixClockCardEditor extends HTMLElement {
             mode:'slider'
           }
         },
-        label:'Прозрачность тени'
+        label:'Непрозрачность тени'
       },
 
       {
@@ -2532,7 +2532,7 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       card_background_opacity:{
-        ru:'Прозрачность фона',
+        ru:'Непрозрачность фона',
         en:'Background opacity'
       },
 
@@ -2542,7 +2542,7 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       card_border_opacity:{
-        ru:'Прозрачность рамки',
+        ru:'Непрозрачность рамки',
         en:'Border opacity'
       },
 
@@ -2552,7 +2552,7 @@ class RenixClockCardEditor extends HTMLElement {
       },
 
       card_shadow_opacity:{
-        ru:'Прозрачность тени',
+        ru:'Непрозрачность тени',
         en:'Shadow opacity'
       },
 
