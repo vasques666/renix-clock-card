@@ -1962,8 +1962,8 @@ ${info(
             --renix-clock-core-color:
   rgba(
     255,
-    245,
-    220,
+    205,
+    150,
     ${Math.min(
       1,
       0.72 + C.clock_glow * 0.14
