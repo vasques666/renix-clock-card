@@ -1594,6 +1594,16 @@ const ampm=
 
     const C=this._config;
 
+    const coreRadius=
+  3 *
+  Math.max(
+    .45,
+    Math.min(
+      2.5,
+      (this._lastWidth || 800) / 800
+    )
+  );
+    
 const coreFilter=`
 <svg
   width="0"
@@ -1611,14 +1621,11 @@ const coreFilter=`
       height="140%"
       color-interpolation-filters="sRGB"
     >
-      <!--
-        Берём только внутреннюю часть существующего глифа.
-        Внешняя геометрия цифры не увеличивается.
-      -->
+
       <feMorphology
         in="SourceAlpha"
         operator="erode"
-        radius="3"
+        radius="${coreRadius.toFixed(2)}"
         result="inner"
       />
 
