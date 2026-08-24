@@ -1593,16 +1593,6 @@ const ampm=
       );
 
     const C=this._config;
-
-    const coreRadius=
-  3 *
-  Math.max(
-    .45,
-    Math.min(
-      2.5,
-      (this._lastWidth || 800) / 800
-    )
-  );
     
 const fontScale=
   Math.max(
