@@ -384,7 +384,7 @@ const RENIX_CSS = `
     var(--renix-clock-core-color,#fff1d0);
 
   opacity:
-    var(--renix-clock-core-opacity,.85);
+    var(--renix-seconds-core-opacity,.55);
 
   z-index:19;
 
@@ -1605,6 +1605,15 @@ const fontScale=
 
 const coreRadius=
   3 * fontScale;
+    
+const secondsCoreOpacity=
+  Math.min(
+    .65,
+    Math.max(
+      .35,
+      .55 * fontScale
+    )
+  );
 
 const secondsCoreRadius=
   3 *
@@ -2094,6 +2103,9 @@ ${info(
     1,
     0.72 + C.clock_glow * 0.14
   )};
+
+  --renix-seconds-core-opacity:
+  ${secondsCoreOpacity};
 
           --renix-clock-glow-color:
             ${this._rgba(C.clock_glow_color_rgb,1)};
