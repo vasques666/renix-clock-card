@@ -3322,7 +3322,7 @@ _updateSensorValues(){
 
   /*
    * Sensor cards are not rebuilt every second.
-   * Only text nodes are updated in-place.
+   * Only their text content is updated in-place.
    */
 
   const cards =
@@ -3339,21 +3339,7 @@ _updateSensorValues(){
     this._config;
 
   /* =====================================================
-     OUTSIDE
-     ===================================================== */
-
-  const outsideTemp =
-    this._val(
-      C.outside_temperature
-    );
-
-  const outsideHumidity =
-    this._val(
-      C.outside_humidity
-    );
-
-  /* =====================================================
-     PRESSURE
+     FORMAT PRESSURE
      ===================================================== */
 
   const pressureRaw =
@@ -3378,28 +3364,16 @@ _updateSensorValues(){
         pressureRaw;
 
   /* =====================================================
-     ROOM
-     ===================================================== */
-
-  const roomTemp =
-    this._val(
-      C.room_temperature
-    );
-
-  const roomHumidity =
-    this._val(
-      C.room_humidity
-    );
-
-  /* =====================================================
-     DATA
+     VALUES
      ===================================================== */
 
   const values = [
 
     {
       value:
-        outsideTemp,
+        this._val(
+          C.outside_temperature
+        ),
 
       unit:
         this._unit(
@@ -3407,7 +3381,9 @@ _updateSensorValues(){
         ),
 
       secondary:
-        outsideHumidity,
+        this._val(
+          C.outside_humidity
+        ),
 
       secondaryUnit:
         this._unit(
@@ -3424,16 +3400,15 @@ _updateSensorValues(){
           C.pressure_entity
         ),
 
-      secondary:
-        '',
-
-      secondaryUnit:
-        ''
+      secondary:'',
+      secondaryUnit:''
     },
 
     {
       value:
-        roomTemp,
+        this._val(
+          C.room_temperature
+        ),
 
       unit:
         this._unit(
@@ -3441,7 +3416,9 @@ _updateSensorValues(){
         ),
 
       secondary:
-        roomHumidity,
+        this._val(
+          C.room_humidity
+        ),
 
       secondaryUnit:
         this._unit(
@@ -3452,7 +3429,93 @@ _updateSensorValues(){
   ];
 
   /* =====================================================
-     UPDATE DOM
+     UPDATE ONE VALUE
+     ===================================================== */
+
+  const updateValue =
+    (
+      element,
+      value,
+      unit
+    )=>{
+
+      if(!element){
+        return;
+      }
+
+      /*
+       * The first text node contains
+       * the numeric value.
+       */
+
+      let textNode =
+        Array.from(
+          element.childNodes
+        ).find(
+          node =>
+            node.nodeType ===
+            Node.TEXT_NODE
+        );
+
+      if(!textNode){
+
+        textNode =
+          document.createTextNode('');
+
+        element.insertBefore(
+          textNode,
+          element.firstChild
+        );
+
+      }
+
+      textNode.nodeValue =
+        String(value) + ' ';
+
+      /*
+       * Always guarantee the unit span.
+       */
+
+      let unitSpan =
+        element.querySelector(
+          ':scope > span'
+        );
+
+      if(!unitSpan){
+
+        unitSpan =
+          document.createElement(
+            'span'
+          );
+
+        unitSpan.style.fontSize =
+          '.55em';
+
+        unitSpan.style.marginLeft =
+          '.08em';
+
+        element.appendChild(
+          unitSpan
+        );
+
+      }
+
+      unitSpan.textContent =
+        unit || '';
+
+      /*
+       * Hide an empty unit without
+       * destroying the span.
+       */
+
+      unitSpan.style.display =
+        unit
+          ? ''
+          : 'none';
+    };
+
+  /* =====================================================
+     UPDATE CARDS
      ===================================================== */
 
   cards.forEach(
@@ -3475,105 +3538,33 @@ _updateSensorValues(){
           '.info-secondary'
         );
 
-      /* =================================================
-         MAIN VALUE
-         ================================================= */
+      /* MAIN VALUE */
 
-      if(value){
+      updateValue(
+        value,
+        data.value,
+        data.unit
+      );
 
-        const unitSpan =
-          value.querySelector(
-            'span'
-          );
-
-        /*
-         * Remove only text nodes.
-         * Unit <span> remains untouched.
-         */
-
-        Array.from(
-          value.childNodes
-        ).forEach(
-          node=>{
-
-            if(
-              node.nodeType ===
-              Node.TEXT_NODE
-            ){
-
-              node.remove();
-
-            }
-
-          }
-        );
-
-        value.insertBefore(
-          document.createTextNode(
-            data.value + ' '
-          ),
-          unitSpan || null
-        );
-
-        if(unitSpan){
-
-          unitSpan.textContent =
-            data.unit;
-
-        }
-
-      }
-
-      /* =================================================
-         SECONDARY VALUE
-         ================================================= */
+      /* SECONDARY VALUE */
 
       if(
         secondary &&
         data.secondary !== ''
       ){
 
-        const unitSpan =
-          secondary.querySelector(
-            'span'
-          );
-
-        Array.from(
-          secondary.childNodes
-        ).forEach(
-          node=>{
-
-            if(
-              node.nodeType ===
-              Node.TEXT_NODE
-            ){
-
-              node.remove();
-
-            }
-
-          }
+        updateValue(
+          secondary,
+          data.secondary,
+          data.secondaryUnit
         );
-
-        secondary.insertBefore(
-          document.createTextNode(
-            data.secondary + ' '
-          ),
-          unitSpan || null
-        );
-
-        if(unitSpan){
-
-          unitSpan.textContent =
-            data.secondaryUnit;
-
-        }
 
       }
 
     }
   );
 }
+  
   /* =======================================================
      CARD SIZE
      ======================================================= */
