@@ -514,11 +514,24 @@ const RENIX_CSS = `
 
   left:50%;
 
-  width:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
-  height:calc(23px * var(--renix-scale) * var(--renix-clock-factor));
+  width:calc(
+    23px *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  height:calc(
+    23px *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
 
   margin-left:
-    calc(-6.5px * var(--renix-scale) * var(--renix-clock-factor));
+    calc(
+      -6.5px *
+      var(--renix-scale) *
+      var(--renix-clock-factor)
+    );
 
   border-radius:50%;
 
@@ -527,10 +540,42 @@ const RENIX_CSS = `
   box-shadow:
     0 0 var(--renix-glow-4,4px)
       var(--renix-clock-glow-color,#ff3300),
+
     0 0 var(--renix-glow-10,10px)
       var(--renix-clock-glow-color,#ff5500),
+
     0 0 var(--renix-glow-20,20px)
       var(--renix-clock-color,#ff7700);
+
+  /*
+   * Needed for the inner bright core.
+   */
+  overflow:visible;
+}
+
+.renix-colon span::after{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:42%;
+  height:42%;
+
+  transform:translate(-50%,-50%);
+
+  border-radius:50%;
+
+  background:
+    rgba(255,245,220,.95);
+
+  box-shadow:
+    0 0 2px rgba(255,245,220,.9),
+    0 0 4px rgba(255,210,140,.7);
+
+  pointer-events:none;
 }
 
 .renix-colon span:first-child{
@@ -892,6 +937,10 @@ const RENIX_CSS = `
 .renix-card.night .renix-core,
 .renix-card.night .renix-seconds-core{
   display:none !important;
+}
+
+.renix-card.night .renix-colon span::after{
+  display:none;
 }
 
 .renix-card.hide-grid .renix-grid{
