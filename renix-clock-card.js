@@ -885,6 +885,14 @@ const RENIX_CSS = `
       var(--renix-top-brightness,.5)
     );
 }
+/* =========================================================
+   NIGHT MODE — DISABLE INNER FILAMENT CORE
+   ========================================================= */
+
+.renix-card.night .renix-core,
+.renix-card.night .renix-seconds-core{
+  display:none !important;
+}
 
 .renix-card.hide-grid .renix-grid{
   display:none;
