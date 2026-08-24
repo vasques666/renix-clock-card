@@ -212,6 +212,54 @@ const RENIX_CSS = `
 }
 
 /* =========================================================
+   HOURS CLICK LAYER
+   Only the hours area is clickable.
+   ========================================================= */
+
+.renix-hours-click-layer{
+  position:absolute;
+
+  top:0;
+
+  right:calc(50% + .2em);
+
+  height:100%;
+
+  display:flex;
+  align-items:flex-end;
+
+  font-family:renix1,monospace;
+  font-size:calc(
+    17rem *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  font-weight:400;
+  font-style:normal;
+
+  line-height:.95;
+  letter-spacing:-.12em;
+
+  white-space:nowrap;
+
+  /*
+   * Transparent hit area.
+   */
+  color:transparent;
+
+  /*
+   * IMPORTANT:
+   * this layer receives the click.
+   */
+  pointer-events:auto;
+
+  cursor:pointer;
+
+  z-index:30;
+}
+
+/* =========================================================
    reNix LAYERS
    ========================================================= */
 
@@ -1809,6 +1857,14 @@ ${info(
 
             <div class="renix-top">
 
+              <!-- HOURS CLICK LAYER -->
+              <div
+                class="renix-hours-click-layer"
+                title="Toggle 24 h / AM PM"
+              >
+                <span>${h}</span>
+              </div>
+
               <div
                 class="
                   renix-digit-layer
@@ -1960,6 +2016,69 @@ this.shadowRoot
     );
 
   });
+
+    /* =====================================================
+   HOURS CLICK
+   Toggle 24 h / AM PM
+   ===================================================== */
+
+const hoursClickLayer=
+  this.shadowRoot.querySelector(
+    '.renix-hours-click-layer'
+  );
+
+if(hoursClickLayer){
+
+  hoursClickLayer.addEventListener(
+    'click',
+    event=>{
+
+      event.stopPropagation();
+
+      /*
+       * Toggle time format.
+       */
+      const newFormat=
+        this._config.time_format==='24'
+          ? 'ampm'
+          : '24';
+
+      /*
+       * Update current configuration.
+       */
+      this._config={
+        ...this._config,
+        time_format:newFormat
+      };
+
+      /*
+       * Re-render immediately.
+       */
+      this._render();
+
+      /*
+       * Save configuration in Home Assistant.
+       */
+      this.dispatchEvent(
+        new CustomEvent(
+          'config-changed',
+          {
+            detail:{
+              config:{
+                ...this._config
+              }
+            },
+            bubbles:true,
+            composed:true
+          }
+        )
+      );
+
+    }
+  );
+
+}
+    
   }
 
   getCardSize(){
