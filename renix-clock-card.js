@@ -79,7 +79,7 @@ const RENIX_CSS = `
   justify-content:center;
 
   z-index:40;
-  pointer-events:none;
+
 }
 
 .renix-date{
@@ -109,6 +109,10 @@ const RENIX_CSS = `
 
   white-space:nowrap;
   z-index:40;
+  
+ /* CLICK */
+  pointer-events:auto;
+  cursor:pointer;
 }
 
 .renix-weather-icon{
