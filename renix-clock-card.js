@@ -722,7 +722,6 @@ const RENIX_CSS = `
    STATES
    ========================================================= */
 
-/*.renix-card.night .renix-weather-icon,*/
 .renix-card.night .renix-date
 {
   filter:
@@ -1606,9 +1605,7 @@ const ampm=
         `<div
           class="bottom-grid ${night?'night':''}"
           style="
-            --renix-title-color:${this._rgba(C.title_color_rgb,.8)};
-            --renix-bottom-brightness:
-              ${C.bottom_night_brightness}
+            --renix-title-color:${this._rgba(C.title_color_rgb,.8)}
           "
         >
 
@@ -1771,6 +1768,9 @@ ${info(
 
           --renix-top-brightness:
             ${C.top_night_brightness};
+
+          --renix-bottom-brightness:
+            ${C.bottom_night_brightness};
         "
       >
 
