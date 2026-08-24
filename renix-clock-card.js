@@ -357,7 +357,7 @@ const RENIX_CSS = `
    * Keep the core narrow and bright.
    */
   -webkit-text-stroke:
-    calc(.55px * var(--renix-scale))
+    calc(.05px * var(--renix-scale))
     var(--renix-clock-core-color,#fff2d0);
 
   text-shadow:
@@ -393,7 +393,7 @@ const RENIX_CSS = `
   color:var(--renix-clock-core-color,#fff2d0);
 
   -webkit-text-stroke:
-    calc(.45px * var(--renix-scale))
+    calc(.0px * var(--renix-scale))
     var(--renix-clock-core-color,#fff2d0);
 
   text-shadow:
