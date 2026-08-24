@@ -429,7 +429,7 @@ const RENIX_CSS = `
   white-space:nowrap;
   pointer-events:none;
 
-  z-index:3;
+  z-index:5;
 
   color:transparent;
 
