@@ -2168,23 +2168,16 @@ class RenixClockCard extends HTMLElement {
         C.pressure_entity
       );
 
-const pressRaw =
-  this._val(
-    C.pressure_entity
-  );
-
-const pressNumber =
-  parseFloat(
-    String(pressRaw)
-      .replace(',', '.')
-  );
-
-const press =
-  this._escape(
-    Number.isFinite(pressNumber)
-      ? pressNumber.toFixed(1)
-      : pressRaw
-  );
+    const press=
+      this._escape(
+        Number.isFinite(
+          Number(pressRaw)
+        )
+          ?
+            Number(pressRaw).toFixed(1)
+          :
+            pressRaw
+      );
 
     const rt=
       this._escape(
@@ -3321,175 +3314,266 @@ const press =
   }
 
 
-  /* =======================================================
-     SENSOR UPDATE
-     ======================================================= */
+/* =======================================================
+   SENSOR UPDATE
+   ======================================================= */
 
-  _updateSensorValues(){
+_updateSensorValues(){
 
-    /*
-     * Deliberately conservative.
-     *
-     * Sensor cards are not rebuilt every second.
-     * We update their text nodes in-place.
-     */
+  /*
+   * Sensor cards are not rebuilt every second.
+   * Only text nodes are updated in-place.
+   */
 
-    const cards=
-      this.shadowRoot
-        ?.querySelectorAll(
-          '.info-card'
-        );
+  const cards =
+    this.shadowRoot
+      ?.querySelectorAll(
+        '.info-card'
+      );
 
-    if(!cards?.length){
-      return;
-    }
+  if(!cards?.length){
+    return;
+  }
 
-    const C=this._config;
+  const C =
+    this._config;
 
-    const values=[
-      {
-        value:this._val(
+  /* =====================================================
+     OUTSIDE
+     ===================================================== */
+
+  const outsideTemp =
+    this._val(
+      C.outside_temperature
+    );
+
+  const outsideHumidity =
+    this._val(
+      C.outside_humidity
+    );
+
+  /* =====================================================
+     PRESSURE
+     ===================================================== */
+
+  const pressureRaw =
+    this._val(
+      C.pressure_entity
+    );
+
+  const pressureNumber =
+    parseFloat(
+      String(
+        pressureRaw
+      ).replace(',', '.')
+    );
+
+  const pressure =
+    Number.isFinite(
+      pressureNumber
+    )
+      ?
+        pressureNumber.toFixed(1)
+      :
+        pressureRaw;
+
+  /* =====================================================
+     ROOM
+     ===================================================== */
+
+  const roomTemp =
+    this._val(
+      C.room_temperature
+    );
+
+  const roomHumidity =
+    this._val(
+      C.room_humidity
+    );
+
+  /* =====================================================
+     DATA
+     ===================================================== */
+
+  const values = [
+
+    {
+      value:
+        outsideTemp,
+
+      unit:
+        this._unit(
           C.outside_temperature
         ),
-        unit:this._unit(
-          C.outside_temperature
-        ),
-        secondary:this._val(
-          C.outside_humidity
-        ),
-        secondaryUnit:this._unit(
+
+      secondary:
+        outsideHumidity,
+
+      secondaryUnit:
+        this._unit(
           C.outside_humidity
         )
-      },
+    },
 
-      {
-const raw =
-  this._val(C.pressure_entity);
+    {
+      value:
+        pressure,
 
-const number =
-  parseFloat(
-    String(raw).replace(',', '.')
-  );
-
-element.textContent =
-  Number.isFinite(number)
-    ? number.toFixed(1)
-    : raw;
-        unit:this._unit(
+      unit:
+        this._unit(
           C.pressure_entity
         ),
-        secondary:'',
-        secondaryUnit:''
-      },
 
-      {
-        value:this._val(
+      secondary:
+        '',
+
+      secondaryUnit:
+        ''
+    },
+
+    {
+      value:
+        roomTemp,
+
+      unit:
+        this._unit(
           C.room_temperature
         ),
-        unit:this._unit(
-          C.room_temperature
-        ),
-        secondary:this._val(
-          C.room_humidity
-        ),
-        secondaryUnit:this._unit(
+
+      secondary:
+        roomHumidity,
+
+      secondaryUnit:
+        this._unit(
           C.room_humidity
         )
-      }
-    ];
+    }
 
-    cards.forEach((card,index)=>{
+  ];
 
-      const data=
+  /* =====================================================
+     UPDATE DOM
+     ===================================================== */
+
+  cards.forEach(
+    (card,index)=>{
+
+      const data =
         values[index];
 
       if(!data){
         return;
       }
 
-      const value=
+      const value =
         card.querySelector(
           '.info-value'
         );
 
-      const secondary=
+      const secondary =
         card.querySelector(
           '.info-secondary'
         );
 
+      /* =================================================
+         MAIN VALUE
+         ================================================= */
+
       if(value){
 
-        const unitSpan=
+        const unitSpan =
           value.querySelector(
             'span'
           );
 
         /*
-         * Remove only the text node content,
-         * preserving unit span.
+         * Remove only text nodes.
+         * Unit <span> remains untouched.
          */
 
-        Array.from(value.childNodes)
-          .forEach(node=>{
+        Array.from(
+          value.childNodes
+        ).forEach(
+          node=>{
+
             if(
-              node.nodeType===
+              node.nodeType ===
               Node.TEXT_NODE
             ){
+
               node.remove();
+
             }
-          });
+
+          }
+        );
 
         value.insertBefore(
           document.createTextNode(
-            data.value+' '
+            data.value + ' '
           ),
-          unitSpan||null
+          unitSpan || null
         );
 
         if(unitSpan){
-          unitSpan.textContent=
+
+          unitSpan.textContent =
             data.unit;
+
         }
+
       }
+
+      /* =================================================
+         SECONDARY VALUE
+         ================================================= */
 
       if(
         secondary &&
-        data.secondary!==''
+        data.secondary !== ''
       ){
 
-        const unitSpan=
+        const unitSpan =
           secondary.querySelector(
             'span'
           );
 
         Array.from(
           secondary.childNodes
-        )
-          .forEach(node=>{
+        ).forEach(
+          node=>{
+
             if(
-              node.nodeType===
+              node.nodeType ===
               Node.TEXT_NODE
             ){
+
               node.remove();
+
             }
-          });
+
+          }
+        );
 
         secondary.insertBefore(
           document.createTextNode(
-            data.secondary+' '
+            data.secondary + ' '
           ),
-          unitSpan||null
+          unitSpan || null
         );
 
         if(unitSpan){
-          unitSpan.textContent=
+
+          unitSpan.textContent =
             data.secondaryUnit;
+
         }
+
       }
-    });
-  }
 
-
+    }
+  );
+}
   /* =======================================================
      CARD SIZE
      ======================================================= */
