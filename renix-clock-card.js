@@ -2427,22 +2427,7 @@ _setValueElement(element,value,unit){
         )
       );
 
-    const coreRadius=
-      3*fontScale;
-
-    const secondsCoreOpacity=
-      Math.min(
-        .65,
-        Math.max(
-          .35,
-          .55*fontScale
-        )
-      );
-
-    const secondsCoreRadius=
-      3*
-      (6/17)*
-      fontScale;
+const coreRadius=
 
     /*
      * ===============================================
@@ -2452,7 +2437,7 @@ _setValueElement(element,value,unit){
      * ===============================================
      */
 
-    const coreFilter=`
+const coreFilter=`
 <svg
   width="0"
   height="0"
@@ -2461,12 +2446,16 @@ _setValueElement(element,value,unit){
 >
   <defs>
 
+    <!-- ===============================================
+         MAIN DIGITS
+         =============================================== -->
+
     <filter
       id="renix-inner-core"
-      x="-20%"
-      y="-20%"
-      width="140%"
-      height="140%"
+      x="-10%"
+      y="-10%"
+      width="120%"
+      height="120%"
       color-interpolation-filters="sRGB"
     >
 
@@ -2496,12 +2485,17 @@ _setValueElement(element,value,unit){
 
     </filter>
 
+
+    <!-- ===============================================
+         SECONDS
+         =============================================== -->
+
     <filter
       id="renix-inner-core-seconds"
-      x="-20%"
-      y="-20%"
-      width="140%"
-      height="140%"
+      x="-10%"
+      y="-10%"
+      width="120%"
+      height="120%"
       color-interpolation-filters="sRGB"
     >
 
@@ -2533,7 +2527,6 @@ _setValueElement(element,value,unit){
 
   </defs>
 </svg>`;
-
     /* =====================================================
        SENSOR VALUES
        ===================================================== */
