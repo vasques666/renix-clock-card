@@ -978,6 +978,52 @@ class RenixClockCard extends HTMLElement {
     this._resizeObserver=null;
     this._resizeQueued=false;
     this._lastWidth=0;
+
+    /*
+     * Permanent DOM references.
+     *
+     * После первого полного render() DOM больше
+     * не пересоздаётся при обычном обновлении.
+     */
+    this._dom=null;
+
+    /*
+     * Последние отображённые значения.
+     *
+     * Нужны для того, чтобы вообще не трогать
+     * DOM, если значение фактически не изменилось.
+     */
+    this._lastDynamic={
+      h:null,
+      m:null,
+      s:null,
+      ampm:null,
+
+      dateKey:null,
+      dateText:null,
+      weekday:null,
+
+      weatherState:null,
+
+      outsideTemperature:null,
+      outsideHumidity:null,
+      pressure:null,
+      roomTemperature:null,
+      roomHumidity:null,
+
+      outsideTemperatureUnit:null,
+      outsideHumidityUnit:null,
+      pressureUnit:null,
+      roomTemperatureUnit:null,
+      roomHumidityUnit:null,
+
+      night:null
+    };
+
+    /*
+     * Состояние первичного построения.
+     */
+    this._initialized=false;
   }
 
   /* =======================================================
@@ -998,7 +1044,7 @@ class RenixClockCard extends HTMLElement {
 
       time_format:
         config.time_format||'24',
-      
+
       weather_entity:config.weather_entity||'',
       night_entity:config.night_entity||'',
 
@@ -1089,7 +1135,7 @@ class RenixClockCard extends HTMLElement {
                       String(
                         config.card_backdrop_filter
                       ).match(
-                        /blur\\(([-0-9.]+)px\\)/
+                        /blur\(([-0-9.]+)px\)/
                       )||[]
                     )[1] || 10
                   )
@@ -1097,7 +1143,9 @@ class RenixClockCard extends HTMLElement {
             ),
 
       card_background_color_rgb:
-        config.card_background_color_rgb ?? config.card_background_color ?? null,
+        config.card_background_color_rgb ??
+        config.card_background_color ??
+        null,
 
       card_background_opacity:
         config.card_background_opacity != null
@@ -1105,7 +1153,9 @@ class RenixClockCard extends HTMLElement {
           : 0.08,
 
       card_border_color_rgb:
-        config.card_border_color_rgb ?? config.card_border_color ?? null,
+        config.card_border_color_rgb ??
+        config.card_border_color ??
+        null,
 
       card_border_opacity:
         config.card_border_opacity != null
@@ -1113,7 +1163,9 @@ class RenixClockCard extends HTMLElement {
           : 0.15,
 
       card_shadow_color_rgb:
-        config.card_shadow_color_rgb ?? config.card_shadow_color ?? null,
+        config.card_shadow_color_rgb ??
+        config.card_shadow_color ??
+        null,
 
       card_shadow_opacity:
         config.card_shadow_opacity != null
@@ -1139,10 +1191,14 @@ class RenixClockCard extends HTMLElement {
          =================================================== */
 
       clock_color_rgb:
-        config.clock_color_rgb ?? config.clock_color ?? [255,119,0],
+        config.clock_color_rgb ??
+        config.clock_color ??
+        [255,119,0],
 
       clock_glow_color_rgb:
-        config.clock_glow_color_rgb ?? config.clock_glow_color ?? [255,85,0],
+        config.clock_glow_color_rgb ??
+        config.clock_glow_color ??
+        [255,85,0],
 
       clock_glow:
         config.clock_glow != null
@@ -1150,45 +1206,84 @@ class RenixClockCard extends HTMLElement {
           : 1,
 
       outside_color_rgb:
-        config.outside_color_rgb ?? config.outside_color ?? [0,144,48],
+        config.outside_color_rgb ??
+        config.outside_color ??
+        [0,144,48],
 
       outside_stroke:
-        config.outside_stroke||'#209030',
+        config.outside_stroke ||
+        '#209030',
 
       outside_glow:
-        config.outside_glow||
+        config.outside_glow ||
         'rgba(0,153,16,.5)',
 
       pressure_color_rgb:
-        config.pressure_color_rgb ?? config.pressure_color ?? [0,153,187],
+        config.pressure_color_rgb ??
+        config.pressure_color ??
+        [0,153,187],
 
       pressure_stroke:
-        config.pressure_stroke||'#3377dd',
+        config.pressure_stroke ||
+        '#3377dd',
 
       pressure_glow:
-        config.pressure_glow||
+        config.pressure_glow ||
         'rgba(0,153,187,.5)',
 
       room_color_rgb:
-        config.room_color_rgb ?? config.room_color ?? [187,187,0],
+        config.room_color_rgb ??
+        config.room_color ??
+        [187,187,0],
 
       room_stroke:
-        config.room_stroke||'#bbbb55',
+        config.room_stroke ||
+        '#bbbb55',
 
       room_glow:
-        config.room_glow||
+        config.room_glow ||
         'rgba(187,187,0,.5)',
 
       title_color_rgb:
-        config.title_color_rgb ?? config.title_color ?? [255,119,0]
+        config.title_color_rgb ??
+        config.title_color ??
+        [255,119,0]
     };
 
-    this._render();
+    /*
+     * Configuration changes can affect DOM structure,
+     * CSS, visibility, filters, etc.
+     *
+     * Therefore ONLY here we do a full render.
+     */
+    this._fullRender();
   }
 
+  /* =======================================================
+     HASS
+     ======================================================= */
+
   set hass(hass){
+
+    const oldHass=this._hass;
+
     this._hass=hass;
-    this._render();
+
+    /*
+     * First hass may arrive before the first render.
+     */
+    if(!this._initialized){
+      this._fullRender();
+      return;
+    }
+
+    /*
+     * No DOM rebuild.
+     *
+     * Only entities whose state actually changed
+     * are inspected/updated.
+     */
+    this._updateHass(oldHass,hass);
   }
 
   /* =======================================================
@@ -1196,8 +1291,17 @@ class RenixClockCard extends HTMLElement {
      ======================================================= */
 
   connectedCallback(){
+
     this._start();
     this._observeSize();
+
+    /*
+     * In case connectedCallback happens before
+     * setConfig()/hass.
+     */
+    if(!this._initialized && this._config){
+      this._fullRender();
+    }
   }
 
   disconnectedCallback(){
@@ -1210,6 +1314,10 @@ class RenixClockCard extends HTMLElement {
       this._resizeObserver=null;
     }
   }
+
+  /* =======================================================
+     TIMER
+     ======================================================= */
 
   _start(){
 
@@ -1231,7 +1339,16 @@ class RenixClockCard extends HTMLElement {
 
       this._timer=null;
 
-      this._render();
+      /*
+       * IMPORTANT:
+       *
+       * Previously:
+       *     this._render();
+       *
+       * Now:
+       *     only dynamic clock elements.
+       */
+      this._updateClock();
 
       this._scheduleNextSecond();
 
@@ -1240,15 +1357,6 @@ class RenixClockCard extends HTMLElement {
 
   /* =======================================================
      ADAPTIVE SIZE
-     
-     IMPORTANT:
-     scale is calculated ONLY from actual WIDTH.
-     
-     800px => scale 1
-     400px => scale .5
-     1200px => scale 1.5
-     
-     Height config does NOT participate.
      ======================================================= */
 
   _observeSize(){
@@ -1315,10 +1423,6 @@ class RenixClockCard extends HTMLElement {
     const width=
       rect.width || 800;
 
-    /*
-     * Reference geometry = 800 x 480.
-     * Height is derived from width.
-     */
     const scale=
       Math.max(
         .45,
@@ -1344,16 +1448,19 @@ class RenixClockCard extends HTMLElement {
      ======================================================= */
 
   _state(id){
+
     return id &&
       this._hass?.states?.[id] ||
       null;
   }
 
   _val(id){
+
     return this._state(id)?.state ?? '—';
   }
 
   _unit(id){
+
     return this._state(id)
       ?.attributes
       ?.unit_of_measurement || '';
@@ -1401,165 +1508,231 @@ class RenixClockCard extends HTMLElement {
   }
 
   _css(v){
-    if (v === null || v === undefined || v === '') return '';
-    if (typeof v === 'number') return `${v}px`;
-    if (/^\d+(\.\d+)?$/.test(String(v).trim())) return `${String(v).trim()}px`;
-      return String(v);
+
+    if(
+      v===null ||
+      v===undefined ||
+      v===''
+    ){
+      return '';
     }
+
+    if(typeof v==='number'){
+      return `${v}px`;
+    }
+
+    if(
+      /^\d+(\.\d+)?$/.test(
+        String(v).trim()
+      )
+    ){
+      return `${String(v).trim()}px`;
+    }
+
+    return String(v);
+  }
 
   _rgba(color,opacity=1){
 
-    if(color==null || color===''){
+    if(
+      color==null ||
+      color===''
+    ){
       return 'transparent';
     }
 
     let r,g,b;
 
-    if(Array.isArray(color) && color.length>=3){
+    if(
+      Array.isArray(color) &&
+      color.length>=3
+    ){
       [r,g,b]=color;
+
     }else{
-      const value=String(color).trim();
+
+      const value=
+        String(color).trim();
 
       const rgb=value.match(
         /^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/i
       );
 
       if(rgb){
+
         r=rgb[1];
         g=rgb[2];
         b=rgb[3];
+
       }else{
-        const hex=value.match(/^#([0-9a-f]{6})$/i);
+
+        const hex=
+          value.match(
+            /^#([0-9a-f]{6})$/i
+          );
+
         if(!hex){
           return value;
         }
-        const n=parseInt(hex[1],16);
+
+        const n=
+          parseInt(
+            hex[1],
+            16
+          );
+
         r=n>>16;
         g=(n>>8)&255;
         b=n&255;
       }
     }
 
-    const a=Math.max(
-      0,
-      Math.min(
-        1,
-        Number(opacity)
-      )
-    );
+    const a=
+      Math.max(
+        0,
+        Math.min(
+          1,
+          Number(opacity)
+        )
+      );
 
     return `rgba(${Number(r)},${Number(g)},${Number(b)},${a})`;
   }
 
   /* =======================================================
-     RENDER
+     TIME
      ======================================================= */
 
-  _render(){
-
-    if(
-      !this.shadowRoot ||
-      !this._config
-    ){
-      return;
-    }
+  _getTimeData(){
 
     const now=new Date();
 
-const isAmPm=
-  this._config.time_format==='ampm';
+    const isAmPm=
+      this._config.time_format==='ampm';
 
-const currentHour=
-  now.getHours();
+    const currentHour=
+      now.getHours();
 
-const h=
-  isAmPm
-    ?
-      String(
-        currentHour % 12 || 12
-      ).padStart(2,'0')
-    :
-      String(
-        currentHour
-      ).padStart(2,'0');
-
-const m=
-  String(
-    now.getMinutes()
-  ).padStart(2,'0');
-
-const s=
-  String(
-    now.getSeconds()
-  ).padStart(2,'0');
-
-const ampm=
-  currentHour>=12
-    ? 'PM'
-    : 'AM';
-
-    const language=
-      this._config.language==='auto'
+    const h=
+      isAmPm
         ?
           String(
-            this._hass?.locale?.language ||
-            this._hass?.language ||
-            navigator.language ||
-            'en'
-          )
-          .toLowerCase()
-          .startsWith('ru')
-            ? 'ru'
-            : 'en'
+            currentHour%12||12
+          ).padStart(2,'0')
         :
-          this._config.language;
+          String(
+            currentHour
+          ).padStart(2,'0');
+
+    const m=
+      String(
+        now.getMinutes()
+      ).padStart(2,'0');
+
+    const s=
+      String(
+        now.getSeconds()
+      ).padStart(2,'0');
+
+    const ampm=
+      currentHour>=12
+        ? 'PM'
+        : 'AM';
+
+    return {
+      now,
+      currentHour,
+      h,
+      m,
+      s,
+      ampm
+    };
+  }
+
+  /* =======================================================
+     LANGUAGE
+     ======================================================= */
+
+  _getLanguage(){
+
+    return this._config.language==='auto'
+      ?
+        String(
+          this._hass?.locale?.language ||
+          this._hass?.language ||
+          navigator.language ||
+          'en'
+        )
+        .toLowerCase()
+        .startsWith('ru')
+          ? 'ru'
+          : 'en'
+      :
+        this._config.language;
+  }
+
+  _getLabels(){
+
+    const language=
+      this._getLanguage();
+
+    return language==='ru'
+      ?
+      {
+        months:[
+          'января','февраля','марта',
+          'апреля','мая','июня',
+          'июля','августа','сентября',
+          'октября','ноября','декабря'
+        ],
+
+        days:[
+          'Понедельник',
+          'Вторник',
+          'Среда',
+          'Четверг',
+          'Пятница',
+          'Суббота',
+          'Воскресенье'
+        ],
+
+        year:'года',
+        outside:'Улица',
+        pressure:'Давление',
+        room:'Спальня'
+      }
+      :
+      {
+        months:[
+          'January','February','March',
+          'April','May','June',
+          'July','August','September',
+          'October','November','December'
+        ],
+
+        days:[
+          'Monday','Tuesday','Wednesday',
+          'Thursday','Friday','Saturday',
+          'Sunday'
+        ],
+
+        year:'',
+        outside:'Outside',
+        pressure:'Pressure',
+        room:'Bedroom'
+      };
+  }
+
+  _getDateData(now){
+
+    const language=
+      this._getLanguage();
 
     const L=
-      language==='ru'
-        ?
-        {
-          months:[
-            'января','февраля','марта',
-            'апреля','мая','июня',
-            'июля','августа','сентября',
-            'октября','ноября','декабря'
-          ],
+      this._getLabels();
 
-          days:[
-            'Понедельник',
-            'Вторник',
-            'Среда',
-            'Четверг',
-            'Пятница',
-            'Суббота',
-            'Воскресенье'
-          ],
-
-          year:'года',
-          outside:'Улица',
-          pressure:'Давление',
-          room:'Спальня'
-        }
-        :
-        {
-          months:[
-            'January','February','March',
-            'April','May','June',
-            'July','August','September',
-            'October','November','December'
-          ],
-
-          days:[
-            'Monday','Tuesday','Wednesday',
-            'Thursday','Friday','Saturday',
-            'Sunday'
-          ],
-
-          year:'',
-          outside:'Outside',
-          pressure:'Pressure',
-          room:'Bedroom'
-        };
+    const dateKey=
+      `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
 
     const date=
       language==='ru'
@@ -1577,6 +1750,657 @@ const ampm=
         (now.getDay()+6)%7
       ];
 
+    return {
+      dateKey,
+      date,
+      weekday
+    };
+  }
+
+  /* =======================================================
+     DOM CACHE
+     ======================================================= */
+
+  _cacheDom(){
+
+    const root=this.shadowRoot;
+
+    if(!root){
+      return;
+    }
+
+    const hoursLayers=
+      [
+        ...root.querySelectorAll(
+          '.renix-hours-layer span'
+        )
+      ];
+
+    const minutesLayers=
+      [
+        ...root.querySelectorAll(
+          '.renix-minutes-layer span'
+        )
+      ];
+
+    const secondsLayers=
+      [
+        ...root.querySelectorAll(
+          '.renix-seconds-layer span'
+        )
+      ];
+
+    const hoursClick=
+      root.querySelector(
+        '.renix-hours-click-layer span'
+      );
+
+    const secondsClick=
+      root.querySelector(
+        '.renix-seconds-click-layer span'
+      );
+
+    if(hoursClick){
+      hoursLayers.push(hoursClick);
+    }
+
+    if(secondsClick){
+      secondsLayers.push(secondsClick);
+    }
+
+    this._dom={
+
+      root,
+
+      card:
+        root.querySelector(
+          '.renix-card'
+        ),
+
+      date:
+        root.querySelector(
+          '.renix-date > span:last-child'
+        ),
+
+      weatherIcon:
+        root.querySelector(
+          '.renix-weather-icon ha-icon'
+        ),
+
+      hours:
+        hoursLayers,
+
+      minutes:
+        minutesLayers,
+
+      seconds:
+        secondsLayers,
+
+      ampm:
+        root.querySelector(
+          '.renix-ampm'
+        ),
+
+      bottomGrid:
+        root.querySelector(
+          '.bottom-grid'
+        ),
+
+      info:{
+        outsideTemperature:
+          root.querySelector(
+            '.info-card:nth-child(1) .info-value'
+          ),
+
+        outsideHumidity:
+          root.querySelector(
+            '.info-card:nth-child(1) .info-secondary'
+          ),
+
+        pressure:
+          root.querySelector(
+            '.info-card:nth-child(2) .info-value'
+          ),
+
+        roomTemperature:
+          root.querySelector(
+            '.info-card:nth-child(3) .info-value'
+          ),
+
+        roomHumidity:
+          root.querySelector(
+            '.info-card:nth-child(3) .info-secondary'
+          )
+      }
+    };
+  }
+
+  /* =======================================================
+     SET TEXT INSIDE EXISTING VALUE ELEMENT
+     ======================================================= */
+
+_setValueElement(element,value,unit){
+
+  if(!element){
+    return;
+  }
+
+  /*
+   * Значение находится непосредственно в текстовом узле.
+   */
+  let textNode=null;
+
+  for(
+    const node of element.childNodes
+  ){
+
+    if(node.nodeType===3){
+
+      textNode=node;
+      break;
+    }
+  }
+
+  const newText=
+    `\n        ${value}\n        `;
+
+  if(textNode){
+
+    if(textNode.nodeValue!==newText){
+      textNode.nodeValue=newText;
+    }
+
+  }else{
+
+    element.insertBefore(
+      document.createTextNode(newText),
+      element.firstChild
+    );
+  }
+
+  /*
+   * Единица измерения ВСЕГДА должна существовать
+   * как отдельный span.
+   *
+   * Это важно при первом появлении hass:
+   * unit_of_measurement может прийти позже,
+   * чем само значение сенсора.
+   */
+  let unitElement=
+    element.querySelector(
+      ':scope > span'
+    );
+
+  if(!unitElement){
+
+    unitElement=
+      document.createElement('span');
+
+    unitElement.style.fontSize='.55em';
+    unitElement.style.marginLeft='.08em';
+
+    element.appendChild(unitElement);
+  }
+
+  if(
+    unitElement.textContent!==unit
+  ){
+    unitElement.textContent=unit;
+  }
+}
+
+  /* =======================================================
+     CLOCK UPDATE
+     ======================================================= */
+
+  _updateClock(){
+
+    if(
+      !this._initialized ||
+      !this._dom
+    ){
+      return;
+    }
+
+    const {
+      now,
+      h,
+      m,
+      s,
+      ampm
+    }=
+      this._getTimeData();
+
+    /*
+     * HOURS
+     */
+    if(
+      this._lastDynamic.h!==h
+    ){
+
+      this._lastDynamic.h=h;
+
+      for(
+        const element of this._dom.hours
+      ){
+        if(
+          element.textContent!==h
+        ){
+          element.textContent=h;
+        }
+      }
+    }
+
+    /*
+     * MINUTES
+     */
+    if(
+      this._lastDynamic.m!==m
+    ){
+
+      this._lastDynamic.m=m;
+
+      for(
+        const element of this._dom.minutes
+      ){
+        if(
+          element.textContent!==m
+        ){
+          element.textContent=m;
+        }
+      }
+    }
+
+    /*
+     * SECONDS
+     */
+    if(
+      this._lastDynamic.s!==s
+    ){
+
+      this._lastDynamic.s=s;
+
+      for(
+        const element of this._dom.seconds
+      ){
+        if(
+          element.textContent!==s
+        ){
+          element.textContent=s;
+        }
+      }
+    }
+
+    /*
+     * AM / PM
+     */
+    if(
+      this._dom.ampm &&
+      this._lastDynamic.ampm!==ampm
+    ){
+
+      this._lastDynamic.ampm=ampm;
+
+      if(
+        this._dom.ampm.textContent!==ampm
+      ){
+        this._dom.ampm.textContent=ampm;
+      }
+    }
+
+    /*
+     * DATE / WEEKDAY
+     *
+     * Only changes once per day.
+     */
+    const dateData=
+      this._getDateData(now);
+
+    if(
+      this._lastDynamic.dateKey!==
+      dateData.dateKey
+    ){
+
+      this._lastDynamic.dateKey=
+        dateData.dateKey;
+
+      this._lastDynamic.dateText=
+        dateData.date;
+
+      this._lastDynamic.weekday=
+        dateData.weekday;
+
+      if(this._dom.date){
+
+        const dateText=
+          this._config.show_weekday
+            ?
+              `${dateData.date}, ${dateData.weekday}`
+            :
+              dateData.date;
+
+        if(
+          this._dom.date.textContent.trim()!==dateText
+        ){
+          this._dom.date.textContent=dateText;
+        }
+      }
+    }
+  }
+
+  /* =======================================================
+     HASS UPDATE
+     ======================================================= */
+
+  _updateHass(oldHass,newHass){
+
+    if(
+      !this._initialized ||
+      !this._dom
+    ){
+      return;
+    }
+
+    const C=this._config;
+
+    /*
+     * -----------------------------------------------
+     * WEATHER
+     * -----------------------------------------------
+     */
+
+    if(C.weather_entity){
+
+      const newWeather=
+        newHass?.states?.[
+          C.weather_entity
+        ];
+
+      const newWeatherState=
+        newWeather?.state || '';
+
+      if(
+        newWeatherState!==
+        this._lastDynamic.weatherState
+      ){
+
+        this._lastDynamic.weatherState=
+          newWeatherState;
+
+        if(
+          this._dom.weatherIcon
+        ){
+
+          this._dom.weatherIcon.setAttribute(
+            'icon',
+            this._weatherIcon(
+              newWeatherState
+            )
+          );
+        }
+      }
+    }
+
+    /*
+     * -----------------------------------------------
+     * OUTSIDE TEMPERATURE
+     * -----------------------------------------------
+     */
+
+    this._updateSensorIfChanged(
+      oldHass,
+      newHass,
+      C.outside_temperature,
+      'outsideTemperature',
+      true
+    );
+
+    /*
+     * -----------------------------------------------
+     * OUTSIDE HUMIDITY
+     * -----------------------------------------------
+     */
+
+    this._updateSensorIfChanged(
+      oldHass,
+      newHass,
+      C.outside_humidity,
+      'outsideHumidity',
+      false
+    );
+
+    /*
+     * -----------------------------------------------
+     * PRESSURE
+     * -----------------------------------------------
+     */
+
+    this._updateSensorIfChanged(
+      oldHass,
+      newHass,
+      C.pressure_entity,
+      'pressure',
+      true
+    );
+
+    /*
+     * -----------------------------------------------
+     * ROOM TEMPERATURE
+     * -----------------------------------------------
+     */
+
+    this._updateSensorIfChanged(
+      oldHass,
+      newHass,
+      C.room_temperature,
+      'roomTemperature',
+      false
+    );
+
+    /*
+     * -----------------------------------------------
+     * ROOM HUMIDITY
+     * -----------------------------------------------
+     */
+
+    this._updateSensorIfChanged(
+      oldHass,
+      newHass,
+      C.room_humidity,
+      'roomHumidity',
+      false
+    );
+
+    /*
+     * -----------------------------------------------
+     * NIGHT MODE
+     * -----------------------------------------------
+     */
+
+    if(C.night_entity){
+
+      const oldNight=
+        oldHass?.states?.[
+          C.night_entity
+        ]?.state==='on';
+
+      const newNight=
+        newHass?.states?.[
+          C.night_entity
+        ]?.state==='on';
+
+      if(oldNight!==newNight){
+
+        this._updateNightMode(
+          newNight
+        );
+      }
+    }
+
+    /*
+     * -----------------------------------------------
+     * CLOCK
+     *
+     * hass itself may not contain time changes,
+     * therefore clock remains driven by the timer.
+     * -----------------------------------------------
+     */
+
+    this._updateClock();
+  }
+
+  /* =======================================================
+     SENSOR UPDATE
+     * ===================================================== */
+
+  _updateSensorIfChanged(
+    oldHass,
+    newHass,
+    entityId,
+    role,
+    pressureFormat
+  ){
+
+    if(!entityId){
+      return;
+    }
+
+    const oldState=
+      oldHass?.states?.[entityId];
+
+    const newState=
+      newHass?.states?.[entityId];
+
+    const oldValue=
+      oldState?.state ?? '—';
+
+    const newValue=
+      newState?.state ?? '—';
+
+    const oldUnit=
+      oldState
+        ?.attributes
+        ?.unit_of_measurement || '';
+
+    const newUnit=
+      newState
+        ?.attributes
+        ?.unit_of_measurement || '';
+
+    /*
+     * Nothing changed.
+     */
+    if(
+      oldValue===newValue &&
+      oldUnit===newUnit
+    ){
+      return;
+    }
+
+    let displayValue=
+      newValue;
+
+    if(pressureFormat){
+
+      displayValue=
+        Number.isFinite(
+          Number(newValue)
+        )
+          ?
+            Number(newValue).toFixed(1)
+          :
+            newValue;
+    }
+
+    const element=
+      this._dom.info?.[role];
+
+    if(element){
+
+      this._setValueElement(
+        element,
+        this._escape(displayValue),
+        this._escape(newUnit)
+      );
+    }
+
+    this._lastDynamic[role]=
+      newValue;
+
+    this._lastDynamic[
+      `${role}Unit`
+    ]=
+      newUnit;
+  }
+
+  /* =======================================================
+     NIGHT MODE
+     ======================================================= */
+
+  _updateNightMode(night){
+
+    if(!this._dom){
+      return;
+    }
+
+    this._lastDynamic.night=
+      night;
+
+    if(this._dom.card){
+
+      this._dom.card.classList.toggle(
+        'night',
+        night
+      );
+    }
+
+    if(this._dom.bottomGrid){
+
+      this._dom.bottomGrid.classList.toggle(
+        'night',
+        night
+      );
+    }
+  }
+
+  /* =======================================================
+     FULL RENDER
+     
+     THIS IS NOW USED ONLY FOR:
+       - initial construction
+       - configuration changes
+       - structural changes
+     ======================================================= */
+
+  _fullRender(){
+
+    if(
+      !this.shadowRoot ||
+      !this._config
+    ){
+      return;
+    }
+
+    const now=new Date();
+
+    const {
+      currentHour,
+      h,
+      m,
+      s,
+      ampm
+    }=
+      this._getTimeData();
+
+    const language=
+      this._getLanguage();
+
+    const L=
+      this._getLabels();
+
+    const dateData=
+      this._getDateData(now);
+
     const night=
       this._state(
         this._config.night_entity
@@ -1593,34 +2417,42 @@ const ampm=
       );
 
     const C=this._config;
-    
-const fontScale=
-  Math.max(
-    .45,
-    Math.min(
-      2.5,
-      (this._lastWidth || 800) / 800
-    )
-  );
 
-const coreRadius=
-  3 * fontScale;
-    
-const secondsCoreOpacity=
-  Math.min(
-    .65,
-    Math.max(
-      .35,
-      .55 * fontScale
-    )
-  );
+    const fontScale=
+      Math.max(
+        .45,
+        Math.min(
+          2.5,
+          (this._lastWidth||800)/800
+        )
+      );
 
-const secondsCoreRadius=
-  3 *
-  (6 / 17) *
-  fontScale;
+    const coreRadius=
+      3*fontScale;
 
-const coreFilter=`
+    const secondsCoreOpacity=
+      Math.min(
+        .65,
+        Math.max(
+          .35,
+          .55*fontScale
+        )
+      );
+
+    const secondsCoreRadius=
+      3*
+      (6/17)*
+      fontScale;
+
+    /*
+     * ===============================================
+     * SVG FILTERS
+     *
+     * Created only during full render.
+     * ===============================================
+     */
+
+    const coreFilter=`
 <svg
   width="0"
   height="0"
@@ -1628,12 +2460,6 @@ const coreFilter=`
   aria-hidden="true"
 >
   <defs>
-
-    <!-- ===============================================
-         MAIN DIGITS
-         17rem
-         Base radius = 3px
-         =============================================== -->
 
     <filter
       id="renix-inner-core"
@@ -1669,13 +2495,6 @@ const coreFilter=`
       </feMerge>
 
     </filter>
-
-
-    <!-- ===============================================
-         SECONDS
-         6rem
-         Radius proportional to font size
-         =============================================== -->
 
     <filter
       id="renix-inner-core-seconds"
@@ -1714,7 +2533,11 @@ const coreFilter=`
 
   </defs>
 </svg>`;
-    
+
+    /* =====================================================
+       SENSOR VALUES
+       ===================================================== */
+
     const temp=
       this._escape(
         this._val(
@@ -1795,7 +2618,7 @@ const coreFilter=`
       );
 
     /* =====================================================
-       TOP BLOCK
+       TOP
        ===================================================== */
 
     const topIcon=
@@ -1810,41 +2633,41 @@ const coreFilter=`
     const topWeekday=
       C.show_weekday
         ?
-        `, <span>${weekday}</span>`
+        `, <span>${dateData.weekday}</span>`
         :
         '';
 
-const top=
-  C.show_date
-    ?
-      `<div class="renix-header">
-        <div
-          class="
-            renix-date
-            ${C.weather_entity ? 'renix-clickable' : ''}
-          "
-          ${
-            C.weather_entity
-              ?
-                `data-entity-id="${this._escape(
-                  C.weather_entity
-                )}"`
-              :
-                ''
-          }
-        >
-          ${topIcon}
-          <span>${date}${topWeekday}</span>
-        </div>
-      </div>`
-    :
-      '';
+    const top=
+      C.show_date
+        ?
+        `<div class="renix-header">
+          <div
+            class="
+              renix-date
+              ${C.weather_entity ? 'renix-clickable':''}
+            "
+            ${
+              C.weather_entity
+                ?
+                  `data-entity-id="${this._escape(
+                    C.weather_entity
+                  )}"`
+                :
+                  ''
+            }
+          >
+            ${topIcon}
+            <span>${dateData.date}${topWeekday}</span>
+          </div>
+        </div>`
+        :
+        '';
 
     /* =====================================================
-       SENSOR BLOCK
+       INFO
        ===================================================== */
 
- const info=(
+const info=(
   title,
   value,
   unit,
@@ -1865,11 +2688,13 @@ const top=
     <div class="info-content">
 
       <div
-        class="info-value ${entityId ? 'renix-clickable' : ''}"
+        class="info-value ${entityId ? 'renix-clickable':''}"
         ${
           entityId
             ?
-              `data-entity-id="${this._escape(entityId)}"`
+              `data-entity-id="${this._escape(
+                entityId
+              )}"`
             :
               ''
         }
@@ -1880,18 +2705,12 @@ const top=
         "
       >
         ${value}
-        ${
-          unit
-            ?
-            `<span
-              style="
-                font-size:.55em;
-                margin-left:.08em
-              "
-            >${unit}</span>`
-            :
-            ''
-        }
+        <span
+          style="
+            font-size:.55em;
+            margin-left:.08em
+          "
+        >${unit || ''}</span>
       </div>
 
       ${
@@ -1900,7 +2719,7 @@ const top=
           `<div
             class="
               info-secondary
-              ${secondaryEntityId ? 'renix-clickable' : ''}
+              ${secondaryEntityId ? 'renix-clickable':''}
             "
             ${
               secondaryEntityId
@@ -1918,18 +2737,12 @@ const top=
             "
           >
             ${secondary}
-            ${
-              secondaryUnit
-                ?
-                `<span
-                  style="
-                    font-size:.55em;
-                    margin-left:.08em
-                  "
-                >${secondaryUnit}</span>`
-                :
-                ''
-            }
+            <span
+              style="
+                font-size:.55em;
+                margin-left:.08em
+              "
+            >${secondaryUnit || ''}</span>
           </div>`
           :
           ''
@@ -1938,54 +2751,64 @@ const top=
     </div>
 
   </div>`;
-
     const bottom=
       C.show_bottom_cards
         ?
         `<div
           class="bottom-grid ${night?'night':''}"
           style="
-            --renix-title-color:${this._rgba(C.title_color_rgb,.8)}
-          "
+            --renix-title-color:${this._rgba(
+              C.title_color_rgb,
+              .8
+            )}"
         >
 
-${info(
-  L.outside,
-  temp,
-  tu,
-  hum,
-  hu,
-  this._rgba(C.outside_color_rgb,1),
-  C.outside_stroke,
-  C.outside_glow,
-  C.outside_temperature,
-  C.outside_humidity
-)}
+          ${info(
+            L.outside,
+            temp,
+            tu,
+            hum,
+            hu,
+            this._rgba(
+              C.outside_color_rgb,
+              1
+            ),
+            C.outside_stroke,
+            C.outside_glow,
+            C.outside_temperature,
+            C.outside_humidity
+          )}
 
-${info(
-  L.pressure,
-  press,
-  pu,
-  '',
-  '',
-  this._rgba(C.pressure_color_rgb,1),
-  C.pressure_stroke,
-  C.pressure_glow,
-  C.pressure_entity
-)}
+          ${info(
+            L.pressure,
+            press,
+            pu,
+            '',
+            '',
+            this._rgba(
+              C.pressure_color_rgb,
+              1
+            ),
+            C.pressure_stroke,
+            C.pressure_glow,
+            C.pressure_entity
+          )}
 
-${info(
-  L.room,
-  rt,
-  ru,
-  rh,
-  rhu,
-  this._rgba(C.room_color_rgb,1),
-  C.room_stroke,
-  C.room_glow,
-  C.room_temperature,
-  C.room_humidity
-)}
+          ${info(
+            L.room,
+            rt,
+            ru,
+            rh,
+            rhu,
+            this._rgba(
+              C.room_color_rgb,
+              1
+            ),
+            C.room_stroke,
+            C.room_glow,
+            C.room_temperature,
+            C.room_humidity
+          )}
 
         </div>`
         :
@@ -2016,15 +2839,22 @@ ${info(
     );
 
     if(!this._lastWidth){
+
       requestAnimationFrame(()=>{
         this._applyAdaptiveSize();
       });
     }
 
+    /*
+     * =====================================================
+     * THE ONLY FULL DOM REBUILD
+     * =====================================================
+     */
+
     this.shadowRoot.innerHTML=
       `<style>${RENIX_CSS}</style>
 
-  ${coreFilter}
+      ${coreFilter}
 
       <div
         class="renix-shell"
@@ -2033,46 +2863,46 @@ ${info(
             ${
               C.card_background_color_rgb
                 ?
-                this._rgba(
-                  C.card_background_color_rgb,
-                  C.card_background_opacity
-                )
+                  this._rgba(
+                    C.card_background_color_rgb,
+                    C.card_background_opacity
+                  )
                 :
-                this._css(
-                  C.card_background
-                )
+                  this._css(
+                    C.card_background
+                  )
             };
 
           --renix-card-border:
             ${
               C.card_border_color_rgb
                 ?
-                `1px solid ${
-                  this._rgba(
-                    C.card_border_color_rgb,
-                    C.card_border_opacity
-                  )
-                }`
+                  `1px solid ${
+                    this._rgba(
+                      C.card_border_color_rgb,
+                      C.card_border_opacity
+                    )
+                  }`
                 :
-                this._css(
-                  C.card_border
-                )
+                  this._css(
+                    C.card_border
+                  )
             };
 
           --renix-card-shadow:
             ${
               C.card_shadow_color_rgb
                 ?
-                `0 8px 32px ${
-                  this._rgba(
-                    C.card_shadow_color_rgb,
-                    C.card_shadow_opacity
-                  )
-                }`
+                  `0 8px 32px ${
+                    this._rgba(
+                      C.card_shadow_color_rgb,
+                      C.card_shadow_opacity
+                    )
+                  }`
                 :
-                this._css(
-                  C.card_shadow
-                )
+                  this._css(
+                    C.card_shadow
+                  )
             };
 
           --renix-card-radius:
@@ -2085,30 +2915,36 @@ ${info(
             )}px);
 
           --renix-clock-color:
-            ${this._rgba(C.clock_color_rgb,1)};
+            ${this._rgba(
+              C.clock_color_rgb,
+              1
+            )};
 
-            --renix-clock-core-color:
-  rgba(
-    255,
-    245,
-    220,
-    ${Math.min(
-      1,
-      0.72 + C.clock_glow * 0.14
-    )}
-  );
+          --renix-clock-core-color:
+            rgba(
+              255,
+              245,
+              220,
+              ${Math.min(
+                1,
+                .72+C.clock_glow*.14
+              )}
+            );
 
---renix-clock-core-opacity:
-  ${Math.min(
-    1,
-    0.72 + C.clock_glow * 0.14
-  )};
+          --renix-clock-core-opacity:
+            ${Math.min(
+              1,
+              .72+C.clock_glow*.14
+            )};
 
-  --renix-seconds-core-opacity:
-  ${secondsCoreOpacity};
+          --renix-seconds-core-opacity:
+            ${secondsCoreOpacity};
 
           --renix-clock-glow-color:
-            ${this._rgba(C.clock_glow_color_rgb,1)};
+            ${this._rgba(
+              C.clock_glow_color_rgb,
+              1
+            )};
 
           --renix-glow-4:
             ${4*C.clock_glow}px;
@@ -2126,7 +2962,10 @@ ${info(
             ${C.clock_glow};
 
           --renix-title-color:
-            ${this._rgba(C.title_color_rgb,.8)};
+            ${this._rgba(
+              C.title_color_rgb,
+              .8
+            )};
 
           --renix-top-brightness:
             ${C.top_night_brightness};
@@ -2154,6 +2993,7 @@ ${info(
             <div class="renix-top">
 
               <!-- HOURS CLICK LAYER -->
+
               <div
                 class="renix-hours-click-layer"
                 title="Toggle 24 h / AM PM"
@@ -2183,16 +3023,16 @@ ${info(
                 <span>${h}</span>
               </div>
 
-<div
-  class="
-    renix-digit-layer
-    renix-top-item
-    renix-hours-layer
-    renix-core
-  "
->
-  <span>${h}</span>
-</div>
+              <div
+                class="
+                  renix-digit-layer
+                  renix-top-item
+                  renix-hours-layer
+                  renix-core
+                "
+              >
+                <span>${h}</span>
+              </div>
 
               <div
                 class="
@@ -2214,6 +3054,8 @@ ${info(
               >
                 <span>${h}</span>
               </div>
+
+              <!-- MINUTES -->
 
               <div
                 class="
@@ -2238,15 +3080,15 @@ ${info(
               </div>
 
               <div
-  class="
-    renix-digit-layer
-    renix-top-item
-    renix-minutes-layer
-    renix-core
-  "
->
-  <span>${m}</span>
-</div>
+                class="
+                  renix-digit-layer
+                  renix-top-item
+                  renix-minutes-layer
+                  renix-core
+                "
+              >
+                <span>${m}</span>
+              </div>
 
               <div
                 class="
@@ -2269,71 +3111,87 @@ ${info(
                 <span>${m}</span>
               </div>
 
+              <!-- COLON -->
+
               <div class="renix-colon">
                 <span></span>
                 <span></span>
               </div>
 
-<!-- =================================================
-     SECONDS CLICK LAYER
-     ================================================= -->
+              <!-- SECONDS CLICK LAYER -->
 
-<div
-  class="renix-seconds-click-layer"
->
-  <span>${s}</span>
-</div>
+              <div
+                class="renix-seconds-click-layer"
+              >
+                <span>${s}</span>
+              </div>
 
-${C.show_seconds ? `
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-ss03
-    "
-  >
-    <span>${s}</span>
-  </div>
+              ${
+                C.show_seconds
+                  ?
+                  `
+                    <div
+                      class="
+                        renix-seconds-layer
+                        renix-top-item
+                        renix-seconds-ss03
+                      "
+                    >
+                      <span>${s}</span>
+                    </div>
 
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-base
-    "
-  >
-    <span>${s}</span>
-  </div>
+                    <div
+                      class="
+                        renix-seconds-layer
+                        renix-top-item
+                        renix-seconds-base
+                      "
+                    >
+                      <span>${s}</span>
+                    </div>
 
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-core
-    "
-  >
-    <span>${s}</span>
-  </div>
+                    <div
+                      class="
+                        renix-seconds-layer
+                        renix-top-item
+                        renix-seconds-core
+                      "
+                    >
+                      <span>${s}</span>
+                    </div>
 
-  <div
-    class="
-      renix-seconds-layer
-      renix-top-item
-      renix-seconds-ss02
-    "
-  >
-    <span>${s}</span>
-  </div>
-` : ''}
+                    <div
+                      class="
+                        renix-seconds-layer
+                        renix-top-item
+                        renix-seconds-ss02
+                      "
+                    >
+                      <span>${s}</span>
+                    </div>
+                  `
+                  :
+                  ''
+              }
 
-              ${C.time_format==='ampm' ? `
-                <div class="renix-ampm renix-top-item">
-                  ${ampm}
-                </div>
-              ` : ''}
-              
+              ${
+                C.time_format==='ampm'
+                  ?
+                  `
+                    <div
+                      class="
+                        renix-ampm
+                        renix-top-item
+                      "
+                    >
+                      ${ampm}
+                    </div>
+                  `
+                  :
+                  ''
+              }
+
             </div>
-
           </div>
 
           <div class="renix-bottom-area">
@@ -2341,181 +3199,318 @@ ${C.show_seconds ? `
           </div>
 
         </div>
-
       </div>`;
-  
-this.shadowRoot
-  .querySelectorAll(
-    '.renix-clickable[data-entity-id]'
-  )
-  .forEach(element=>{
 
-    element.addEventListener(
-      'click',
-      event=>{
+    /*
+     * =====================================================
+     * CACHE DOM
+     * =====================================================
+     */
 
-        event.stopPropagation();
+    this._cacheDom();
 
-        const entityId=
-          element.dataset.entityId;
+    /*
+     * =====================================================
+     * RESET DYNAMIC CACHE
+     * =====================================================
+     */
 
-        if(!entityId){
-          return;
-        }
+    this._lastDynamic={
+      h:null,
+      m:null,
+      s:null,
+      ampm:null,
 
-        this.dispatchEvent(
-          new CustomEvent(
-            'hass-more-info',
-            {
-              detail:{
-                entityId
-              },
-              bubbles:true,
-              composed:true
-            }
-          )
-        );
+      dateKey:null,
+      dateText:null,
+      weekday:null,
 
-      }
-    );
+      weatherState:null,
 
-  });
+      outsideTemperature:null,
+      outsideHumidity:null,
+      pressure:null,
+      roomTemperature:null,
+      roomHumidity:null,
 
-    /* =====================================================
-   HOURS CLICK
-   Toggle 24 h / AM PM
-   ===================================================== */
+      outsideTemperatureUnit:null,
+      outsideHumidityUnit:null,
+      pressureUnit:null,
+      roomTemperatureUnit:null,
+      roomHumidityUnit:null,
 
-const hoursClickLayer=
-  this.shadowRoot.querySelector(
-    '.renix-hours-click-layer'
-  );
+      night:null
+    };
 
-if(hoursClickLayer){
+    /*
+     * =====================================================
+     * INITIAL DYNAMIC STATE
+     * =====================================================
+     */
 
-  hoursClickLayer.addEventListener(
-    'click',
-    event=>{
+    this._lastDynamic.h=h;
+    this._lastDynamic.m=m;
+    this._lastDynamic.s=s;
+    this._lastDynamic.ampm=ampm;
 
-      event.stopPropagation();
+    this._lastDynamic.dateKey=
+      dateData.dateKey;
 
-      /*
-       * Toggle time format.
-       */
-      const newFormat=
-        this._config.time_format==='24'
-          ? 'ampm'
-          : '24';
+    this._lastDynamic.dateText=
+      dateData.date;
 
-      /*
-       * Update current configuration.
-       */
-      this._config={
-        ...this._config,
-        time_format:newFormat
-      };
+    this._lastDynamic.weekday=
+      dateData.weekday;
 
-      /*
-       * Re-render immediately.
-       */
-      this._render();
+    this._lastDynamic.weatherState=
+      weather?.state||'';
 
-      /*
-       * Save configuration in Home Assistant.
-       */
-      this.dispatchEvent(
-        new CustomEvent(
-          'config-changed',
-          {
-            detail:{
-              config:{
-                ...this._config
-              }
-            },
-            bubbles:true,
-            composed:true
-          }
-        )
-      );
+    this._lastDynamic.night=
+      night;
 
+    /*
+     * =====================================================
+     * EVENT HANDLERS
+     *
+     * Created ONLY ON FULL RENDER.
+     * =====================================================
+     */
+
+    this._installEventHandlers();
+
+    /*
+     * =====================================================
+     * MARK INITIALIZED
+     * =====================================================
+     */
+
+    this._initialized=true;
+
+    /*
+     * =====================================================
+     * INITIAL SIZE
+     * =====================================================
+     */
+
+    if(!this._lastWidth){
+
+      requestAnimationFrame(()=>{
+        this._applyAdaptiveSize();
+      });
     }
-  );
-
-}
-  /* =====================================================
-     SECONDS CLICK
-     Toggle seconds ON / OFF
-     ===================================================== */
-
-  const secondsClickLayer=
-    this.shadowRoot.querySelector(
-      '.renix-seconds-click-layer'
-    );
-
-  if(secondsClickLayer){
-
-    secondsClickLayer.addEventListener(
-      'click',
-      event=>{
-
-        event.stopPropagation();
-
-        const newValue=
-          this._config.show_seconds===false;
-
-        this._config={
-          ...this._config,
-          show_seconds:newValue
-        };
-
-        this._render();
-
-        this.dispatchEvent(
-          new CustomEvent(
-            'config-changed',
-            {
-              detail:{
-                config:{
-                  ...this._config
-                }
-              },
-              bubbles:true,
-              composed:true
-            }
-          )
-        );
-
-      }
-    );
-
   }
 
-}
+  /* =======================================================
+     EVENT HANDLERS
+     ======================================================= */
+
+  _installEventHandlers(){
+
+    if(!this.shadowRoot){
+      return;
+    }
+
+    /*
+     * -----------------------------------------------
+     * ENTITY CLICK HANDLERS
+     * -----------------------------------------------
+     */
+
+    this.shadowRoot
+      .querySelectorAll(
+        '.renix-clickable[data-entity-id]'
+      )
+      .forEach(element=>{
+
+        element.addEventListener(
+          'click',
+          event=>{
+
+            event.stopPropagation();
+
+            const entityId=
+              element.dataset.entityId;
+
+            if(!entityId){
+              return;
+            }
+
+            this.dispatchEvent(
+              new CustomEvent(
+                'hass-more-info',
+                {
+                  detail:{
+                    entityId
+                  },
+                  bubbles:true,
+                  composed:true
+                }
+              )
+            );
+
+          }
+        );
+
+      });
+
+    /*
+     * -----------------------------------------------
+     * HOURS CLICK
+     * -----------------------------------------------
+     */
+
+    const hoursClickLayer=
+      this.shadowRoot.querySelector(
+        '.renix-hours-click-layer'
+      );
+
+    if(hoursClickLayer){
+
+      hoursClickLayer.addEventListener(
+        'click',
+        event=>{
+
+          event.stopPropagation();
+
+          const newFormat=
+            this._config.time_format==='24'
+              ? 'ampm'
+              : '24';
+
+          this._config={
+            ...this._config,
+            time_format:newFormat
+          };
+
+          /*
+           * Configuration changes alter the DOM:
+           *
+           * - AM/PM element appears/disappears
+           * - hour formatting changes
+           *
+           * Therefore full render is correct here.
+           */
+          this._fullRender();
+
+          this.dispatchEvent(
+            new CustomEvent(
+              'config-changed',
+              {
+                detail:{
+                  config:{
+                    ...this._config
+                  }
+                },
+                bubbles:true,
+                composed:true
+              }
+            )
+          );
+
+        }
+      );
+    }
+
+    /*
+     * -----------------------------------------------
+     * SECONDS CLICK
+     * -----------------------------------------------
+     */
+
+    const secondsClickLayer=
+      this.shadowRoot.querySelector(
+        '.renix-seconds-click-layer'
+      );
+
+    if(secondsClickLayer){
+
+      secondsClickLayer.addEventListener(
+        'click',
+        event=>{
+
+          event.stopPropagation();
+
+          const newValue=
+            this._config.show_seconds===false;
+
+          this._config={
+            ...this._config,
+            show_seconds:newValue
+          };
+
+          /*
+           * show_seconds changes DOM structure,
+           * therefore full render.
+           */
+          this._fullRender();
+
+          this.dispatchEvent(
+            new CustomEvent(
+              'config-changed',
+              {
+                detail:{
+                  config:{
+                    ...this._config
+                  }
+                },
+                bubbles:true,
+                composed:true
+              }
+            )
+          );
+
+        }
+      );
+    }
+  }
+
+  /* =======================================================
+     CARD SIZE
+     ======================================================= */
 
   getCardSize(){
+
     return this._config.show_bottom_cards
       ? 5
       : 4;
   }
 
+  /* =======================================================
+     CONFIG ELEMENT
+     ======================================================= */
+
   static getConfigElement(){
+
     return document.createElement(
       'renix-clock-card-editor'
     );
   }
 
+  /* =======================================================
+     STUB CONFIG
+     ======================================================= */
+
   static getStubConfig(){
+
     return {
-      weather_entity:'weather.yandex_pogoda',
-      night_entity:'input_boolean.night_mode',
+      weather_entity:
+        'weather.yandex_pogoda',
+
+      night_entity:
+        'input_boolean.night_mode',
+
       outside_temperature:
         'sensor.spalnia_ulitsa_temperature',
+
       outside_humidity:
         'sensor.spalnia_ulitsa_humidity',
+
       pressure_entity:
         'sensor.spalnia_atmospheric_pressure',
+
       room_temperature:
         'sensor.spalnia_temperature',
+
       room_humidity:
         'sensor.spalnia_humidity'
     };
