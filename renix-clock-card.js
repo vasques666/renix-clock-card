@@ -1491,7 +1491,7 @@ _applyAdaptiveSize(){
   if(secondsCoreMorphology){
 
     const secondsCoreRadius=
-      scale;
+      0.8*scale;
 
     secondsCoreMorphology.setAttribute(
       'radius',
@@ -2519,7 +2519,7 @@ _setValueElement(element,value,unit){
       );
 
     const secondsCoreRadius=
-      fontScale;
+      0.8*fontScale;
 
     /*
      * ===============================================
