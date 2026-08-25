@@ -2420,7 +2420,7 @@ _setValueElement(element,value,unit){
 
     const fontScale=
       Math.max(
-        .5,
+        .05,
         Math.min(
           12.5,
           (this._lastWidth||800)/800
