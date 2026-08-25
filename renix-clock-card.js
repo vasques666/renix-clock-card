@@ -658,14 +658,14 @@ class RenixClockCard extends HTMLElement {
          * later by ResizeObserver.
          * =====================================================
          */
-        const coreRadius = 3 * scale;
+        const coreRadius = 4 * scale;
         this.style.setProperty('--renix-core-stroke', coreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
          * SECONDS INNER FILAMENT
          * =====================================================
          */
-        const secondsCoreRadius = 0.8 * scale;
+        const secondsCoreRadius = 1.1 * scale;
         this.style.setProperty('--renix-seconds-core-stroke', secondsCoreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
@@ -1163,9 +1163,9 @@ class RenixClockCard extends HTMLElement {
         const wi = this._weatherIcon(weather?.state || '');
         const C = this._config;
         const fontScale = Math.max(.45, Math.min(2.5, (this._lastWidth || 800) / 800));
-        const coreRadius = 3 * fontScale;
+        const coreRadius = 4 * fontScale;
         const secondsCoreOpacity = Math.min(.65, Math.max(.35, .55 * fontScale));
-        const secondsCoreRadius = 0.8 * fontScale;
+        const secondsCoreRadius = 1.1 * fontScale;
         /*
          * ===============================================
          * Inner filament "core" now uses -webkit-text-stroke
