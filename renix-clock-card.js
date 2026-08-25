@@ -2449,7 +2449,7 @@ const coreRadius=
     .85,
     Math.min(
       2.2,
-      2.0 * fontScale
+      3.0 * fontScale
     )
   );
 
