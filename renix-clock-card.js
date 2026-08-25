@@ -652,25 +652,20 @@ class RenixClockCard extends HTMLElement {
          * INNER FILAMENT STROKE WIDTH SCALE
          *
          * Важно:
-         * scaled against the actual glyph font-size (card scale
-         * × clock factor), not just card scale, so the stroke
-         * stays proportional to the rendered digit size.
          * these custom properties feed the -webkit-text-stroke
          * width on .renix-core / .renix-seconds-core, and must
          * be kept in sync with --renix-scale as it's updated
          * later by ResizeObserver.
          * =====================================================
          */
-        const clockFactor = .75;
-        const fontScale = scale * clockFactor;
-        const coreRadius = 6 * fontScale;
+        const coreRadius = 6 * scale;
         this.style.setProperty('--renix-core-stroke', coreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
          * SECONDS INNER FILAMENT
          * =====================================================
          */
-        const secondsCoreRadius = 1.3 * fontScale;
+        const secondsCoreRadius = 2.1 * scale;
         this.style.setProperty('--renix-seconds-core-stroke', secondsCoreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
@@ -1168,11 +1163,9 @@ class RenixClockCard extends HTMLElement {
         const wi = this._weatherIcon(weather?.state || '');
         const C = this._config;
         const fontScale = Math.max(.45, Math.min(2.5, (this._lastWidth || 800) / 800));
-        const clockFactor = .75;
-        const glyphScale = fontScale * clockFactor;
-        const coreRadius = 6 * glyphScale;
+        const coreRadius = 4 * fontScale;
         const secondsCoreOpacity = Math.min(.65, Math.max(.35, .55 * fontScale));
-        const secondsCoreRadius = 1.3 * glyphScale;
+        const secondsCoreRadius = 1.1 * fontScale;
         /*
          * ===============================================
          * Inner filament "core" now uses -webkit-text-stroke
