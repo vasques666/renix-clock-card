@@ -1,7 +1,7 @@
 # reNix Clock Card
 
 <p align="center">
-  <img src="docs/images/renix-clock-card-en.png" alt="Renix Clock Card" width="100%">
+  <img src="docs/images/renix-clock-card-v1.3.2-en.png" alt="Renix Clock Card" width="100%">
 </p>
 
 A custom Home Assistant Lovelace card with a layered reNix tube-style clock, weather/date information and configurable sensor panels.
