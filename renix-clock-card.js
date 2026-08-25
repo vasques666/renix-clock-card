@@ -2427,22 +2427,42 @@ _setValueElement(element,value,unit){
         )
       );
 
-    const coreRadius=
-      3*fontScale;
+/*
+ * CORE RADIUS
+ *
+ * На нормальных размерах полностью сохраняем
+ * исходное значение.
+ *
+ * На маленьких разрешениях ограничиваем
+ * erosion-radius, чтобы SVG не съедал всю
+ * тонкую нить.
+ */
+const coreRadius=
+  Math.min(
+    3*fontScale,
+    Math.max(
+      0.45,
+      1.15*fontScale
+    )
+  );
 
-    const secondsCoreOpacity=
-      Math.min(
-        .65,
-        Math.max(
-          .35,
-          .55*fontScale
-        )
-      );
+const secondsCoreOpacity=
+  Math.min(
+    .65,
+    Math.max(
+      .35,
+      .55*fontScale
+    )
+  );
 
-    const secondsCoreRadius=
-      3*
-      (6/17)*
-      fontScale;
+const secondsCoreRadius=
+  Math.min(
+    3*(6/17)*fontScale,
+    Math.max(
+      0.18,
+      .48*fontScale
+    )
+  );
 
     /*
      * ===============================================
