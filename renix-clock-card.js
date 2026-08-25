@@ -2427,34 +2427,32 @@ _setValueElement(element,value,unit){
         )
       );
 
-/*
- * CORE RADIUS
- *
- * На нормальных размерах полностью сохраняем
- * исходное значение.
- *
- * На маленьких разрешениях ограничиваем
- * erosion-radius, чтобы SVG не съедал всю
- * тонкую нить.
- */
-const coreRadius=
-  3 * fontScale;
-    
-const secondsCoreOpacity=
-  Math.min(
-    .65,
-    Math.max(
-      .35,
-      .55 * fontScale
-    )
-  );
+    const coreRadius=
+      3*fontScale;
 
-const secondsCoreRadius=
-  3 *
-  (6 / 17) *
-  fontScale;
+    const secondsCoreOpacity=
+      Math.min(
+        .65,
+        Math.max(
+          .35,
+          .55*fontScale
+        )
+      );
 
-const coreFilter=`
+    const secondsCoreRadius=
+      3*
+      (6/17)*
+      fontScale;
+
+    /*
+     * ===============================================
+     * SVG FILTERS
+     *
+     * Created only during full render.
+     * ===============================================
+     */
+
+    const coreFilter=`
 <svg
   width="0"
   height="0"
@@ -2462,12 +2460,6 @@ const coreFilter=`
   aria-hidden="true"
 >
   <defs>
-
-    <!-- ===============================================
-         MAIN DIGITS
-         17rem
-         Base radius = 3px
-         =============================================== -->
 
     <filter
       id="renix-inner-core"
@@ -2503,13 +2495,6 @@ const coreFilter=`
       </feMerge>
 
     </filter>
-
-
-    <!-- ===============================================
-         SECONDS
-         6rem
-         Radius proportional to font size
-         =============================================== -->
 
     <filter
       id="renix-inner-core-seconds"
