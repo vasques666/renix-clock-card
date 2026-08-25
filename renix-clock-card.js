@@ -1167,8 +1167,8 @@ class RenixClockCard extends HTMLElement {
         const weather = this._state(this._config.weather_entity);
         const wi = this._weatherIcon(weather?.state || '');
         const C = this._config;
+        const fontScale = Math.max(.45, Math.min(2.5, (this._lastWidth || 800) / 800));
         const clockFactor = .75;
-        const fontScale = scale * clockFactor;
         const glyphScale = fontScale * clockFactor;
         const coreRadius = 6 * glyphScale;
         const secondsCoreOpacity = Math.min(.65, Math.max(.35, .55 * fontScale));
