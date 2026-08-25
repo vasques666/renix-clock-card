@@ -2374,6 +2374,51 @@ _setValueElement(element,value,unit){
 
   _fullRender(){
 
+_render(){
+
+  if(
+    !this.shadowRoot ||
+    !this._config
+  ){
+    return;
+  }
+
+  /*
+   * Before rendering SVG filters, make sure
+   * adaptive scale is already known.
+   */
+  if(!this._lastWidth){
+
+    const rect=
+      this.getBoundingClientRect();
+
+    const width=
+      rect.width || 800;
+
+    this._lastWidth=width;
+
+    const scale=
+      Math.max(
+        .45,
+        Math.min(
+          2.5,
+          width/800
+        )
+      );
+
+    this.style.setProperty(
+      '--renix-scale',
+      String(scale)
+    );
+
+    this.style.setProperty(
+      '--renix-clock-factor',
+      '.75'
+    );
+  }
+
+  ...
+    
     if(
       !this.shadowRoot ||
       !this._config
@@ -3286,18 +3331,7 @@ const info=(
 
     this._initialized=true;
 
-    /*
-     * =====================================================
-     * INITIAL SIZE
-     * =====================================================
-     */
 
-    if(!this._lastWidth){
-
-      requestAnimationFrame(()=>{
-        this._applyAdaptiveSize();
-      });
-    }
   }
 
   /* =======================================================
@@ -4222,47 +4256,6 @@ class RenixClockCardEditor extends HTMLElement {
    */
 
   _render(){
-
-  if(
-    !this.shadowRoot ||
-    !this._config
-  ){
-    return;
-  }
-
-  /*
-   * Before rendering SVG filters, make sure
-   * adaptive scale is already known.
-   */
-  if(!this._lastWidth){
-
-    const rect=
-      this.getBoundingClientRect();
-
-    const width=
-      rect.width || 800;
-
-    this._lastWidth=width;
-
-    const scale=
-      Math.max(
-        .45,
-        Math.min(
-          2.5,
-          width/800
-        )
-      );
-
-    this.style.setProperty(
-      '--renix-scale',
-      String(scale)
-    );
-
-    this.style.setProperty(
-      '--renix-clock-factor',
-      '.75'
-    );
-  }
     
     if(!this.shadowRoot){
       return;
