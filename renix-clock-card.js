@@ -1411,38 +1411,119 @@ class RenixClockCard extends HTMLElement {
     });
   }
 
-  _applyAdaptiveSize(){
+_applyAdaptiveSize(){
 
-    if(!this.shadowRoot){
-      return;
-    }
+  if(!this.shadowRoot){
+    return;
+  }
 
-    const rect=
-      this.getBoundingClientRect();
+  const rect=
+    this.getBoundingClientRect();
 
-    const width=
-      rect.width || 800;
+  const width=
+    rect.width || 800;
 
-    const scale=
-      Math.max(
-        .45,
-        Math.min(
-          2.5,
-          width/800
-        )
-      );
-
-    this.style.setProperty(
-      '--renix-scale',
-      String(scale)
+  const scale=
+    Math.max(
+      .45,
+      Math.min(
+        2.5,
+        width/800
+      )
     );
 
-    this.style.setProperty(
-      '--renix-clock-factor',
-      '.75'
+  /*
+   * =====================================================
+   * CSS SCALE
+   * =====================================================
+   */
+
+  this.style.setProperty(
+    '--renix-scale',
+    String(scale)
+  );
+
+  this.style.setProperty(
+    '--renix-clock-factor',
+    '.75'
+  );
+
+  /*
+   * =====================================================
+   * SVG INNER FILAMENT SCALE
+   *
+   * Важно:
+   * SVG filter создаётся во время _fullRender(),
+   * а --renix-scale изменяется позже ResizeObserver'ом.
+   *
+   * Поэтому radius feMorphology необходимо
+   * обновлять отдельно.
+   * =====================================================
+   */
+
+  const coreMorphology=
+    this.shadowRoot.querySelector(
+      '#renix-core-morphology'
+    );
+
+  if(coreMorphology){
+
+    const coreRadius=
+      3*scale;
+
+    coreMorphology.setAttribute(
+      'radius',
+      coreRadius.toFixed(2)
     );
   }
 
+  /*
+   * =====================================================
+   * SECONDS INNER FILAMENT
+   * =====================================================
+   */
+
+  const secondsCoreMorphology=
+    this.shadowRoot.querySelector(
+      '#renix-seconds-core-morphology'
+    );
+
+  if(secondsCoreMorphology){
+
+    const secondsCoreRadius=
+      3*
+      (6/17)*
+      scale;
+
+    secondsCoreMorphology.setAttribute(
+      'radius',
+      secondsCoreRadius.toFixed(2)
+    );
+  }
+
+  /*
+   * =====================================================
+   * CORE OPACITY
+   *
+   * Оставляем существующую логику,
+   * но также адаптируем её к размеру.
+   * =====================================================
+   */
+
+  const secondsCoreOpacity=
+    Math.min(
+      .65,
+      Math.max(
+        .35,
+        .55*scale
+      )
+    );
+
+  this.style.setProperty(
+    '--renix-seconds-core-opacity',
+    String(secondsCoreOpacity)
+  );
+}
   /* =======================================================
      STATE HELPERS
      ======================================================= */
@@ -2427,49 +2508,23 @@ _setValueElement(element,value,unit){
         )
       );
 
-/*
- * =====================================================
- * INNER CORE GEOMETRY
- *
- * Core must remain visible at small sizes,
- * but must not become too thick at large sizes.
- *
- * Main digits:
- *   scale .45 -> ~0.9 px
- *   scale 1   -> 2.0 px
- *   scale 2+  -> max 2.2 px
- *
- * Seconds use proportional radius because their
- * glyph is much smaller.
- * =====================================================
- */
+    const coreRadius=
+      3*fontScale;
 
-const coreRadius=
-  Math.max(
-    .85,
-    Math.min(
-      2.2,
-      2.0 * fontScale
-    )
-  );
+    const secondsCoreOpacity=
+      Math.min(
+        .65,
+        Math.max(
+          .35,
+          .55*fontScale
+        )
+      );
 
-const secondsCoreOpacity=
-  Math.min(
-    .65,
-    Math.max(
-      .35,
-      .55 * fontScale
-    )
-  );
+    const secondsCoreRadius=
+      3*
+      (6/17)*
+      fontScale;
 
-const secondsCoreRadius=
-  Math.max(
-    .45,
-    Math.min(
-      .8,
-      .7 * fontScale
-    )
-  );
     /*
      * ===============================================
      * SVG FILTERS
@@ -2478,7 +2533,7 @@ const secondsCoreRadius=
      * ===============================================
      */
 
-const coreFilter=`
+    const coreFilter=`
 <svg
   width="0"
   height="0"
@@ -2487,25 +2542,22 @@ const coreFilter=`
 >
   <defs>
 
-    <!-- ===============================================
-         MAIN DIGITS
-         =============================================== -->
-
     <filter
       id="renix-inner-core"
-      x="-10%"
-      y="-10%"
-      width="120%"
-      height="120%"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
       color-interpolation-filters="sRGB"
     >
 
-      <feMorphology
-        in="SourceAlpha"
-        operator="erode"
-        radius="${coreRadius.toFixed(2)}"
-        result="inner"
-      />
+<feMorphology
+  id="renix-core-morphology"
+  in="SourceAlpha"
+  operator="erode"
+  radius="${coreRadius.toFixed(2)}"
+  result="inner"
+/>
 
       <feFlood
         flood-color="white"
@@ -2526,26 +2578,22 @@ const coreFilter=`
 
     </filter>
 
-
-    <!-- ===============================================
-         SECONDS
-         =============================================== -->
-
     <filter
       id="renix-inner-core-seconds"
-      x="-10%"
-      y="-10%"
-      width="120%"
-      height="120%"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
       color-interpolation-filters="sRGB"
     >
 
-      <feMorphology
-        in="SourceAlpha"
-        operator="erode"
-        radius="${secondsCoreRadius.toFixed(2)}"
-        result="inner"
-      />
+<feMorphology
+  id="renix-seconds-core-morphology"
+  in="SourceAlpha"
+  operator="erode"
+  radius="${secondsCoreRadius.toFixed(2)}"
+  result="inner"
+/>
 
       <feFlood
         flood-color="white"
