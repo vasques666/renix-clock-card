@@ -2452,7 +2452,7 @@ _setValueElement(element,value,unit){
      * ===============================================
      */
 
-    const coreFilter=`
+const coreFilter=`
 <svg
   width="0"
   height="0"
@@ -2460,6 +2460,24 @@ _setValueElement(element,value,unit){
   aria-hidden="true"
 >
   <defs>
+
+    <!-- =================================================
+         MAIN CORE
+
+         Не даём erosion полностью уничтожить
+         центральную часть тонкой нити на малом
+         масштабе.
+
+         Вместо одного агрессивного erode используем
+         два прохода:
+           1. основной внутренний слой;
+           2. мягкий fallback-слой.
+
+         На нормальном размере основной слой
+         практически полностью определяет результат.
+         На маленьком размере fallback сохраняет
+         видимую core-нить.
+         ================================================= -->
 
     <filter
       id="renix-inner-core"
@@ -2470,31 +2488,82 @@ _setValueElement(element,value,unit){
       color-interpolation-filters="sRGB"
     >
 
+      <!-- Основное сжатие -->
       <feMorphology
         in="SourceAlpha"
         operator="erode"
         radius="${coreRadius.toFixed(2)}"
-        result="inner"
+        result="inner-main"
       />
 
+      <!-- Мягкое сжатие для малых размеров -->
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="${Math.max(
+          .25,
+          Math.min(
+            coreRadius*.42,
+            1.0
+          )
+        ).toFixed(2)}"
+        result="inner-fallback"
+      />
+
+      <!-- Белый основной core -->
       <feFlood
         flood-color="white"
         flood-opacity="1"
-        result="coreColor"
+        result="core-main-color"
       />
 
       <feComposite
-        in="coreColor"
-        in2="inner"
+        in="core-main-color"
+        in2="inner-main"
         operator="in"
-        result="core"
+        result="core-main"
+      />
+
+      <!-- Белый fallback core -->
+      <feFlood
+        flood-color="white"
+        flood-opacity="${Math.min(
+          1,
+          .34 + .22*(1/fontScale)
+        ).toFixed(3)}"
+        result="core-fallback-color"
+      />
+
+      <feComposite
+        in="core-fallback-color"
+        in2="inner-fallback"
+        operator="in"
+        result="core-fallback"
+      />
+
+      <!--
+       * Основной core имеет приоритет.
+       * Fallback существует только там,
+       * где основной слой отсутствует.
+       -->
+      <feComposite
+        in="core-fallback"
+        in2="core-main"
+        operator="out"
+        result="core-only-fallback"
       />
 
       <feMerge>
-        <feMergeNode in="core"/>
+        <feMergeNode in="core-main"/>
+        <feMergeNode in="core-only-fallback"/>
       </feMerge>
 
     </filter>
+
+
+    <!-- =================================================
+         SECONDS CORE
+         ================================================= -->
 
     <filter
       id="renix-inner-core-seconds"
@@ -2505,28 +2574,70 @@ _setValueElement(element,value,unit){
       color-interpolation-filters="sRGB"
     >
 
+      <!-- Основной core секунд -->
       <feMorphology
         in="SourceAlpha"
         operator="erode"
         radius="${secondsCoreRadius.toFixed(2)}"
-        result="inner"
+        result="inner-main"
+      />
+
+      <!--
+       * Fallback особенно важен для секунд,
+       * поскольку их core ещё тоньше.
+       -->
+      <feMorphology
+        in="SourceAlpha"
+        operator="erode"
+        radius="${Math.max(
+          .15,
+          Math.min(
+            secondsCoreRadius*.42,
+            .5
+          )
+        ).toFixed(2)}"
+        result="inner-fallback"
       />
 
       <feFlood
         flood-color="white"
         flood-opacity="1"
-        result="coreColor"
+        result="core-main-color"
       />
 
       <feComposite
-        in="coreColor"
-        in2="inner"
+        in="core-main-color"
+        in2="inner-main"
         operator="in"
-        result="core"
+        result="core-main"
+      />
+
+      <feFlood
+        flood-color="white"
+        flood-opacity="${Math.min(
+          1,
+          .30 + .20*(1/fontScale)
+        ).toFixed(3)}"
+        result="core-fallback-color"
+      />
+
+      <feComposite
+        in="core-fallback-color"
+        in2="inner-fallback"
+        operator="in"
+        result="core-fallback"
+      />
+
+      <feComposite
+        in="core-fallback"
+        in2="core-main"
+        operator="out"
+        result="core-only-fallback"
       />
 
       <feMerge>
-        <feMergeNode in="core"/>
+        <feMergeNode in="core-main"/>
+        <feMergeNode in="core-only-fallback"/>
       </feMerge>
 
     </filter>
