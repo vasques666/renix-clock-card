@@ -658,14 +658,14 @@ class RenixClockCard extends HTMLElement {
          * later by ResizeObserver.
          * =====================================================
          */
-        const coreRadius = 4 * scale;
+        const coreRadius = 6 * scale;
         this.style.setProperty('--renix-core-stroke', coreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
          * SECONDS INNER FILAMENT
          * =====================================================
          */
-        const secondsCoreRadius = 1.1 * scale;
+        const secondsCoreRadius = 2.1 * scale;
         this.style.setProperty('--renix-seconds-core-stroke', secondsCoreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
