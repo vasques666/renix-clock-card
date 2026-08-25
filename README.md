@@ -42,7 +42,7 @@ See [`example.yaml`](example.yaml).
 Красивая Nixie-style карточка часов для **Home Assistant**, созданная на основе шрифта **reNix**.
 
 <p align="center">
-  <img src="docs/images/renix-clock-card.png" alt="Renix Clock Card" width="100%">
+  <img src="docs/images/renix-clock-card-v1.3.2.png" alt="Renix Clock Card" width="100%">
 </p>
 
 Карточка объединяет часы, дату, погоду, температуру, влажность и атмосферное давление в одном блоке и позволяет настраивать внешний вид через визуальный редактор Home Assistant.
