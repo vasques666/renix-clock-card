@@ -1879,70 +1879,75 @@ class RenixClockCard extends HTMLElement {
      SET TEXT INSIDE EXISTING VALUE ELEMENT
      ======================================================= */
 
-  _setValueElement(element,value,unit){
+_setValueElement(element,value,unit){
 
-    if(!element){
-      return;
-    }
+  if(!element){
+    return;
+  }
 
-    /*
-     * The original HTML contains:
-     *
-     *   text
-     *   <span>unit</span>
-     *
-     * We modify only the existing text node
-     * and existing unit span.
-     *
-     * No innerHTML replacement.
-     */
-    let textNode=null;
+  /*
+   * Значение находится непосредственно в текстовом узле.
+   */
+  let textNode=null;
 
-    for(
-      const node of element.childNodes
-    ){
+  for(
+    const node of element.childNodes
+  ){
 
-      if(node.nodeType===3){
+    if(node.nodeType===3){
 
-        textNode=node;
-        break;
-      }
-    }
-
-    if(textNode){
-
-      const newText=
-        `\n        ${value}\n        `;
-
-      if(textNode.nodeValue!==newText){
-        textNode.nodeValue=newText;
-      }
-
-    }else{
-
-      /*
-       * Extremely defensive fallback.
-       */
-      element.insertBefore(
-        document.createTextNode(
-          `\n        ${value}\n        `
-        ),
-        element.firstChild
-      );
-    }
-
-    const unitElement=
-      element.querySelector(
-        'span'
-      );
-
-    if(unitElement){
-
-      if(unitElement.textContent!==unit){
-        unitElement.textContent=unit;
-      }
+      textNode=node;
+      break;
     }
   }
+
+  const newText=
+    `\n        ${value}\n        `;
+
+  if(textNode){
+
+    if(textNode.nodeValue!==newText){
+      textNode.nodeValue=newText;
+    }
+
+  }else{
+
+    element.insertBefore(
+      document.createTextNode(newText),
+      element.firstChild
+    );
+  }
+
+  /*
+   * Единица измерения ВСЕГДА должна существовать
+   * как отдельный span.
+   *
+   * Это важно при первом появлении hass:
+   * unit_of_measurement может прийти позже,
+   * чем само значение сенсора.
+   */
+  let unitElement=
+    element.querySelector(
+      ':scope > span'
+    );
+
+  if(!unitElement){
+
+    unitElement=
+      document.createElement('span');
+
+    unitElement.style.fontSize='.55em';
+    unitElement.style.marginLeft='.08em';
+
+    element.appendChild(unitElement);
+  }
+
+  if(
+    unitElement.textContent!==unit
+  ){
+    unitElement.textContent=unit;
+  }
+}
 
   /* =======================================================
      CLOCK UPDATE
@@ -2662,103 +2667,90 @@ class RenixClockCard extends HTMLElement {
        INFO
        ===================================================== */
 
-    const info=(
-      title,
-      value,
-      unit,
-      secondary,
-      secondaryUnit,
-      color,
-      stroke,
-      glow,
-      entityId,
-      secondaryEntityId
-    )=>
-      `<div class="info-card">
+const info=(
+  title,
+  value,
+  unit,
+  secondary,
+  secondaryUnit,
+  color,
+  stroke,
+  glow,
+  entityId,
+  secondaryEntityId
+)=>
+  `<div class="info-card">
 
-        <div class="info-title">
-          ${title}
-        </div>
+    <div class="info-title">
+      ${title}
+    </div>
 
-        <div class="info-content">
+    <div class="info-content">
 
-          <div
-            class="info-value ${entityId ? 'renix-clickable':''}"
+      <div
+        class="info-value ${entityId ? 'renix-clickable':''}"
+        ${
+          entityId
+            ?
+              `data-entity-id="${this._escape(
+                entityId
+              )}"`
+            :
+              ''
+        }
+        style="
+          --value-color:${color};
+          --stroke-color:${stroke};
+          --glow-color:${glow}
+        "
+      >
+        ${value}
+        <span
+          style="
+            font-size:.55em;
+            margin-left:.08em
+          "
+        >${unit || ''}</span>
+      </div>
+
+      ${
+        secondary!==''
+          ?
+          `<div
+            class="
+              info-secondary
+              ${secondaryEntityId ? 'renix-clickable':''}
+            "
             ${
-              entityId
+              secondaryEntityId
                 ?
                   `data-entity-id="${this._escape(
-                    entityId
+                    secondaryEntityId
                   )}"`
                 :
                   ''
             }
             style="
-              --value-color:${color};
-              --stroke-color:${stroke};
-              --glow-color:${glow}
+              --secondary-color:${color};
+              --secondary-stroke:${stroke};
+              --secondary-glow:${glow}
             "
           >
-            ${value}
-            ${
-              unit
-                ?
-                `<span
-                  style="
-                    font-size:.55em;
-                    margin-left:.08em
-                  "
-                >${unit}</span>`
-                :
-                ''
-            }
-          </div>
+            ${secondary}
+            <span
+              style="
+                font-size:.55em;
+                margin-left:.08em
+              "
+            >${secondaryUnit || ''}</span>
+          </div>`
+          :
+          ''
+      }
 
-          ${
-            secondary!==''
-              ?
-              `<div
-                class="
-                  info-secondary
-                  ${secondaryEntityId ? 'renix-clickable':''}
-                "
-                ${
-                  secondaryEntityId
-                    ?
-                      `data-entity-id="${this._escape(
-                        secondaryEntityId
-                      )}"`
-                    :
-                      ''
-                }
-                style="
-                  --secondary-color:${color};
-                  --secondary-stroke:${stroke};
-                  --secondary-glow:${glow}
-                "
-              >
-                ${secondary}
-                ${
-                  secondaryUnit
-                    ?
-                    `<span
-                      style="
-                        font-size:.55em;
-                        margin-left:.08em
-                      "
-                    >${secondaryUnit}</span>`
-                    :
-                    ''
-                }
-              </div>`
-              :
-              ''
-          }
+    </div>
 
-        </div>
-
-      </div>`;
-
+  </div>`;
     const bottom=
       C.show_bottom_cards
         ?
