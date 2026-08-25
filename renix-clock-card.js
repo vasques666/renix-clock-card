@@ -2427,32 +2427,9 @@ _setValueElement(element,value,unit){
         )
       );
 
-/*
- * =====================================================
- * INNER CORE GEOMETRY
- *
- * Core must remain visible at small sizes,
- * but must not become too thick at large sizes.
- *
- * Main digits:
- *   scale .45 -> ~0.9 px
- *   scale 1   -> 2.0 px
- *   scale 2+  -> max 2.2 px
- *
- * Seconds use proportional radius because their
- * glyph is much smaller.
- * =====================================================
- */
-
 const coreRadius=
-  Math.max(
-    .85,
-    Math.min(
-      2.2,
-      3.0 * fontScale
-    )
-  );
-
+  3 * fontScale;
+    
 const secondsCoreOpacity=
   Math.min(
     .65,
@@ -2463,20 +2440,9 @@ const secondsCoreOpacity=
   );
 
 const secondsCoreRadius=
-  Math.max(
-    .45,
-    Math.min(
-      .8,
-      .7 * fontScale
-    )
-  );
-    /*
-     * ===============================================
-     * SVG FILTERS
-     *
-     * Created only during full render.
-     * ===============================================
-     */
+  3 *
+  (6 / 17) *
+  fontScale;
 
 const coreFilter=`
 <svg
@@ -2489,14 +2455,16 @@ const coreFilter=`
 
     <!-- ===============================================
          MAIN DIGITS
+         17rem
+         Base radius = 3px
          =============================================== -->
 
     <filter
       id="renix-inner-core"
-      x="-10%"
-      y="-10%"
-      width="120%"
-      height="120%"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
       color-interpolation-filters="sRGB"
     >
 
@@ -2529,14 +2497,16 @@ const coreFilter=`
 
     <!-- ===============================================
          SECONDS
+         6rem
+         Radius proportional to font size
          =============================================== -->
 
     <filter
       id="renix-inner-core-seconds"
-      x="-10%"
-      y="-10%"
-      width="120%"
-      height="120%"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
       color-interpolation-filters="sRGB"
     >
 
