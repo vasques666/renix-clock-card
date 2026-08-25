@@ -1411,38 +1411,119 @@ class RenixClockCard extends HTMLElement {
     });
   }
 
-  _applyAdaptiveSize(){
+_applyAdaptiveSize(){
 
-    if(!this.shadowRoot){
-      return;
-    }
+  if(!this.shadowRoot){
+    return;
+  }
 
-    const rect=
-      this.getBoundingClientRect();
+  const rect=
+    this.getBoundingClientRect();
 
-    const width=
-      rect.width || 800;
+  const width=
+    rect.width || 800;
 
-    const scale=
-      Math.max(
-        .45,
-        Math.min(
-          2.5,
-          width/800
-        )
-      );
-
-    this.style.setProperty(
-      '--renix-scale',
-      String(scale)
+  const scale=
+    Math.max(
+      .45,
+      Math.min(
+        2.5,
+        width/800
+      )
     );
 
-    this.style.setProperty(
-      '--renix-clock-factor',
-      '.75'
+  /*
+   * =====================================================
+   * CSS SCALE
+   * =====================================================
+   */
+
+  this.style.setProperty(
+    '--renix-scale',
+    String(scale)
+  );
+
+  this.style.setProperty(
+    '--renix-clock-factor',
+    '.75'
+  );
+
+  /*
+   * =====================================================
+   * SVG INNER FILAMENT SCALE
+   *
+   * Важно:
+   * SVG filter создаётся во время _fullRender(),
+   * а --renix-scale изменяется позже ResizeObserver'ом.
+   *
+   * Поэтому radius feMorphology необходимо
+   * обновлять отдельно.
+   * =====================================================
+   */
+
+  const coreMorphology=
+    this.shadowRoot.querySelector(
+      '#renix-core-morphology'
+    );
+
+  if(coreMorphology){
+
+    const coreRadius=
+      3*scale;
+
+    coreMorphology.setAttribute(
+      'radius',
+      coreRadius.toFixed(2)
     );
   }
 
+  /*
+   * =====================================================
+   * SECONDS INNER FILAMENT
+   * =====================================================
+   */
+
+  const secondsCoreMorphology=
+    this.shadowRoot.querySelector(
+      '#renix-seconds-core-morphology'
+    );
+
+  if(secondsCoreMorphology){
+
+    const secondsCoreRadius=
+      3*
+      (6/17)*
+      scale;
+
+    secondsCoreMorphology.setAttribute(
+      'radius',
+      secondsCoreRadius.toFixed(2)
+    );
+  }
+
+  /*
+   * =====================================================
+   * CORE OPACITY
+   *
+   * Оставляем существующую логику,
+   * но также адаптируем её к размеру.
+   * =====================================================
+   */
+
+  const secondsCoreOpacity=
+    Math.min(
+      .65,
+      Math.max(
+        .35,
+        .55*scale
+      )
+    );
+
+  this.style.setProperty(
+    '--renix-seconds-core-opacity',
+    String(secondsCoreOpacity)
+  );
+}
   /* =======================================================
      STATE HELPERS
      ======================================================= */
@@ -2470,12 +2551,13 @@ _setValueElement(element,value,unit){
       color-interpolation-filters="sRGB"
     >
 
-      <feMorphology
-        in="SourceAlpha"
-        operator="erode"
-        radius="${coreRadius.toFixed(2)}"
-        result="inner"
-      />
+<feMorphology
+  id="renix-core-morphology"
+  in="SourceAlpha"
+  operator="erode"
+  radius="${coreRadius.toFixed(2)}"
+  result="inner"
+/>
 
       <feFlood
         flood-color="white"
@@ -2505,12 +2587,13 @@ _setValueElement(element,value,unit){
       color-interpolation-filters="sRGB"
     >
 
-      <feMorphology
-        in="SourceAlpha"
-        operator="erode"
-        radius="${secondsCoreRadius.toFixed(2)}"
-        result="inner"
-      />
+<feMorphology
+  id="renix-seconds-core-morphology"
+  in="SourceAlpha"
+  operator="erode"
+  radius="${secondsCoreRadius.toFixed(2)}"
+  result="inner"
+/>
 
       <feFlood
         flood-color="white"
