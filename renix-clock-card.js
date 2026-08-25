@@ -2420,9 +2420,9 @@ _setValueElement(element,value,unit){
 
     const fontScale=
       Math.max(
-        .45,
+        .5,
         Math.min(
-          2.5,
+          12.5,
           (this._lastWidth||800)/800
         )
       );
@@ -2440,8 +2440,7 @@ _setValueElement(element,value,unit){
       );
 
     const secondsCoreRadius=
-      3*
-      (6/17)*
+      (18/17)*
       fontScale;
 
     /*
