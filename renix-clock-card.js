@@ -100,12 +100,12 @@ const RENIX_CSS = `
   line-height:1.2;
   letter-spacing:1px;
 
-  color:var(--renix-clock-color,#ff7700);
+  color:var(--renix-top-color,#ff7700);
 
   text-shadow:
-    0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300),
-    0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500),
-    0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);
+    0 0 var(--renix-top-glow-4,4px) var(--renix-top-glow-color,#ff5500),
+    0 0 var(--renix-top-glow-10,10px) var(--renix-top-glow-color,#ff5500),
+    0 0 var(--renix-top-glow-20,20px) var(--renix-top-color,#ff7700);
 
   white-space:nowrap;
   z-index:40;
@@ -129,16 +129,16 @@ const RENIX_CSS = `
 .renix-weather-icon ha-icon{
   --mdc-icon-size:calc(var(--renix-top-icon-size,42px) * var(--renix-scale));
 
-  color:var(--renix-clock-color,#ff7700);
+  color:var(--renix-top-color,#ff7700);
 
   filter:
     drop-shadow(
-      0 0 var(--renix-glow-4,4px)
-      var(--renix-clock-glow-color,#ff3300)
+      0 0 var(--renix-top-glow-4,4px)
+      var(--renix-top-glow-color,#ff5500)
     )
     drop-shadow(
-      0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500)
+      0 0 var(--renix-top-glow-10,10px)
+      var(--renix-top-glow-color,#ff5500)
     );
 }
 
@@ -1051,6 +1051,18 @@ class RenixClockCard extends HTMLElement {
             top_gap: config.top_gap != null
                 ? Number(config.top_gap)
                 : 14,
+
+            /* ===================================================
+               TOP ROW COLORS
+               =================================================== */
+            top_color_rgb: config.top_color_rgb ??
+                [255, 119, 0],
+            top_glow_color_rgb: config.top_glow_color_rgb ??
+                [255, 85, 0],
+            top_glow: config.top_glow != null
+                ? Number(config.top_glow)
+                : 1,
+
             /* ===================================================
                CARD
                =================================================== */
@@ -2131,6 +2143,21 @@ class RenixClockCard extends HTMLElement {
           --renix-clock-glow:
             ${C.clock_glow};
 
+          --renix-top-color:
+            ${this._rgba(C.top_color_rgb, 1)};
+
+          --renix-top-glow-color:
+            ${this._rgba(C.top_glow_color_rgb, 1)};
+
+          --renix-top-glow-4:
+            ${4 * C.top_glow}px;
+
+          --renix-top-glow-10:
+            ${10 * C.top_glow}px;
+
+          --renix-top-glow-20:
+            ${20 * C.top_glow}px;
+
           --renix-title-color:
             ${this._rgba(C.title_color_rgb, .8)};
 
@@ -2786,6 +2813,37 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Верхний блок — расстояние'
             },
+
+            /* =====================================================
+               TOP ROW COLORS
+               ===================================================== */
+            {
+                name: 'top_color_rgb',
+                selector: {
+                    color_rgb: {}
+                },
+                label: 'Цвет верхней строки'
+            },
+            {
+                name: 'top_glow_color_rgb',
+                selector: {
+                    color_rgb: {}
+                },
+                label: 'Цвет свечения верхней строки'
+            },
+            {
+                name: 'top_glow',
+                selector: {
+                    number: {
+                        min: 0,
+                        max: 2,
+                        step: .05,
+                        mode: 'slider'
+                    }
+                },
+                label: 'Интенсивность свечения верхней строки'
+            },
+
             /* =====================================================
                CARD BACKGROUND
                ===================================================== */
@@ -3045,6 +3103,18 @@ class RenixClockCardEditor extends HTMLElement {
             top_gap: {
                 ru: 'Верхний блок — расстояние',
                 en: 'Top block — spacing'
+            },
+            top_color_rgb: {
+                ru: 'Цвет верхней строки',
+                en: 'Top row color'
+            },
+            top_glow_color_rgb: {
+                ru: 'Цвет свечения верхней строки',
+                en: 'Top row glow color'
+            },
+            top_glow: {
+                ru: 'Интенсивность свечения верхней строки',
+                en: 'Top row glow intensity'
             },
             card_background_color_rgb: {
                 ru: 'Цвет фона',
