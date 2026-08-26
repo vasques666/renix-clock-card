@@ -776,7 +776,7 @@ const RENIX_CSS = `
 
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-core-stroke,0.03em) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-core-stroke,0.01em) var(--renix-clock-color,#ff7700);
 
   opacity:var(--renix-clock-core-opacity,.85);
 
