@@ -177,7 +177,7 @@ const RENIX_CSS = `
    */
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-core-stroke,0.0147em) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-core-stroke,0.02em) var(--renix-clock-color,#ff7700);
   /*
    * Core color is deliberately brighter than
    * the normal filament.
@@ -193,7 +193,7 @@ const RENIX_CSS = `
 .renix-seconds-core{
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-seconds-core-stroke,0.0115em) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-seconds-core-stroke,0.015em) var(--renix-clock-color,#ff7700);
   opacity:var(--renix-seconds-core-opacity,.55);z-index:19;pointer-events:none;
 }
 
