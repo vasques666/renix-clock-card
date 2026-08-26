@@ -725,17 +725,12 @@ const RENIX_CSS = `
   z-index:21;
 }
 
+/* ЯРКОЕ ЯДРО AM / PM */
 .renix-ampm::after{
   content:attr(data-ampm);
 
   position:absolute;
   inset:0;
-
-  font-family:inherit;
-  font-size:inherit;
-  font-weight:200;
-  line-height:inherit;
-  letter-spacing:inherit;
 
   color:rgba(255,245,220,.95);
 
@@ -743,7 +738,7 @@ const RENIX_CSS = `
 
   pointer-events:none;
 
-  z-index:1;
+  z-index:22;
 }
 
 /* =========================================================
