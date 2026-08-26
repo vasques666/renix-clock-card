@@ -177,7 +177,7 @@ const RENIX_CSS = `
    */
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-core-stroke,3px) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-core-stroke,0.0147em) var(--renix-clock-color,#ff7700);
   /*
    * Core color is deliberately brighter than
    * the normal filament.
@@ -193,7 +193,7 @@ const RENIX_CSS = `
 .renix-seconds-core{
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-seconds-core-stroke,1.6px) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-seconds-core-stroke,0.0115em) var(--renix-clock-color,#ff7700);
   opacity:var(--renix-seconds-core-opacity,.55);z-index:19;pointer-events:none;
 }
 
@@ -649,24 +649,18 @@ class RenixClockCard extends HTMLElement {
         this.style.setProperty('--renix-clock-factor', '.75');
         /*
          * =====================================================
-         * INNER FILAMENT STROKE WIDTH SCALE
+         * INNER FILAMENT STROKE WIDTH
          *
-         * Важно:
-         * these custom properties feed the -webkit-text-stroke
-         * width on .renix-core / .renix-seconds-core, and must
-         * be kept in sync with --renix-scale as it's updated
-         * later by ResizeObserver.
+         * Больше не задаётся здесь: -webkit-text-stroke
+         * теперь задан в 'em' в самой CSS (см. .renix-core /
+         * .renix-seconds-core), а значит масштабируется вместе
+         * с font-size автоматически — включая случаи, когда
+         * root font-size отличается от 16px на маленьких
+         * экранах. Раньше значение вычислялось в px и не
+         * учитывало root font-size, из-за чего на маленьких
+         * экранах толщина "плыла" относительно цифр.
          * =====================================================
          */
-        const coreRadius = 6 * scale;
-        this.style.setProperty('--renix-core-stroke', coreRadius.toFixed(2) + 'px');
-        /*
-         * =====================================================
-         * SECONDS INNER FILAMENT
-         * =====================================================
-         */
-        const secondsCoreRadius = 2 * scale;
-        this.style.setProperty('--renix-seconds-core-stroke', secondsCoreRadius.toFixed(2) + 'px');
         /*
          * =====================================================
          * CORE OPACITY
@@ -1163,15 +1157,14 @@ class RenixClockCard extends HTMLElement {
         const wi = this._weatherIcon(weather?.state || '');
         const C = this._config;
         const fontScale = Math.max(.45, Math.min(2.5, (this._lastWidth || 800) / 800));
-        const coreRadius = 6 * fontScale;
         const secondsCoreOpacity = Math.min(.65, Math.max(.35, .55 * fontScale));
-        const secondsCoreRadius = 2 * fontScale;
         /*
          * ===============================================
-         * Inner filament "core" now uses -webkit-text-stroke
-         * (see .renix-core / .renix-seconds-core in CSS)
+         * Inner filament "core" uses -webkit-text-stroke in
+         * 'em' (see .renix-core / .renix-seconds-core in CSS)
          * instead of an SVG feMorphology filter — cheaper to
-         * render, no software-filter pass needed.
+         * render, and 'em' keeps it proportional to the glyph's
+         * own font-size on any screen, unlike a fixed px value.
          * ===============================================
          */
         /* =====================================================
@@ -1362,12 +1355,6 @@ class RenixClockCard extends HTMLElement {
 
           --renix-seconds-core-opacity:
             ${secondsCoreOpacity};
-
-          --renix-core-stroke:
-            ${coreRadius.toFixed(2)}px;
-
-          --renix-seconds-core-stroke:
-            ${secondsCoreRadius.toFixed(2)}px;
 
           --renix-clock-glow-color:
             ${this._rgba(C.clock_glow_color_rgb, 1)};
