@@ -528,7 +528,7 @@ const RENIX_CSS = `
 
   margin-left:
     calc(
-      -6.5px *
+      -11.5px *
       var(--renix-scale) *
       var(--renix-clock-factor)
     );
