@@ -725,6 +725,27 @@ const RENIX_CSS = `
   z-index:21;
 }
 
+.renix-ampm::after{
+  content:attr(data-ampm);
+
+  position:absolute;
+  inset:0;
+
+  font-family:inherit;
+  font-size:inherit;
+  font-weight:200;
+  line-height:inherit;
+  letter-spacing:inherit;
+
+  color:rgba(255,245,220,.95);
+
+  text-shadow:none;
+
+  pointer-events:none;
+
+  z-index:1;
+}
+
 /* =========================================================
    BOTTOM SENSOR BLOCK
    Reference Y = 330
@@ -2369,14 +2390,12 @@ class RenixClockCard extends HTMLElement {
               ${C.time_format === 'ampm'
                 ?
                     `
-                    <div
-                      class="
-                        renix-ampm
-                        renix-top-item
-                      "
-                    >
-                      ${ampm}
-                    </div>
+<div
+  class="renix-ampm renix-top-item"
+  data-ampm="${ampm}"
+>
+  ${ampm}
+</div>
                   `
                 :
                     ''}
