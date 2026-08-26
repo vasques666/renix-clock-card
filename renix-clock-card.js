@@ -177,7 +177,7 @@ const RENIX_CSS = `
    */
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-core-stroke,0.05em) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-core-stroke,0.03em) var(--renix-clock-color,#ff7700);
   /*
    * Core color is deliberately brighter than
    * the normal filament.
@@ -206,7 +206,7 @@ const RENIX_CSS = `
 .renix-grid{
   position:absolute;top:0;height:100%;display:flex;align-items:flex-end;
   font-family:renix1,monospace;
-  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));font-weight:500;
+  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));font-weight:800;
   font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;
   pointer-events:none;z-index:5;color:transparent;
   background:repeating-linear-gradient( 0deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 5px, rgba(0,0,0,.9) 5px, rgba(0,0,0,.4) 6px ), repeating-linear-gradient( 90deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 5px, rgba(0,0,0,.9) 5px, rgba(0,0,0,.4) 6px );
