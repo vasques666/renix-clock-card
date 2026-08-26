@@ -725,6 +725,64 @@ const RENIX_CSS = `
   z-index:21;
 }
 
+/*
+ * =========================================================
+ * AM / PM — INNER CORE
+ *
+ * Same "no SVG" technique used for the clock digits'
+ * .renix-core: fill in the bright core color, then
+ * paint a -webkit-text-stroke centered on the glyph edge
+ * in the base glow color, so only the interior reads as
+ * "bright core". Position/size duplicated from .renix-ampm
+ * on purpose, so this stays a plain sibling layer and
+ * doesn't disturb the existing .renix-ampm DOM lookups.
+ * =========================================================
+ */
+
+.renix-ampm-core{
+  position:absolute;
+
+  left:calc(
+    50% + 4.5em
+  );
+
+  top:calc(
+    10px * var(--renix-scale) * var(--renix-clock-factor)
+  );
+
+  width:max-content;
+  height:auto;
+
+  font-family:
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size:calc(
+    6rem *
+    var(--renix-scale) *
+    var(--renix-clock-factor)
+  );
+
+  font-weight:400;
+
+  line-height:1;
+
+  letter-spacing:.08em;
+
+  white-space:nowrap;
+
+  pointer-events:none;
+
+  color:var(--renix-clock-core-color,#fff1d0);
+  -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
+  -webkit-text-stroke:var(--renix-core-stroke,0.03em) var(--renix-clock-color,#ff7700);
+
+  opacity:var(--renix-clock-core-opacity,.85);
+
+  z-index:22;
+}
+
 /* =========================================================
    BOTTOM SENSOR BLOCK
    Reference Y = 330
@@ -1535,6 +1593,7 @@ class RenixClockCard extends HTMLElement {
             minutes: minutesLayers,
             seconds: secondsLayers,
             ampm: root.querySelector('.renix-ampm'),
+            ampmCore: root.querySelector('.renix-ampm-core'),
             bottomGrid: root.querySelector('.bottom-grid'),
             info: {
                 outsideTemperature: root.querySelector('.info-card:nth-child(1) .info-value'),
@@ -1641,6 +1700,9 @@ class RenixClockCard extends HTMLElement {
             this._lastDynamic.ampm = ampm;
             if (this._dom.ampm.textContent !== ampm) {
                 this._dom.ampm.textContent = ampm;
+            }
+            if (this._dom.ampmCore && this._dom.ampmCore.textContent !== ampm) {
+                this._dom.ampmCore.textContent = ampm;
             }
         }
         /*
@@ -2372,6 +2434,15 @@ class RenixClockCard extends HTMLElement {
                     <div
                       class="
                         renix-ampm
+                        renix-top-item
+                      "
+                    >
+                      ${ampm}
+                    </div>
+
+                    <div
+                      class="
+                        renix-ampm-core
                         renix-top-item
                       "
                     >
