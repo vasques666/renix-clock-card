@@ -193,7 +193,7 @@ const RENIX_CSS = `
 .renix-seconds-core{
   color:var(--renix-clock-core-color,#fff1d0);
   -webkit-text-fill-color:var(--renix-clock-core-color,#fff1d0);
-  -webkit-text-stroke:var(--renix-seconds-core-stroke,0.03em) var(--renix-clock-color,#ff7700);
+  -webkit-text-stroke:var(--renix-core-stroke,0.03em) var(--renix-clock-color,#ff7700);
   opacity:var(--renix-seconds-core-opacity,.55);z-index:19;pointer-events:none;
 }
 
@@ -202,11 +202,14 @@ const RENIX_CSS = `
   text-shadow:0 0 1px rgba(80,30,5,.25), 0 0 2px rgba(70,25,4,.1);opacity:.68;z-index:4;
 }
 
+/* =========================================================
+   GRID
+   ========================================================= */
 
 .renix-grid{
   position:absolute;top:0;height:100%;display:flex;align-items:flex-end;
   font-family:renix1,monospace;
-  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));font-weight:800;
+  font-size:calc(17rem * var(--renix-scale) * var(--renix-clock-factor));font-weight:400;
   font-style:normal;line-height:.95;letter-spacing:-.12em;white-space:nowrap;
   pointer-events:none;z-index:5;color:transparent;
   background:repeating-linear-gradient( 0deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 5px, rgba(0,0,0,.9) 5px, rgba(0,0,0,.4) 6px ), repeating-linear-gradient( 90deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 5px, rgba(0,0,0,.9) 5px, rgba(0,0,0,.4) 6px );
@@ -234,7 +237,7 @@ const RENIX_CSS = `
   position:absolute;left:50%;
   width:calc( 23px * var(--renix-scale) * var(--renix-clock-factor) );
   height:calc( 23px * var(--renix-scale) * var(--renix-clock-factor) );
-  margin-left:calc( -6.5px * var(--renix-scale) * var(--renix-clock-factor) );
+  margin-left:calc( -11.5px * var(--renix-scale) * var(--renix-clock-factor) );
   border-radius:50%;background:var(--renix-clock-color,#ff7700);
   box-shadow:0 0 var(--renix-glow-4,4px) var(--renix-clock-glow-color,#ff3300), 0 0 var(--renix-glow-10,10px) var(--renix-clock-glow-color,#ff5500), 0 0 var(--renix-glow-20,20px) var(--renix-clock-color,#ff7700);
   /*
