@@ -710,7 +710,7 @@ const RENIX_CSS = `
   pointer-events:none;
 
   color:
-    var(--renix-clock-core-color,#fff1d0);
+    var(--renix-clock-color,#ff7700);
 
   text-shadow:
     0 0 var(--renix-glow-4,4px)
