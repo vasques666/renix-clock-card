@@ -2603,421 +2603,476 @@ class RenixClockCardEditor extends HTMLElement {
         this._form = null;
         this._schema = [
             {
-                name: 'language',
-                selector: {
-                    select: {
-                        options: [
-                            {
-                                value: 'auto',
-                                label: 'Автоматически'
-                            },
-                            {
-                                value: 'ru',
-                                label: 'Русский'
-                            },
-                            {
-                                value: 'en',
-                                label: 'English'
-                            }
-                        ],
-                        mode: 'dropdown'
-                    }
+                type: 'expandable',
+                name: 'group_general',
+                flatten: true,
+                title: 'Общие / General',
+                schema: [
+                {
+                    name: 'language',
+                    selector: {
+                        select: {
+                            options: [
+                                {
+                                    value: 'auto',
+                                    label: 'Автоматически'
+                                },
+                                {
+                                    value: 'ru',
+                                    label: 'Русский'
+                                },
+                                {
+                                    value: 'en',
+                                    label: 'English'
+                                }
+                            ],
+                            mode: 'dropdown'
+                        }
+                    },
+                    label: 'Язык'
                 },
-                label: 'Язык'
+                {
+                    name: 'time_format',
+                    selector: {
+                        select: {
+                            options: [
+                                {
+                                    value: '24',
+                                    label: '24 h'
+                                },
+                                {
+                                    value: 'ampm',
+                                    label: 'AM / PM'
+                                }
+                            ],
+                            mode: 'dropdown'
+                        }
+                    },
+                    label: 'Формат времени'
+                },
+                ]
             },
             {
-                name: 'time_format',
-                selector: {
-                    select: {
-                        options: [
-                            {
-                                value: '24',
-                                label: '24 h'
-                            },
-                            {
-                                value: 'ampm',
-                                label: 'AM / PM'
-                            }
-                        ],
-                        mode: 'dropdown'
-                    }
+                type: 'expandable',
+                name: 'group_entities',
+                flatten: true,
+                title: 'Датчики / Entities',
+                schema: [
+                {
+                    name: 'weather_entity',
+                    selector: {
+                        entity: {
+                            domain: 'weather'
+                        }
+                    },
+                    label: 'Погода'
                 },
-                label: 'Формат времени'
+                {
+                    name: 'night_entity',
+                    selector: {
+                        entity: {
+                            domain: 'input_boolean'
+                        }
+                    },
+                    label: 'Ночной режим'
+                },
+                {
+                    name: 'outside_temperature',
+                    selector: {
+                        entity: {
+                            domain: 'sensor'
+                        }
+                    },
+                    label: 'Температура улицы'
+                },
+                {
+                    name: 'outside_humidity',
+                    selector: {
+                        entity: {
+                            domain: 'sensor'
+                        }
+                    },
+                    label: 'Влажность улицы'
+                },
+                {
+                    name: 'pressure_entity',
+                    selector: {
+                        entity: {
+                            domain: 'sensor'
+                        }
+                    },
+                    label: 'Давление'
+                },
+                {
+                    name: 'room_temperature',
+                    selector: {
+                        entity: {
+                            domain: 'sensor'
+                        }
+                    },
+                    label: 'Температура спальни'
+                },
+                {
+                    name: 'room_humidity',
+                    selector: {
+                        entity: {
+                            domain: 'sensor'
+                        }
+                    },
+                    label: 'Влажность спальни'
+                },
+                ]
             },
             {
-                name: 'weather_entity',
-                selector: {
-                    entity: {
-                        domain: 'weather'
-                    }
+                type: 'expandable',
+                name: 'group_visibility',
+                flatten: true,
+                title: 'Отображение элементов / Visibility',
+                schema: [
+                {
+                    name: 'show_bottom_cards',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать нижние датчики'
                 },
-                label: 'Погода'
+                {
+                    name: 'show_seconds',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать секунды'
+                },
+                {
+                    name: 'show_grid',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать сетку'
+                },
+                {
+                    name: 'show_inactive_threads',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать неактивные нити'
+                },
+                {
+                    name: 'show_weather_icon',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать значок погоды'
+                },
+                {
+                    name: 'show_date',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать дату'
+                },
+                {
+                    name: 'show_weekday',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Показывать день недели'
+                },
+                ]
             },
             {
-                name: 'night_entity',
-                selector: {
-                    entity: {
-                        domain: 'input_boolean'
-                    }
+                type: 'expandable',
+                name: 'group_top_size',
+                flatten: true,
+                title: 'Верхний блок — размер / Top block — size',
+                schema: [
+                {
+                    name: 'top_offset',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 100,
+                            step: 1,
+                            unit_of_measurement: 'px',
+                            mode: 'box'
+                        }
+                    },
+                    label: 'Верхний блок — отступ сверху'
                 },
-                label: 'Ночной режим'
+                {
+                    name: 'top_font_size',
+                    selector: {
+                        number: {
+                            min: .5,
+                            max: 5,
+                            step: .05,
+                            unit_of_measurement: 'rem',
+                            mode: 'box'
+                        }
+                    },
+                    label: 'Верхний блок — размер текста'
+                },
+                {
+                    name: 'top_icon_size',
+                    selector: {
+                        number: {
+                            min: 16,
+                            max: 80,
+                            step: 1,
+                            unit_of_measurement: 'px',
+                            mode: 'box'
+                        }
+                    },
+                    label: 'Верхний блок — размер иконки'
+                },
+                {
+                    name: 'top_gap',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 50,
+                            step: 1,
+                            unit_of_measurement: 'px',
+                            mode: 'box'
+                        }
+                    },
+                    label: 'Верхний блок — расстояние'
+                },
+                ]
             },
             {
-                name: 'outside_temperature',
-                selector: {
-                    entity: {
-                        domain: 'sensor'
-                    }
+                type: 'expandable',
+                name: 'group_top_colors',
+                flatten: true,
+                title: 'Верхняя строка — цвета / Top row — colors',
+                schema: [
+                {
+                    name: 'top_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет верхней строки'
                 },
-                label: 'Температура улицы'
+                {
+                    name: 'top_glow_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет свечения верхней строки'
+                },
+                {
+                    name: 'top_glow',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 2,
+                            step: .05,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Интенсивность свечения верхней строки'
+                },
+                ]
             },
             {
-                name: 'outside_humidity',
-                selector: {
-                    entity: {
-                        domain: 'sensor'
-                    }
+                type: 'expandable',
+                name: 'group_card',
+                flatten: true,
+                title: 'Фон карточки / Card background',
+                schema: [
+                {
+                    name: 'card_background_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет фона'
                 },
-                label: 'Влажность улицы'
+                {
+                    name: 'card_background_opacity',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 1,
+                            step: .01,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Непрозрачность фона'
+                },
+                {
+                    name: 'card_border_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет рамки'
+                },
+                {
+                    name: 'card_border_opacity',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 1,
+                            step: .01,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Непрозрачность рамки'
+                },
+                {
+                    name: 'card_shadow_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет тени'
+                },
+                {
+                    name: 'card_shadow_opacity',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 1,
+                            step: .01,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Непрозрачность тени'
+                },
+                {
+                    name: 'card_radius',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 100,
+                            step: 1,
+                            unit_of_measurement: 'px',
+                            mode: 'box'
+                        }
+                    },
+                    label: 'Скругление'
+                },
+                {
+                    name: 'card_backdrop_blur',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 50,
+                            step: 1,
+                            unit_of_measurement: 'px',
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Размытие фона'
+                },
+                ]
             },
             {
-                name: 'pressure_entity',
-                selector: {
-                    entity: {
-                        domain: 'sensor'
-                    }
+                type: 'expandable',
+                name: 'group_night',
+                flatten: true,
+                title: 'Ночной режим — яркость / Night — brightness',
+                schema: [
+                {
+                    name: 'top_night_brightness',
+                    selector: {
+                        number: {
+                            min: .05,
+                            max: 1,
+                            step: .05,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Ночная яркость — часы'
                 },
-                label: 'Давление'
+                {
+                    name: 'bottom_night_brightness',
+                    selector: {
+                        number: {
+                            min: .05,
+                            max: 1,
+                            step: .05,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Ночная яркость — остальное'
+                },
+                ]
             },
             {
-                name: 'room_temperature',
-                selector: {
-                    entity: {
-                        domain: 'sensor'
-                    }
+                type: 'expandable',
+                name: 'group_clock_colors',
+                flatten: true,
+                title: 'Цвета часов / Clock colors',
+                schema: [
+                {
+                    name: 'clock_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет часов'
                 },
-                label: 'Температура спальни'
+                {
+                    name: 'clock_glow_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет свечения часов'
+                },
+                {
+                    name: 'clock_glow',
+                    selector: {
+                        number: {
+                            min: 0,
+                            max: 2,
+                            step: .05,
+                            mode: 'slider'
+                        }
+                    },
+                    label: 'Интенсивность свечения'
+                },
+                {
+                    name: 'clock_core_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет внутренней нити'
+                },
+                ]
             },
             {
-                name: 'room_humidity',
-                selector: {
-                    entity: {
-                        domain: 'sensor'
-                    }
+                type: 'expandable',
+                name: 'group_info_colors',
+                flatten: true,
+                title: 'Цвета информационных панелей / Info panel colors',
+                schema: [
+                {
+                    name: 'outside_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет улицы'
                 },
-                label: 'Влажность спальни'
-            },
-            {
-                name: 'show_bottom_cards',
-                selector: {
-                    boolean: {}
+                {
+                    name: 'pressure_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет давления'
                 },
-                label: 'Показывать нижние датчики'
-            },
-            {
-                name: 'show_seconds',
-                selector: {
-                    boolean: {}
+                {
+                    name: 'room_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет спальни'
                 },
-                label: 'Показывать секунды'
-            },
-            {
-                name: 'show_grid',
-                selector: {
-                    boolean: {}
-                },
-                label: 'Показывать сетку'
-            },
-            {
-                name: 'show_inactive_threads',
-                selector: {
-                    boolean: {}
-                },
-                label: 'Показывать неактивные нити'
-            },
-            /* =====================================================
-               TOP BLOCK SETTINGS
-               ===================================================== */
-            {
-                name: 'show_weather_icon',
-                selector: {
-                    boolean: {}
-                },
-                label: 'Показывать значок погоды'
-            },
-            {
-                name: 'show_date',
-                selector: {
-                    boolean: {}
-                },
-                label: 'Показывать дату'
-            },
-            {
-                name: 'show_weekday',
-                selector: {
-                    boolean: {}
-                },
-                label: 'Показывать день недели'
-            },
-            {
-                name: 'top_offset',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 100,
-                        step: 1,
-                        unit_of_measurement: 'px',
-                        mode: 'box'
-                    }
-                },
-                label: 'Верхний блок — отступ сверху'
-            },
-            {
-                name: 'top_font_size',
-                selector: {
-                    number: {
-                        min: .5,
-                        max: 5,
-                        step: .05,
-                        unit_of_measurement: 'rem',
-                        mode: 'box'
-                    }
-                },
-                label: 'Верхний блок — размер текста'
-            },
-            {
-                name: 'top_icon_size',
-                selector: {
-                    number: {
-                        min: 16,
-                        max: 80,
-                        step: 1,
-                        unit_of_measurement: 'px',
-                        mode: 'box'
-                    }
-                },
-                label: 'Верхний блок — размер иконки'
-            },
-            {
-                name: 'top_gap',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 50,
-                        step: 1,
-                        unit_of_measurement: 'px',
-                        mode: 'box'
-                    }
-                },
-                label: 'Верхний блок — расстояние'
-            },
-
-            /* =====================================================
-               TOP ROW COLORS
-               ===================================================== */
-            {
-                name: 'top_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет верхней строки'
-            },
-            {
-                name: 'top_glow_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет свечения верхней строки'
-            },
-            {
-                name: 'top_glow',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 2,
-                        step: .05,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Интенсивность свечения верхней строки'
-            },
-
-            /* =====================================================
-               CARD BACKGROUND
-               ===================================================== */
-            {
-                name: 'card_background_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет фона'
-            },
-            {
-                name: 'card_background_opacity',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 1,
-                        step: .01,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Непрозрачность фона'
-            },
-            {
-                name: 'card_border_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет рамки'
-            },
-            {
-                name: 'card_border_opacity',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 1,
-                        step: .01,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Непрозрачность рамки'
-            },
-            {
-                name: 'card_shadow_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет тени'
-            },
-            {
-                name: 'card_shadow_opacity',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 1,
-                        step: .01,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Непрозрачность тени'
-            },
-            {
-                name: 'card_radius',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 100,
-                        step: 1,
-                        unit_of_measurement: 'px',
-                        mode: 'box'
-                    }
-                },
-                label: 'Скругление'
-            },
-            {
-                name: 'card_backdrop_blur',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 50,
-                        step: 1,
-                        unit_of_measurement: 'px',
-                        mode: 'slider'
-                    }
-                },
-                label: 'Размытие фона'
-            },
-            /* =====================================================
-               NIGHT
-               ===================================================== */
-            {
-                name: 'top_night_brightness',
-                selector: {
-                    number: {
-                        min: .05,
-                        max: 1,
-                        step: .05,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Ночная яркость — часы'
-            },
-            {
-                name: 'bottom_night_brightness',
-                selector: {
-                    number: {
-                        min: .05,
-                        max: 1,
-                        step: .05,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Ночная яркость — остальное'
-            },
-            /* =====================================================
-               COLORS
-               ===================================================== */
-            {
-                name: 'clock_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет часов'
-            },
-            {
-                name: 'clock_glow_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет свечения часов'
-            },
-            {
-                name: 'clock_glow',
-                selector: {
-                    number: {
-                        min: 0,
-                        max: 2,
-                        step: .05,
-                        mode: 'slider'
-                    }
-                },
-                label: 'Интенсивность свечения'
-            },
-            {
-                name: 'clock_core_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет внутренней нити'
-            },
-            {
-                name: 'outside_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет улицы'
-            },
-            {
-                name: 'pressure_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет давления'
-            },
-            {
-                name: 'room_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет спальни'
-            },
-            {
-                name: 'title_color_rgb',
-                selector: {
-                    color_rgb: {}
-                },
-                label: 'Цвет заголовков'
+                {
+                    name: 'title_color_rgb',
+                    selector: {
+                        color_rgb: {}
+                    },
+                    label: 'Цвет заголовков'
+                }
+                ]
             }
         ];
         /*
@@ -3029,6 +3084,42 @@ class RenixClockCardEditor extends HTMLElement {
          * en = English
          */
         this._labels = {
+            group_general: {
+                ru: 'Общие',
+                en: 'General'
+            },
+            group_entities: {
+                ru: 'Датчики',
+                en: 'Entities'
+            },
+            group_visibility: {
+                ru: 'Отображение элементов',
+                en: 'Visibility'
+            },
+            group_top_size: {
+                ru: 'Верхний блок — размер',
+                en: 'Top block — size'
+            },
+            group_top_colors: {
+                ru: 'Верхняя строка — цвета',
+                en: 'Top row — colors'
+            },
+            group_card: {
+                ru: 'Фон карточки',
+                en: 'Card background'
+            },
+            group_night: {
+                ru: 'Ночной режим — яркость',
+                en: 'Night — brightness'
+            },
+            group_clock_colors: {
+                ru: 'Цвета часов',
+                en: 'Clock colors'
+            },
+            group_info_colors: {
+                ru: 'Цвета информационных панелей',
+                en: 'Info panel colors'
+            },
             language: {
                 ru: 'Язык',
                 en: 'Language'
