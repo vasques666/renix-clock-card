@@ -2606,7 +2606,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_general',
                 flatten: true,
-                title: 'Общие',
+                title: 'Общие / General',
                 schema: [
                 {
                     name: 'language',
@@ -2656,7 +2656,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_entities',
                 flatten: true,
-                title: 'Датчики',
+                title: 'Датчики / Entities',
                 schema: [
                 {
                     name: 'weather_entity',
@@ -2727,7 +2727,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_visibility',
                 flatten: true,
-                title: 'Отображение элементов',
+                title: 'Отображение элементов / Visibility',
                 schema: [
                 {
                     name: 'show_bottom_cards',
@@ -2784,7 +2784,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_top_size',
                 flatten: true,
-                title: 'Верхний блок — размер',
+                title: 'Верхний блок — размер / Top block — size',
                 schema: [
                 {
                     name: 'top_offset',
@@ -2844,7 +2844,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_top_colors',
                 flatten: true,
-                title: 'Верхняя строка — цвета',
+                title: 'Верхняя строка — цвета / Top row — colors',
                 schema: [
                 {
                     name: 'top_color_rgb',
@@ -2878,7 +2878,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_card',
                 flatten: true,
-                title: 'Фон карточки',
+                title: 'Фон карточки / Card background',
                 schema: [
                 {
                     name: 'card_background_color_rgb',
@@ -2969,7 +2969,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_night',
                 flatten: true,
-                title: 'Ночной режим — яркость',
+                title: 'Ночной режим — яркость / Night — brightness',
                 schema: [
                 {
                     name: 'top_night_brightness',
@@ -3001,7 +3001,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_clock_colors',
                 flatten: true,
-                title: 'Цвета часов',
+                title: 'Цвета часов / Clock colors',
                 schema: [
                 {
                     name: 'clock_color_rgb',
@@ -3042,7 +3042,7 @@ class RenixClockCardEditor extends HTMLElement {
                 type: 'expandable',
                 name: 'group_info_colors',
                 flatten: true,
-                title: 'Цвета информационных панелей',
+                title: 'Цвета информационных панелей / Info panel colors',
                 schema: [
                 {
                     name: 'outside_color_rgb',
