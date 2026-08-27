@@ -569,11 +569,11 @@ const RENIX_CSS = `
   border-radius:50%;
 
   background:
-    rgba(255,245,220,.95);
+    var(--renix-clock-core-color,rgba(255,245,220,.95));
 
   box-shadow:
-    0 0 2px rgba(255,245,220,.9),
-    0 0 4px rgba(255,210,140,.7);
+    0 0 2px var(--renix-clock-core-color,rgba(255,245,220,.9)),
+    0 0 4px var(--renix-clock-core-color,rgba(255,210,140,.7));
 
   pointer-events:none;
 }
@@ -1115,6 +1115,9 @@ class RenixClockCard extends HTMLElement {
             clock_glow: config.clock_glow != null
                 ? Number(config.clock_glow)
                 : 1,
+            clock_core_color_rgb: config.clock_core_color_rgb ??
+                config.clock_core_color ??
+                [255, 245, 220],
             outside_color_rgb: config.outside_color_rgb ??
                 config.outside_color ??
                 [0, 144, 48],
@@ -1865,7 +1868,7 @@ class RenixClockCard extends HTMLElement {
 />
 
       <feFlood
-        flood-color="white"
+        flood-color="${this._rgba(C.clock_core_color_rgb, 1)}"
         flood-opacity="1"
         result="coreColor"
       />
@@ -1901,7 +1904,7 @@ class RenixClockCard extends HTMLElement {
 />
 
       <feFlood
-        flood-color="white"
+        flood-color="${this._rgba(C.clock_core_color_rgb, 1)}"
         flood-opacity="1"
         result="coreColor"
       />
@@ -2112,12 +2115,7 @@ class RenixClockCard extends HTMLElement {
             ${this._rgba(C.clock_color_rgb, 1)};
 
           --renix-clock-core-color:
-            rgba(
-              255,
-              245,
-              220,
-              ${Math.min(1, .72 + C.clock_glow * .14)}
-            );
+            ${this._rgba(C.clock_core_color_rgb, Math.min(1, .72 + C.clock_glow * .14))};
 
           --renix-clock-core-opacity:
             ${Math.min(1, .72 + C.clock_glow * .14)};
@@ -2987,6 +2985,13 @@ class RenixClockCardEditor extends HTMLElement {
                 label: 'Интенсивность свечения'
             },
             {
+                name: 'clock_core_color_rgb',
+                selector: {
+                    color_rgb: {}
+                },
+                label: 'Цвет внутренней нити'
+            },
+            {
                 name: 'outside_color_rgb',
                 selector: {
                     color_rgb: {}
@@ -3167,6 +3172,10 @@ class RenixClockCardEditor extends HTMLElement {
             clock_glow: {
                 ru: 'Интенсивность свечения',
                 en: 'Glow intensity'
+            },
+            clock_core_color_rgb: {
+                ru: 'Цвет внутренней нити',
+                en: 'Inner core color'
             },
             outside_color_rgb: {
                 ru: 'Цвет улицы',
