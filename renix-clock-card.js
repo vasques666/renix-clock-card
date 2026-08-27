@@ -1868,7 +1868,7 @@ class RenixClockCard extends HTMLElement {
 />
 
       <feFlood
-        flood-color="white"
+        flood-color="${this._rgba(C.clock_core_color_rgb, 1)}"
         flood-opacity="1"
         result="coreColor"
       />
@@ -1904,7 +1904,7 @@ class RenixClockCard extends HTMLElement {
 />
 
       <feFlood
-        flood-color="white"
+        flood-color="${this._rgba(C.clock_core_color_rgb, 1)}"
         flood-opacity="1"
         result="coreColor"
       />
