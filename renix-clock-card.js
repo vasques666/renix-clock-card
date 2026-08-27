@@ -2602,6 +2602,9 @@ class RenixClockCardEditor extends HTMLElement {
         this._config = {};
         this._form = null;
         this._schema = [
+            /* =====================================================
+               GENERAL
+               ===================================================== */
             {
                 name: 'language',
                 selector: {
@@ -2644,6 +2647,9 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Формат времени'
             },
+            /* =====================================================
+               ENTITIES
+               ===================================================== */
             {
                 name: 'weather_entity',
                 selector: {
@@ -2707,6 +2713,9 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Влажность спальни'
             },
+            /* =====================================================
+               VISIBILITY
+               ===================================================== */
             {
                 name: 'show_bottom_cards',
                 selector: {
@@ -2735,9 +2744,6 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Показывать неактивные нити'
             },
-            /* =====================================================
-               TOP BLOCK SETTINGS
-               ===================================================== */
             {
                 name: 'show_weather_icon',
                 selector: {
@@ -2759,6 +2765,9 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Показывать день недели'
             },
+            /* =====================================================
+               TOP BLOCK SIZE
+               ===================================================== */
             {
                 name: 'top_offset',
                 selector: {
@@ -2811,7 +2820,6 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Верхний блок — расстояние'
             },
-
             /* =====================================================
                TOP ROW COLORS
                ===================================================== */
@@ -2841,7 +2849,6 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Интенсивность свечения верхней строки'
             },
-
             /* =====================================================
                CARD BACKGROUND
                ===================================================== */
@@ -2956,7 +2963,7 @@ class RenixClockCardEditor extends HTMLElement {
                 label: 'Ночная яркость — остальное'
             },
             /* =====================================================
-               COLORS
+               CLOCK COLORS
                ===================================================== */
             {
                 name: 'clock_color_rgb',
@@ -2991,6 +2998,9 @@ class RenixClockCardEditor extends HTMLElement {
                 },
                 label: 'Цвет внутренней нити'
             },
+            /* =====================================================
+               INFO PANEL COLORS
+               ===================================================== */
             {
                 name: 'outside_color_rgb',
                 selector: {
