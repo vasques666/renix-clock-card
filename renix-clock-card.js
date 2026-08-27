@@ -569,11 +569,11 @@ const RENIX_CSS = `
   border-radius:50%;
 
   background:
-    rgba(255,245,220,.95);
+    var(--renix-clock-core-color,rgba(255,245,220,.95));
 
   box-shadow:
-    0 0 2px rgba(255,245,220,.9),
-    0 0 4px rgba(255,210,140,.7);
+    0 0 2px var(--renix-clock-core-color,rgba(255,245,220,.9)),
+    0 0 4px var(--renix-clock-core-color,rgba(255,210,140,.7));
 
   pointer-events:none;
 }
