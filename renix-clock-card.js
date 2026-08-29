@@ -3467,7 +3467,23 @@ class RenixClockCardEditor extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
-        this.shadowRoot.innerHTML = `
+        if (!this._form) {
+            /*
+             * ============================================
+             * BUILD ONCE
+             *
+             * <ha-form> (and every ha-form-expandable panel
+             * inside it) is only created here, the first
+             * time _render() runs. setConfig() calls
+             * _render() again after every single field edit
+             * (via the config-changed round-trip below), and
+             * rebuilding the element via innerHTML each time
+             * would destroy ha-form's internal state — which
+             * is exactly what was collapsing every expandable
+             * group back shut on every keystroke.
+             * ============================================
+             */
+            this.shadowRoot.innerHTML = `
       <style>
         :host{
           display:block;
@@ -3481,26 +3497,73 @@ class RenixClockCardEditor extends HTMLElement {
 
       <ha-form></ha-form>
     `;
-        this._form =
-            this.shadowRoot.querySelector('ha-form');
-        /*
-         * Передаём схему.
-         */
-        this._form.schema =
-            this._schema;
-        /*
-         * Передаём функцию формирования
-         * названия каждого пункта.
-         */
-        this._form.computeLabel =
-            schema => {
-                const language = this._getEditorLanguage();
-                return (this._labels[schema.name]?.[language]
-                    ||
-                        schema.name);
-            };
+            this._form =
+                this.shadowRoot.querySelector('ha-form');
+            /*
+             * Передаём схему.
+             */
+            this._form.schema =
+                this._schema;
+            /*
+             * Передаём функцию формирования
+             * названия каждого пункта.
+             */
+            this._form.computeLabel =
+                schema => {
+                    const language = this._getEditorLanguage();
+                    return (this._labels[schema.name]?.[language]
+                        ||
+                            schema.name);
+                };
+            /*
+             * Изменение любого параметра.
+             */
+            this._form.addEventListener('value-changed', e => {
+                const config = {
+                    ...e.detail.value
+                };
+                const languageChanged =
+                    config.language !== this._config.language;
+                this._config =
+                    config;
+                if (languageChanged) {
+                    /*
+                     * Язык — единственное изменение, требующее
+                     * полной пересборки <ha-form>: чтобы
+                     * заголовки expandable-групп (не проходящие
+                     * через computeLabel, см. title) пересчитались,
+                     * форма должна быть пересоздана целиком.
+                     * Вызываем _render() сразу же, не полагаясь
+                     * на то, что HA обязательно и синхронно
+                     * вызовет setConfig() в ответ на
+                     * config-changed ниже.
+                     */
+                    this._form = null;
+                    this._render();
+                }
+                else if (this._form &&
+                    this._form.computeLabel) {
+                    this._form.requestUpdate();
+                }
+                /*
+                 * Сообщаем редактору HA
+                 * об изменении конфигурации.
+                 */
+                this.dispatchEvent(new CustomEvent('config-changed', {
+                    detail: {
+                        config
+                    },
+                    bubbles: true,
+                    composed: true
+                }));
+            });
+        }
         /*
          * Передаём текущую конфигурацию.
+         *
+         * Обновляется на КАЖДЫЙ вызов _render(), в отличие
+         * от блока выше — но на уже существующем <ha-form>,
+         * без пересоздания DOM.
          */
         this._form.data = {
             ...this._config
@@ -3512,36 +3575,6 @@ class RenixClockCardEditor extends HTMLElement {
             this._form.hass =
                 this._hass;
         }
-        /*
-         * Изменение любого параметра.
-         */
-        this._form.addEventListener('value-changed', e => {
-            const config = {
-                ...e.detail.value
-            };
-            this._config =
-                config;
-            /*
-             * Если изменили язык,
-             * заставляем ha-form пересчитать
-             * подписи полей.
-             */
-            if (this._form &&
-                this._form.computeLabel) {
-                this._form.requestUpdate();
-            }
-            /*
-             * Сообщаем редактору HA
-             * об изменении конфигурации.
-             */
-            this.dispatchEvent(new CustomEvent('config-changed', {
-                detail: {
-                    config
-                },
-                bubbles: true,
-                composed: true
-            }));
-        });
     }
     /*
      * =====================================================
