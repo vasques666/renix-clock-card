@@ -1,0 +1,19 @@
+name: Upload Release Asset
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Upload JS to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: renix-clock-card.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
