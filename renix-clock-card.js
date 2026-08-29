@@ -508,7 +508,7 @@ const RENIX_CSS = `
   z-index:10;
   pointer-events:none;
 
-  transition:opacity .3s ease;
+  /* transition:opacity .3s ease; */
 }
 
 /*
