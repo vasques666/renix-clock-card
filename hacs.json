@@ -1,5 +1,5 @@
 {
-  "name": "reNix Nixie Clock Card",
+  "name": "reNix Clock Card - Nixie style clock",
   "content_in_root": true,
   "filename": "renix-clock-card.js",
   "render_readme": true,
