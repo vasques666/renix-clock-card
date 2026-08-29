@@ -8,6 +8,14 @@ const RENIX_CSS = `
   display:block;
   width:100%;
 
+  /*
+   * When a container (e.g. a Lovelace grid row) constrains
+   * our height, percentage-height lets us actually shrink to
+   * fit it. Against an auto-height parent, per spec this
+   * resolves the same as auto — no change there.
+   */
+  height:100%;
+
   --renix-scale:1;
 
   /* clock reduced by 40% */
@@ -507,8 +515,6 @@ const RENIX_CSS = `
 
   z-index:10;
   pointer-events:none;
-
-  /* transition:opacity .3s ease; */
 }
 
 /*
@@ -715,7 +721,7 @@ const RENIX_CSS = `
     var(--renix-clock-factor)
   );
 
-  font-weight:300;
+  font-weight:400;
 
   line-height:1;
 
@@ -1318,10 +1324,14 @@ class RenixClockCard extends HTMLElement {
                     return;
                 }
                 const width = entry.contentRect.width;
-                if (Math.abs(width - this._lastWidth) < 0.5) {
+                const height = entry.contentRect.height;
+                const widthChanged = Math.abs(width - this._lastWidth) >= 0.5;
+                const heightChanged = Math.abs(height - (this._lastHeight || 0)) >= 0.5;
+                if (!widthChanged && !heightChanged) {
                     return;
                 }
                 this._lastWidth = width;
+                this._lastHeight = height;
                 if (this._resizeQueued) {
                     return;
                 }
@@ -1342,7 +1352,28 @@ class RenixClockCard extends HTMLElement {
         }
         const rect = this.getBoundingClientRect();
         const width = rect.width || 800;
-        const scale = Math.max(.45, Math.min(2.5, width / 800));
+        const height = rect.height || 0;
+        /*
+         * =====================================================
+         * FIT WITHIN BOTH DIMENSIONS
+         *
+         * --renix-shell's height is 465px * scale, so scaling
+         * off width alone assumes an 800:465 container. On a
+         * wide-but-short container (e.g. a full-width dashboard
+         * row) that would push the card taller than the space
+         * actually available. If the host's own height is
+         * constrained by its container (see :host height:100%),
+         * `height` here reflects that real limit — so take
+         * whichever of width/height implies the smaller scale,
+         * same as fitting an image inside a box without
+         * distorting it. If height is unconstrained (the
+         * common case), `height` just tracks whatever this
+         * same scale produced last render, so this reduces to
+         * the width-only behavior as before.
+         */
+        const widthScale = width / 800;
+        const heightScale = height > 0 ? height / 465 : widthScale;
+        const scale = Math.max(.45, Math.min(2.5, Math.min(widthScale, heightScale)));
         /*
          * =====================================================
          * CSS SCALE
