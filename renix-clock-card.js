@@ -507,6 +507,22 @@ const RENIX_CSS = `
 
   z-index:10;
   pointer-events:none;
+
+  transition:opacity .3s ease;
+}
+
+/*
+ * =========================================================
+ * COLON BLINK
+ *
+ * Toggled once a second in _updateClock() by adding/removing
+ * this class on .renix-colon, based on the parity of the
+ * current second.
+ * =========================================================
+ */
+
+.renix-colon.renix-colon-off{
+  opacity:0;
 }
 
 .renix-colon span{
@@ -1538,6 +1554,7 @@ class RenixClockCard extends HTMLElement {
             minutes: minutesLayers,
             seconds: secondsLayers,
             ampm: root.querySelector('.renix-ampm'),
+            colon: root.querySelector('.renix-colon'),
             bottomGrid: root.querySelector('.bottom-grid'),
             info: {
                 outsideTemperature: root.querySelector('.info-card:nth-child(1) .info-value'),
@@ -1634,6 +1651,17 @@ class RenixClockCard extends HTMLElement {
                 if (element.textContent !== s) {
                     element.textContent = s;
                 }
+            }
+            /*
+             * COLON BLINK
+             *
+             * Toggles once per second, in step with the
+             * seconds digit itself — on for even seconds,
+             * off for odd seconds.
+             */
+            if (this._dom.colon) {
+                const colonOff = Number(s) % 2 !== 0;
+                this._dom.colon.classList.toggle('renix-colon-off', colonOff);
             }
         }
         /*
@@ -2305,7 +2333,7 @@ class RenixClockCard extends HTMLElement {
 
               <!-- COLON -->
 
-              <div class="renix-colon">
+              <div class="renix-colon ${Number(s) % 2 !== 0 ? 'renix-colon-off' : ''}">
                 <span></span>
                 <span></span>
               </div>
