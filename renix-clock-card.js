@@ -517,7 +517,7 @@ const RENIX_CSS = `
  *
  * Toggled once a second in _updateClock() by adding/removing
  * this class on .renix-colon, based on the parity of the
- * current second.
+ * current second — only while show_seconds is off.
  * =========================================================
  */
 
@@ -1655,11 +1655,12 @@ class RenixClockCard extends HTMLElement {
             /*
              * COLON BLINK
              *
-             * Toggles once per second, in step with the
-             * seconds digit itself — on for even seconds,
-             * off for odd seconds.
+             * Only when the seconds digits themselves are
+             * hidden — with seconds visible, a blinking colon
+             * is redundant next to a digit that already
+             * changes every second.
              */
-            if (this._dom.colon) {
+            if (this._dom.colon && !this._config.show_seconds) {
                 const colonOff = Number(s) % 2 !== 0;
                 this._dom.colon.classList.toggle('renix-colon-off', colonOff);
             }
@@ -2333,7 +2334,7 @@ class RenixClockCard extends HTMLElement {
 
               <!-- COLON -->
 
-              <div class="renix-colon ${Number(s) % 2 !== 0 ? 'renix-colon-off' : ''}">
+              <div class="renix-colon ${!C.show_seconds && Number(s) % 2 !== 0 ? 'renix-colon-off' : ''}">
                 <span></span>
                 <span></span>
               </div>
