@@ -735,9 +735,6 @@ const RENIX_CSS = `
     0 0 var(--renix-glow-10,10px)
       var(--renix-clock-glow-color,#ff5500),
 
-    0 0 var(--renix-glow-20,20px)
-      var(--renix-clock-color,#ff7700);
-
   z-index:21;
 }
 
