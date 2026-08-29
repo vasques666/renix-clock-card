@@ -1,5 +1,5 @@
 # reNix Clock Card - Nixie style clock
-[![GitHub All Releases](img.shields.io/github/downloads/vasques666/renix-clock-card/total?color=orange&label=Downloads&logo=github)](https://github.com/vasques666/renix-clock-card/)
+[![GitHub All Releases](https://img.shields.io/github/downloads/vasques666/renix-clock-card/total?color=orange&label=Downloads&logo=github)](https://github.com/vasques666/renix-clock-card/)
 
 
 <p align="center">
