@@ -715,7 +715,7 @@ const RENIX_CSS = `
     var(--renix-clock-factor)
   );
 
-  font-weight:400;
+  font-weight:300;
 
   line-height:1;
 
