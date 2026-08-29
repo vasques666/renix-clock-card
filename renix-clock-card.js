@@ -1047,6 +1047,11 @@ class RenixClockCard extends HTMLElement {
             room_humidity: config.room_humidity || '',
             show_bottom_cards: config.show_bottom_cards !== false,
             show_seconds: config.show_seconds !== false,
+            colon_blink_mode: ['every_second', 'every_two_seconds', 'constant']
+                .includes(config.colon_blink_mode)
+                ? config.colon_blink_mode
+                : 'every_second',
+            colon_blink_depends_on_seconds: config.colon_blink_depends_on_seconds !== false,
             show_grid: config.show_grid !== false,
             show_inactive_threads: config.show_inactive_threads !== false,
             /* ===================================================
@@ -1201,10 +1206,20 @@ class RenixClockCard extends HTMLElement {
         if (!this._initialized && this._config) {
             this._fullRender();
         }
+        else {
+            /*
+             * Reconnecting without a full re-render (e.g. card
+             * moved in the dashboard) — restart the colon
+             * blink timer, since disconnectedCallback stopped it.
+             */
+            this._syncColonBlink();
+        }
     }
     disconnectedCallback() {
         clearTimeout(this._timer);
         this._timer = null;
+        clearTimeout(this._colonTimer);
+        this._colonTimer = null;
         if (this._resizeObserver) {
             this._resizeObserver.disconnect();
             this._resizeObserver = null;
@@ -1236,6 +1251,57 @@ class RenixClockCard extends HTMLElement {
             this._updateClock();
             this._scheduleNextSecond();
         }, delay);
+    }
+    /* =======================================================
+       COLON BLINK TIMER
+       ------------------------------------------------------
+       Independent of the once-per-second clock tick above:
+       a blink pulse needs sub-second resolution, so it runs
+       on its own phase-locked timer. Rate and whether it's
+       active at all are both configurable — see
+       colon_blink_mode / colon_blink_depends_on_seconds.
+       ======================================================= */
+    _colonBlinkIntervalMs() {
+        return this._config &&
+            this._config.colon_blink_mode === 'every_two_seconds'
+            ? 1000
+            : 500;
+    }
+    _toggleColonBlink(intervalMs) {
+        if (!this._dom ||
+            !this._dom.colon) {
+            return;
+        }
+        const phase = Math.floor(Date.now() / intervalMs) % 2;
+        this._dom.colon.classList.toggle('renix-colon-off', phase === 1);
+    }
+    _scheduleNextColonToggle(intervalMs) {
+        clearTimeout(this._colonTimer);
+        const delay = intervalMs - (Date.now() % intervalMs);
+        this._colonTimer = setTimeout(() => {
+            this._colonTimer = null;
+            this._toggleColonBlink(intervalMs);
+            this._scheduleNextColonToggle(intervalMs);
+        }, delay);
+    }
+    _syncColonBlink() {
+        clearTimeout(this._colonTimer);
+        this._colonTimer = null;
+        if (!this._config ||
+            !this._dom ||
+            !this._dom.colon) {
+            return;
+        }
+        const dependsOnSeconds = this._config.colon_blink_depends_on_seconds !== false;
+        const blockedBySeconds = dependsOnSeconds && this._config.show_seconds;
+        const constantOn = this._config.colon_blink_mode === 'constant';
+        if (constantOn || blockedBySeconds) {
+            this._dom.colon.classList.remove('renix-colon-off');
+            return;
+        }
+        const intervalMs = this._colonBlinkIntervalMs();
+        this._toggleColonBlink(intervalMs);
+        this._scheduleNextColonToggle(intervalMs);
     }
     /* =======================================================
        ADAPTIVE SIZE
@@ -1651,18 +1717,6 @@ class RenixClockCard extends HTMLElement {
                 if (element.textContent !== s) {
                     element.textContent = s;
                 }
-            }
-            /*
-             * COLON BLINK
-             *
-             * Only when the seconds digits themselves are
-             * hidden — with seconds visible, a blinking colon
-             * is redundant next to a digit that already
-             * changes every second.
-             */
-            if (this._dom.colon && !this._config.show_seconds) {
-                const colonOff = Number(s) % 2 !== 0;
-                this._dom.colon.classList.toggle('renix-colon-off', colonOff);
             }
         }
         /*
@@ -2334,7 +2388,7 @@ class RenixClockCard extends HTMLElement {
 
               <!-- COLON -->
 
-              <div class="renix-colon ${!C.show_seconds && Number(s) % 2 !== 0 ? 'renix-colon-off' : ''}">
+              <div class="renix-colon">
                 <span></span>
                 <span></span>
               </div>
@@ -2482,6 +2536,15 @@ class RenixClockCard extends HTMLElement {
          * =====================================================
          */
         this._initialized = true;
+        /*
+         * =====================================================
+         * COLON BLINK
+         *
+         * DOM was just rebuilt, so re-sync the blink timer
+         * against the current show_seconds setting.
+         * =====================================================
+         */
+        this._syncColonBlink();
         /*
          * =====================================================
          * INITIAL SIZE
@@ -2771,6 +2834,36 @@ class RenixClockCardEditor extends HTMLElement {
                         boolean: {}
                     },
                     label: 'Показывать секунды'
+                },
+                {
+                    name: 'colon_blink_mode',
+                    selector: {
+                        select: {
+                            mode: 'dropdown',
+                            options: [
+                                {
+                                    value: 'every_second',
+                                    label: 'Каждую секунду'
+                                },
+                                {
+                                    value: 'every_two_seconds',
+                                    label: 'Каждые две секунды'
+                                },
+                                {
+                                    value: 'constant',
+                                    label: 'Постоянно включено'
+                                }
+                            ]
+                        }
+                    },
+                    label: 'Мигание двоеточия'
+                },
+                {
+                    name: 'colon_blink_depends_on_seconds',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Мигание только при скрытых секундах'
                 },
                 {
                     name: 'show_grid',
@@ -3192,6 +3285,14 @@ class RenixClockCardEditor extends HTMLElement {
             show_seconds: {
                 ru: 'Показывать секунды',
                 en: 'Show seconds'
+            },
+            colon_blink_mode: {
+                ru: 'Мигание двоеточия',
+                en: 'Colon blink'
+            },
+            colon_blink_depends_on_seconds: {
+                ru: 'Мигание только при скрытых секундах',
+                en: 'Blink only when seconds are hidden'
             },
             show_grid: {
                 ru: 'Показывать сетку',
