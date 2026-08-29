@@ -1,4 +1,4 @@
-# reNix Clock Card
+# reNix Clock Card - Nixie style clock
 
 <p align="center">
   <img src="docs/images/renix-clock-card-v1.3.2-en.png" alt="Renix Clock Card" width="100%">
