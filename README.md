@@ -1,7 +1,7 @@
 # reNix Clock Card - Nixie style clock
 
 <p align="center">
-  <img src="https://github.com/vasques666/renix-clock-card/docs/images/renix-clock-card-v1.3.2-en.png" alt="Renix Clock Card" width="100%">
+  <img src="https://raw.githubusercontent.com/vasques666/renix-clock-card/refs/heads/main/docs/images/renix-clock-card-v1.3.2-en.png" alt="Renix Clock Card" width="100%">
 </p>
 
 A custom Home Assistant Lovelace card with a layered reNix tube-style clock, weather/date information and configurable sensor panels.
@@ -42,7 +42,7 @@ See [`example.yaml`](example.yaml).
 Красивая Nixie-style карточка часов для **Home Assistant**, созданная на основе шрифта **reNix**.
 
 <p align="center">
-  <img src="https://github.com/vasques666/renix-clock-card/docs/images/renix-clock-card-v1.3.2.png" alt="Renix Clock Card" width="100%">
+  <img src="[https://github.com/vasques666/renix-clock-card](https://raw.githubusercontent.com/vasques666/renix-clock-card/refs/heads/main)/docs/images/renix-clock-card-v1.3.2.png" alt="Renix Clock Card" width="100%">
 </p>
 
 Карточка объединяет часы, дату, погоду, температуру, влажность и атмосферное давление в одном блоке и позволяет настраивать внешний вид через визуальный редактор Home Assistant.
