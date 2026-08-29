@@ -87,59 +87,7 @@ https://github.com/vasques666/renix-clock-card
 
 Карточку можно добавить через визуальный редактор Home Assistant. Также доступна YAML-конфигурация:
 
-```yaml
-type: custom:renix-clock-card
-weather_entity: weather.yandex_pogoda
-night_entity: input_boolean.night_mode
-outside_temperature: sensor.spalnia_ulitsa_temperature
-outside_humidity: sensor.spalnia_ulitsa_humidity
-pressure_entity: sensor.spalnia_atmospheric_pressure
-room_temperature: sensor.spalnia_temperature
-room_humidity: sensor.spalnia_humidity
-show_bottom_cards: true
-height: 330
-card_background: null
-card_border: null
-card_shadow: null
-card_radius: null
-card_backdrop_blur: 10
-night_brightness: 0.5
-top_night_brightness: 0.5
-bottom_night_brightness: 0.5
-```
-
-## Язык
-
-В визуальном редакторе доступны:
-
-- **Автоматически** — язык Home Assistant;
-- **Русский**;
-- **English**.
-
-## Ночной режим
-
-Ночной режим определяется выбранной сущностью, например:
-
-```yaml
-night_entity: input_boolean.night_mode
-```
-
-Верхняя и нижняя части имеют отдельные уровни яркости:
-
-```yaml
-top_night_brightness: 0.5
-bottom_night_brightness: 0.5
-```
-
-## Frosted Glass
-
-Для эффекта матового стекла используется:
-
-```yaml
-card_backdrop_blur: 10
-```
-
-Значение задаётся в пикселях. Фон, рамку, тень и радиус можно оставить `null`, чтобы оформление определялось темой Home Assistant.
+[`example.yaml`](example.yaml).
 
 ## Обратная связь
 
