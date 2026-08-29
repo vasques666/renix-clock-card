@@ -10,7 +10,7 @@ A custom Home Assistant Lovelace card with a layered reNix tube-style clock, wea
 
 ## Version
 
-**1.4.1**
+**1.4.2**
 
 ## Features
 
@@ -97,7 +97,7 @@ Pull Request с улучшениями также приветствуются.
 
 ## Версия
 
-**1.4.1** — текущая стабильная версия.
+**1.4.2** — текущая стабильная версия.
 
 ## GitHub
 
