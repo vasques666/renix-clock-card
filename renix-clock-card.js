@@ -507,6 +507,22 @@ const RENIX_CSS = `
 
   z-index:10;
   pointer-events:none;
+
+  transition:opacity .3s ease;
+}
+
+/*
+ * =========================================================
+ * COLON BLINK
+ *
+ * Toggled once a second in _updateClock() by adding/removing
+ * this class on .renix-colon, based on the parity of the
+ * current second — only while show_seconds is off.
+ * =========================================================
+ */
+
+.renix-colon.renix-colon-off{
+  opacity:0;
 }
 
 .renix-colon span{
@@ -1031,6 +1047,11 @@ class RenixClockCard extends HTMLElement {
             room_humidity: config.room_humidity || '',
             show_bottom_cards: config.show_bottom_cards !== false,
             show_seconds: config.show_seconds !== false,
+            colon_blink_mode: ['every_second', 'every_two_seconds', 'constant']
+                .includes(config.colon_blink_mode)
+                ? config.colon_blink_mode
+                : 'every_second',
+            colon_blink_depends_on_seconds: config.colon_blink_depends_on_seconds !== false,
             show_grid: config.show_grid !== false,
             show_inactive_threads: config.show_inactive_threads !== false,
             /* ===================================================
@@ -1185,10 +1206,20 @@ class RenixClockCard extends HTMLElement {
         if (!this._initialized && this._config) {
             this._fullRender();
         }
+        else {
+            /*
+             * Reconnecting without a full re-render (e.g. card
+             * moved in the dashboard) — restart the colon
+             * blink timer, since disconnectedCallback stopped it.
+             */
+            this._syncColonBlink();
+        }
     }
     disconnectedCallback() {
         clearTimeout(this._timer);
         this._timer = null;
+        clearTimeout(this._colonTimer);
+        this._colonTimer = null;
         if (this._resizeObserver) {
             this._resizeObserver.disconnect();
             this._resizeObserver = null;
@@ -1220,6 +1251,57 @@ class RenixClockCard extends HTMLElement {
             this._updateClock();
             this._scheduleNextSecond();
         }, delay);
+    }
+    /* =======================================================
+       COLON BLINK TIMER
+       ------------------------------------------------------
+       Independent of the once-per-second clock tick above:
+       a blink pulse needs sub-second resolution, so it runs
+       on its own phase-locked timer. Rate and whether it's
+       active at all are both configurable — see
+       colon_blink_mode / colon_blink_depends_on_seconds.
+       ======================================================= */
+    _colonBlinkIntervalMs() {
+        return this._config &&
+            this._config.colon_blink_mode === 'every_two_seconds'
+            ? 1000
+            : 500;
+    }
+    _toggleColonBlink(intervalMs) {
+        if (!this._dom ||
+            !this._dom.colon) {
+            return;
+        }
+        const phase = Math.floor(Date.now() / intervalMs) % 2;
+        this._dom.colon.classList.toggle('renix-colon-off', phase === 1);
+    }
+    _scheduleNextColonToggle(intervalMs) {
+        clearTimeout(this._colonTimer);
+        const delay = intervalMs - (Date.now() % intervalMs);
+        this._colonTimer = setTimeout(() => {
+            this._colonTimer = null;
+            this._toggleColonBlink(intervalMs);
+            this._scheduleNextColonToggle(intervalMs);
+        }, delay);
+    }
+    _syncColonBlink() {
+        clearTimeout(this._colonTimer);
+        this._colonTimer = null;
+        if (!this._config ||
+            !this._dom ||
+            !this._dom.colon) {
+            return;
+        }
+        const dependsOnSeconds = this._config.colon_blink_depends_on_seconds !== false;
+        const blockedBySeconds = dependsOnSeconds && this._config.show_seconds;
+        const constantOn = this._config.colon_blink_mode === 'constant';
+        if (constantOn || blockedBySeconds) {
+            this._dom.colon.classList.remove('renix-colon-off');
+            return;
+        }
+        const intervalMs = this._colonBlinkIntervalMs();
+        this._toggleColonBlink(intervalMs);
+        this._scheduleNextColonToggle(intervalMs);
     }
     /* =======================================================
        ADAPTIVE SIZE
@@ -1538,6 +1620,7 @@ class RenixClockCard extends HTMLElement {
             minutes: minutesLayers,
             seconds: secondsLayers,
             ampm: root.querySelector('.renix-ampm'),
+            colon: root.querySelector('.renix-colon'),
             bottomGrid: root.querySelector('.bottom-grid'),
             info: {
                 outsideTemperature: root.querySelector('.info-card:nth-child(1) .info-value'),
@@ -2455,6 +2538,15 @@ class RenixClockCard extends HTMLElement {
         this._initialized = true;
         /*
          * =====================================================
+         * COLON BLINK
+         *
+         * DOM was just rebuilt, so re-sync the blink timer
+         * against the current show_seconds setting.
+         * =====================================================
+         */
+        this._syncColonBlink();
+        /*
+         * =====================================================
          * INITIAL SIZE
          * =====================================================
          */
@@ -2742,6 +2834,36 @@ class RenixClockCardEditor extends HTMLElement {
                         boolean: {}
                     },
                     label: 'Показывать секунды'
+                },
+                {
+                    name: 'colon_blink_mode',
+                    selector: {
+                        select: {
+                            mode: 'dropdown',
+                            options: [
+                                {
+                                    value: 'every_second',
+                                    label: 'Каждую секунду'
+                                },
+                                {
+                                    value: 'every_two_seconds',
+                                    label: 'Каждые две секунды'
+                                },
+                                {
+                                    value: 'constant',
+                                    label: 'Постоянно включено'
+                                }
+                            ]
+                        }
+                    },
+                    label: 'Мигание двоеточия'
+                },
+                {
+                    name: 'colon_blink_depends_on_seconds',
+                    selector: {
+                        boolean: {}
+                    },
+                    label: 'Мигание только при скрытых секундах'
                 },
                 {
                     name: 'show_grid',
@@ -3164,6 +3286,14 @@ class RenixClockCardEditor extends HTMLElement {
                 ru: 'Показывать секунды',
                 en: 'Show seconds'
             },
+            colon_blink_mode: {
+                ru: 'Мигание двоеточия',
+                en: 'Colon blink'
+            },
+            colon_blink_depends_on_seconds: {
+                ru: 'Мигание только при скрытых секундах',
+                en: 'Blink only when seconds are hidden'
+            },
             show_grid: {
                 ru: 'Показывать сетку',
                 en: 'Show grid'
@@ -3337,7 +3467,23 @@ class RenixClockCardEditor extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
-        this.shadowRoot.innerHTML = `
+        if (!this._form) {
+            /*
+             * ============================================
+             * BUILD ONCE
+             *
+             * <ha-form> (and every ha-form-expandable panel
+             * inside it) is only created here, the first
+             * time _render() runs. setConfig() calls
+             * _render() again after every single field edit
+             * (via the config-changed round-trip below), and
+             * rebuilding the element via innerHTML each time
+             * would destroy ha-form's internal state — which
+             * is exactly what was collapsing every expandable
+             * group back shut on every keystroke.
+             * ============================================
+             */
+            this.shadowRoot.innerHTML = `
       <style>
         :host{
           display:block;
@@ -3351,26 +3497,73 @@ class RenixClockCardEditor extends HTMLElement {
 
       <ha-form></ha-form>
     `;
-        this._form =
-            this.shadowRoot.querySelector('ha-form');
-        /*
-         * Передаём схему.
-         */
-        this._form.schema =
-            this._schema;
-        /*
-         * Передаём функцию формирования
-         * названия каждого пункта.
-         */
-        this._form.computeLabel =
-            schema => {
-                const language = this._getEditorLanguage();
-                return (this._labels[schema.name]?.[language]
-                    ||
-                        schema.name);
-            };
+            this._form =
+                this.shadowRoot.querySelector('ha-form');
+            /*
+             * Передаём схему.
+             */
+            this._form.schema =
+                this._schema;
+            /*
+             * Передаём функцию формирования
+             * названия каждого пункта.
+             */
+            this._form.computeLabel =
+                schema => {
+                    const language = this._getEditorLanguage();
+                    return (this._labels[schema.name]?.[language]
+                        ||
+                            schema.name);
+                };
+            /*
+             * Изменение любого параметра.
+             */
+            this._form.addEventListener('value-changed', e => {
+                const config = {
+                    ...e.detail.value
+                };
+                const languageChanged =
+                    config.language !== this._config.language;
+                this._config =
+                    config;
+                if (languageChanged) {
+                    /*
+                     * Язык — единственное изменение, требующее
+                     * полной пересборки <ha-form>: чтобы
+                     * заголовки expandable-групп (не проходящие
+                     * через computeLabel, см. title) пересчитались,
+                     * форма должна быть пересоздана целиком.
+                     * Вызываем _render() сразу же, не полагаясь
+                     * на то, что HA обязательно и синхронно
+                     * вызовет setConfig() в ответ на
+                     * config-changed ниже.
+                     */
+                    this._form = null;
+                    this._render();
+                }
+                else if (this._form &&
+                    this._form.computeLabel) {
+                    this._form.requestUpdate();
+                }
+                /*
+                 * Сообщаем редактору HA
+                 * об изменении конфигурации.
+                 */
+                this.dispatchEvent(new CustomEvent('config-changed', {
+                    detail: {
+                        config
+                    },
+                    bubbles: true,
+                    composed: true
+                }));
+            });
+        }
         /*
          * Передаём текущую конфигурацию.
+         *
+         * Обновляется на КАЖДЫЙ вызов _render(), в отличие
+         * от блока выше — но на уже существующем <ha-form>,
+         * без пересоздания DOM.
          */
         this._form.data = {
             ...this._config
@@ -3382,36 +3575,6 @@ class RenixClockCardEditor extends HTMLElement {
             this._form.hass =
                 this._hass;
         }
-        /*
-         * Изменение любого параметра.
-         */
-        this._form.addEventListener('value-changed', e => {
-            const config = {
-                ...e.detail.value
-            };
-            this._config =
-                config;
-            /*
-             * Если изменили язык,
-             * заставляем ha-form пересчитать
-             * подписи полей.
-             */
-            if (this._form &&
-                this._form.computeLabel) {
-                this._form.requestUpdate();
-            }
-            /*
-             * Сообщаем редактору HA
-             * об изменении конфигурации.
-             */
-            this.dispatchEvent(new CustomEvent('config-changed', {
-                detail: {
-                    config
-                },
-                bubbles: true,
-                composed: true
-            }));
-        });
     }
     /*
      * =====================================================
