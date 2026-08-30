@@ -703,8 +703,9 @@ const RENIX_CSS = `
   height:auto;
 
   font-family:
-    Nixie One,
-    monospace;
+    Roboto,
+    Arial,
+    sans-serif;
 
   font-size:calc(
     6rem *
@@ -712,7 +713,7 @@ const RENIX_CSS = `
     var(--renix-clock-factor)
   );
 
-  font-weight:900;
+  font-weight:400;
 
   line-height:1;
 
@@ -723,7 +724,7 @@ const RENIX_CSS = `
   pointer-events:none;
 
   color:
-    var(--renix-clock-color,#ff7700);
+    var(--renix-clock-core-color,#fff1d0);
 
   text-shadow:
     0 0 calc(
@@ -742,7 +743,8 @@ const RENIX_CSS = `
     )
       var(--renix-clock-color,#ff7700);
 
-  opacity:1;
+  opacity:
+    var(--renix-seconds-core-opacity,.55);
 
   z-index:21;
 }
