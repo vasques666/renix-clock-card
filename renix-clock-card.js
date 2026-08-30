@@ -507,8 +507,6 @@ const RENIX_CSS = `
 
   z-index:10;
   pointer-events:none;
-
-  /* transition:opacity .3s ease; */
 }
 
 /*
@@ -694,7 +692,7 @@ const RENIX_CSS = `
   position:absolute;
 
   left:calc(
-    50% + 4.5em
+    50% + 4.6em
   );
 
   top:calc(
@@ -725,18 +723,38 @@ const RENIX_CSS = `
 
   pointer-events:none;
 
+  /*
+   * Blend of --renix-clock-color and --renix-clock-core-color.
+   * Static hex fallback first (midpoint of their defaults) for
+   * browsers without color-mix() support; overridden by the
+   * live blend on anything modern.
+   */
+  color:#ff8844;
   color:
-    var(--renix-clock-color,#ff7700);
+    color-mix(
+      in srgb,
+      var(--renix-clock-color,#ff7700) 75%,
+      var(--renix-clock-core-color,#fff1d0) 25%
+    );
 
   text-shadow:
-    0 0 var(--renix-glow-4,4px)
+    0 0 calc(
+      4px *
+      var(--renix-scale) *
+      var(--renix-clock-factor) *
+      var(--renix-clock-glow,1)
+    )
       var(--renix-clock-glow-color,#ff3300),
 
-    0 0 var(--renix-glow-10,10px)
-      var(--renix-clock-glow-color,#ff5500),
-
-    0 0 var(--renix-glow-20,20px)
+    0 0 calc(
+      10px *
+      var(--renix-scale) *
+      var(--renix-clock-factor) *
+      var(--renix-clock-glow,1)
+    )
       var(--renix-clock-color,#ff7700);
+
+  opacity:1;
 
   z-index:21;
 }
