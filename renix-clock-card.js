@@ -733,8 +733,8 @@ const RENIX_CSS = `
   color:
     color-mix(
       in srgb,
-      var(--renix-clock-color,#ff7700) 66%,
-      var(--renix-clock-core-color,#fff1d0) 34%
+      var(--renix-clock-color,#ff7700) 75%,
+      var(--renix-clock-core-color,#fff1d0) 25%
     );
 
   text-shadow:
