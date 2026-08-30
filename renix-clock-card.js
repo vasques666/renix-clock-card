@@ -713,7 +713,7 @@ const RENIX_CSS = `
     var(--renix-clock-factor)
   );
 
-  font-weight:400;
+  font-weight:300;
 
   line-height:1;
 
@@ -723,8 +723,19 @@ const RENIX_CSS = `
 
   pointer-events:none;
 
+  /*
+   * Blend of --renix-clock-color and --renix-clock-core-color.
+   * Static hex fallback first (midpoint of their defaults) for
+   * browsers without color-mix() support; overridden by the
+   * live blend on anything modern.
+   */
+  color:#ffb468;
   color:
-    var(--renix-clock-color,#ff7700);
+    color-mix(
+      in srgb,
+      var(--renix-clock-color,#ff7700) 50%,
+      var(--renix-clock-core-color,#fff1d0) 50%
+    );
 
   text-shadow:
     0 0 calc(
