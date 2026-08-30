@@ -729,12 +729,12 @@ const RENIX_CSS = `
    * browsers without color-mix() support; overridden by the
    * live blend on anything modern.
    */
-  color:#ffb468;
+  color:#ff8844;
   color:
     color-mix(
       in srgb,
-      var(--renix-clock-color,#ff7700) 50%,
-      var(--renix-clock-core-color,#fff1d0) 50%
+      var(--renix-clock-color,#ff7700) 66%,
+      var(--renix-clock-core-color,#fff1d0) 34%
     );
 
   text-shadow:
