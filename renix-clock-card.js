@@ -692,7 +692,7 @@ const RENIX_CSS = `
   position:absolute;
 
   left:calc(
-    50% + 4.5em
+    50% + 5em
   );
 
   top:calc(
