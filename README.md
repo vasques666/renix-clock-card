@@ -10,7 +10,7 @@ A custom Home Assistant Lovelace card with a layered reNix tube-style clock, wea
 
 ## Version
 
-**1.4.2**
+**1.4.3**
 
 ## Features
 
@@ -33,6 +33,15 @@ A custom Home Assistant Lovelace card with a layered reNix tube-style clock, wea
 3. Install `reNix Clock Card`.
 4. Add the resource if HACS does not do so automatically.
 5. Add `type: custom:renix-clock-card` to a Lovelace dashboard.
+
+## Additional fonts  
+
+1. Add custom resource (Config - Panels - 3 dots in upper right corner - resources - Add resource)
+2. URL: https://fonts.googleapis.com/css2?family=Nixie+One&display=swap (Nixie One font)
+3. Type: Stylesheet
+4. Add one more font
+5. URL: https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap (Roboto font)
+6. Type: Stylesheet
 
 ## Example
 
@@ -83,6 +92,15 @@ https://github.com/vasques666/renix-clock-card
 5. Нажмите **Добавить**.
 6. Найдите **Renix Clock Card** и установите последнюю версию.
 
+## Дополнительные шрифты 
+
+1. Добавление пользовательских ресурсов (Настройки - Панели - 3 точки в правом верхнем углу - Ресурсы - Добавить ресурс)
+2. URL: https://fonts.googleapis.com/css2?family=Nixie+One&display=swap (шрифт Nixie One)
+3. Type: Stylesheet
+4. Также добавьте
+5. URL: https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap (Шрифт Roboto)
+6. Type: Stylesheet
+
 ## Настройка
 
 Карточку можно добавить через визуальный редактор Home Assistant. Также доступна YAML-конфигурация:
@@ -97,7 +115,7 @@ Pull Request с улучшениями также приветствуются.
 
 ## Версия
 
-**1.4.2** — текущая стабильная версия.
+**1.4.3** — текущая стабильная версия.
 
 ## GitHub
 
